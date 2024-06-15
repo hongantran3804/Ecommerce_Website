@@ -1,0 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap');
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 
+  Note: The styles for this gradient grid background is heavily inspired by the creator of this amazing site (https://dub.sh) – all credits go to them! 
+*/
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+@layer utilities {
+  .departmentArrow {
+    @apply absolute content-[''] w-[1.3rem] h-[1.3rem] border-t-2 border-r-2 border-black left-[95%] top-[15%] rotate-[45deg] bg-gradient-to-tr from-white from-50% to-Purple to-50% hidden
+  }
+
+
+}
+
+.goog-te-gadget-simple {
+  width: auto;
+  display: flex;
+  flex-direction: row;
+  padding-top: 1px;
+  padding-bottom: 2px;
+  cursor: pointer;
+  white-space: wrap;
+  justify-items: center;
+}
+
+.goog-te-gadget-simple>span {
+  display: inline-block;
+  flex-direction: row;
+  vertical-align: center;
+  border-style: solid;
+}
+
+.goog-te-gadget-icon {
+  display: inline-block;
+  margin-left: 2px;
+  margin-right: 2px;
+  width: 19px;
+  height: 19px;
+  white-space: nowrap;
+  border-style: solid;
+  border-color: black;
+}
+
+.VIpgJd-ZVi9od-xl07Ob-lTBxed {
+  display: flex;
+  flex-direction: row;
+  border-style: solid;
+}
