@@ -1,148 +1,63 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable jsx-a11y/alt-text */
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { testProducts } from "@utils/utils";
+import defaultImg from "@public/assets/images/defaultProductPhoto.png";
+import { redirect } from "next/navigation";
+import CartShow from "./CartShow";
+const CartSummary = ({ products, oldQuantity, userId }) => {
+  if (!oldQuantity || !products) return;
+  const handleCheckout = async (e) => {
+    e.preventDefault();
+    try {
+      const checkoutProducts = products.filter((product, index) => {
+        if (quantity[index].included && quantity[index].value > 0) {
+          return true
+        }
+      }).map((prod, index) => ({ ...prod, quantity: quantity[index].value }));
+      const response = await fetch(
+        `http://localhost:3000/api/cart?products=${encodeURIComponent(
+          JSON.stringify(checkoutProducts)
+        )}&userId=${userId}`,
+        {
+          method: "PUT",
+        }
+      );
+      if (response.ok) {
+        window.location.href = "/checkout"
+      }
+    } catch (err) {
+      alert(err)
+    }
+  };
 
-export const CartShow = ({ products, quantity, setQuantity }) => {
-  const [update, setUpdate] = useState(Array.from({length: products.length}, () => (true)));
-  
-  return (
-    <div>
-      {products.map((product, index) => (
-        <div
-          className={`w-full flex flex-row items-start border-t-[1px] border-b-[1px] border-t-gray-300 border-b-gray-300 py-[1rem] text-[.9rem] ${
-            quantity[index].included ? "opacity-100" : "opacity-50"
-          }`}
-          key={product.upc}
-        >
-          <input
-            type="checkbox"
-            checked={quantity[index].included}
-            className="self-center mr-4"
-            onChange={(e) => {
-              setQuantity(() => {
-                const newQuantity = [...quantity];
-                newQuantity[index].included = e.target.checked;
-                return newQuantity;
-              });
-            }}
-          />
-          <div className="flex flex-row items-start flex-1 gap-4 h-fit">
-            <div className="h-full">
-              <Image src={product.photo} />
-            </div>
-            <div className="flex flex-col justify-between items-start  h-[10rem] w-[80%]">
-              <div>
-                <strong>Product Description:</strong> {product.prodDesc}
-              </div>
-              <div>
-                <strong>Brand:</strong> {product.brand.name}
-              </div>
-              <div>
-                <strong>UPC:</strong> {product.upc}
-              </div>
-              <div>
-                <strong>Case:</strong> {product.caseVal}
-              </div>
-              <div className="flex flex-row items-center gap-3">
-                {update[index] ? (
-                  <div className="flex flex-row items-center gap-3">
-                    <div>
-                      <strong>Quantity:</strong> {`${quantity[index].value}`}
-                    </div>
-                    <div
-                      className="text-blue-600 hover:underline cursor-pointer"
-                      onClick={() => {
-                        setUpdate(() => {
-                          const newUpdate = [...update];
-                          newUpdate[index] = false;
-                          return newUpdate
-                        });
-                      }}
-                    >
-                      Update
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-row items-center gap-3">
-                    <input
-                      defaultValue={quantity[index].value}
-                      type="number"
-                      id="quantity"
-                      name="quantity"
-                      className="border-[1px] border-black w-[3.5rem] pl-[1rem]"
-                      onChange={(e) => {
-                        setQuantity(() => {
-                          const newQuantity = [...quantity];
-                          if (parseInt(e.target.value) !== NaN) {
-                            newQuantity[index].value = parseInt(e.target.value);
-                          }
-                          return newQuantity;
-                        });
-                      }}
-                    />
-                    <div
-                      className="text-blue-600 hover:underline cursor-pointer"
-                      onClick={() => {
-                        setUpdate(() => {
-                            const newUpdate = [...update];
-                            newUpdate[index] = true;
-                            return newUpdate;
-                        });
-                      }}
-                    >
-                      Save
-                    </div>
-                  </div>
-                )}
-
-                <div
-                  className="text-blue-600 hover:underline cursor-pointer"
-                  onClick={(e) => {
-                    setQuantity(() => {
-                      const newQuantity = [...quantity];
-                      newQuantity.splice(index, 1);
-                      return newQuantity;
-                    });
-                    testProducts.splice(index, 1);
-                  }}
-                >
-                  Delete
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="font-bold">
-            ${product.price * quantity[index].value}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-const CartSummary = ({ products, oldQuantity }) => {
-  
-  const [quantity, setQuantity] = useState(
-    oldQuantity ? [...oldQuantity] :
-    Array.from({ length: testProducts.length }, () => ({
-      value: 1,
-      included: true,
-    }))
-  ); 
+  const filtQuantity = oldQuantity.map((eachVal) => ({
+    value: eachVal,
+    included: true,
+  }));
+  const [quantity, setQuantity] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [numOfProd, setNumOfProd] = useState(0);
+
+  useEffect(() => {
+    setQuantity((curr) => [...curr, ...filtQuantity]);
+  }, [products]);
   useEffect(() => {
     let calTotal = 0;
     let calNum = 0;
     quantity.forEach((element, index) => {
       if (element.included) {
-        calTotal += element.value * testProducts[index].price * 100;
-        calNum += element.value;
+        if (products[index]?.price) {
+          calTotal += element.value * products[index].price * 100;
+          calNum += element.value;
+        }
       }
     });
     setTotalPrice(calTotal);
     setNumOfProd(calNum);
-  }, [quantity]);
+  }, [quantity, products]);
   return (
     <section>
       <div>
@@ -150,38 +65,32 @@ const CartSummary = ({ products, oldQuantity }) => {
           <div className="flex flex-col mb-[2rem] flex-1">
             <div className="self-end">Price</div>
             <CartShow
-              products={testProducts}
+              products={products}
               quantity={quantity}
               setQuantity={setQuantity}
             />
             <div className="self-end font-bold">
               {`Subtotal (${numOfProd} items):`}{" "}
-              <span className="font-extrabold">${`${totalPrice / 100}`}</span>
+              <span className="font-extrabold">
+                ${`${totalPrice / 100 ? totalPrice / 100 : 0}`}
+              </span>
             </div>
           </div>
           <div>
             <div className="flex flex-col items-center border-[1px] border-gray-300 p-5">
               <div className="self-end font-bold">
                 {`Subtotal (${numOfProd} items):`}{" "}
-                <span className="font-extrabold">${`${totalPrice / 100}`}</span>
+                <span className="font-extrabold">
+                  ${`${totalPrice / 100 ? Math.round(totalPrice) / 100 : 0}`}
+                </span>
               </div>
-              <a
-                href={`/checkout?quantity[]=${encodeURIComponent(
-                  JSON.stringify(
-                    quantity.filter((eachQUan) => eachQUan.included)
-                  )
-                )}&products[]=${encodeURIComponent(
-                  JSON.stringify(
-                    testProducts.filter(
-                      (product, index) => quantity[index].included
-                    )
-                  )
-                )}`}
+              <div
+                className=" bg-LightPurple text-[.8rem] p-1 w-full text-center 
+                rounded-[5px] font-bold cursor-pointer hover:bg-Purple text-white"
+                onClick={handleCheckout}
               >
-                <div className=" bg-LightPurple text-[.8rem] p-1 w-full text-center rounded-[5px] font-bold cursor-pointer hover:bg-Purple text-white">
-                  Proceed to checkout
-                </div>
-              </a>
+                Proceed to checkout
+              </div>
             </div>
           </div>
         </div>

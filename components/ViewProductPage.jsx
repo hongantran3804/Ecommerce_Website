@@ -8,7 +8,10 @@ import Main from "./Main";
 import ProductsDisplay from "./ProductsDisplay";
 import { testProducts } from "@utils/utils";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 const ViewProductPage = () => {
+  const { data: session } = useSession();
+  
   const searchParams = useSearchParams();
   const heading = searchParams.get("name");
   const brandId = searchParams.get("brandId");
@@ -39,6 +42,7 @@ const ViewProductPage = () => {
           products={products}
           narrowBy={narrowBy}
           setProducts={setProducts}
+          userId = {session?.user?.id}
         />
       </React.StrictMode>,
       mainview

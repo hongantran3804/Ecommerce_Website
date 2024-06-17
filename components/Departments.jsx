@@ -51,10 +51,10 @@ const Departments = () => {
             </Link>
           </div>
           <div className="group cursor-pointer">
-            <Link href="/history">
+            <Link href="/orders">
               <div className="font-bold text-[0.7rem] border-b-[1px] border-b-gray-400 font-bodyFont py-[0.5rem] px-[5px] relative group-hover:text-white  w-full group-hover:bg-Purple ">
                 {/* after:departmentArrow after:z-10 group-hover:after:from-Purple group-hover:after:to-Purple z-10 group-hover:after:block"> */}
-                History
+                Orders
               </div>
             </Link>
           </div>

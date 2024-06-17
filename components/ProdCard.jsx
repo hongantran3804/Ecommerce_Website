@@ -9,11 +9,10 @@ import cart from "@public/assets/icons/shopping-cart.png";
 import { useState } from "react";
 import checkMark from "@public/assets/icons/checkmark.png";
 import { useSession } from "next-auth/react";
-import { headers } from "next/headers";
-const ProdCard = ({ products }) => {
+const ProdCard = ({ products, userId }) => {
   const [added, setAdded] = useState(Array.from({ length: products.length }, () => (false)));
-  const { data: session } = useSession();
-  const AddToCart = async (e, product) => {
+  
+  const AddToCart = async (e, product,userId) => {
     e.preventDefault();
     try {
       const response = await fetch("http://localhost:3000/api/cart", {
@@ -21,10 +20,10 @@ const ProdCard = ({ products }) => {
         headers: {
           "Content-Type":"application/json",
         },
-        body: {
-          id: session.user?.id,
+        body: JSON.stringify({
+          id: userId,
           product
-        }
+        })
       }) 
   } catch (err) {
       
@@ -70,20 +69,20 @@ const ProdCard = ({ products }) => {
               >
                 <Image src={reqInfoIcon} className="w-[2rem]" />
               </a>
-              <div className="cursor-pointer" onClick={() => {
+              <div className="cursor-pointer" onClick={(e) => {
                 setTimeout(() => {
                   setAdded(() => {
                     const newAdded = [...added];
                     newAdded[index] = false;
                     return newAdded;
                   });
-                }, 2000);
+                }, 500);
                 setAdded(() => {
                   const newAdded = [...added];
                   newAdded[index] = true;
                   return newAdded;
                 })
-                AddToCart(e, product);
+                AddToCart(e, product,userId);
               }}>
                 <Image src={cart} className="w-[1.5rem]" />
               </div>

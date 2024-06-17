@@ -5,7 +5,7 @@ import ProdCard from "./ProdCard";
 import { useState, useEffect, useMemo } from "react";
 import { narrowCategories } from "@utils/utils";
 import { testProducts } from "@utils/utils";
-const ProductsDisplay = ({ products, narrowBy, setProducts }) => {
+const ProductsDisplay = ({ products, narrowBy, setProducts, userId }) => {
   if (!products || !narrowBy) return <div></div>;
   const [originalProducts, setOriginalProducts] = useState([]);
   const [totalProd, setTotalProd] = useState(0);
@@ -35,7 +35,7 @@ const ProductsDisplay = ({ products, narrowBy, setProducts }) => {
                   return product.price < range[1];
                 } else return true;
               }
-              return false;
+              return false
             }
           })
         );
@@ -115,20 +115,21 @@ const ProductsDisplay = ({ products, narrowBy, setProducts }) => {
                       className="border-[1px] border-black rounded-[2px] pl-[1rem]"
                     />
                     <div> of {`${Math.ceil(totalProd / numOfProd)}`}</div>
-                    {Math.ceil(totalProd / numOfProd) > 1 && (
-                      <div
-                        className="text-Purple hover:text-red-800 cursor-pointer underline font-bold"
-                        onClick={(e) => {
-                          if (page < Math.ceil(totalProd / numOfProd)) {
-                            setPos(pos + numOfProd);
-                            setPage(page + 1);
-                          }
-                        }}
-                      >
-                        {" "}
-                        Next &gt;&gt;
-                      </div>
-                    )}
+                    {Math.ceil(totalProd / numOfProd) > 1 &&
+                      Math.ceil(totalProd / numOfProd) > page && (
+                        <div
+                          className="text-Purple hover:text-red-800 cursor-pointer underline font-bold"
+                          onClick={(e) => {
+                            if (page < Math.ceil(totalProd / numOfProd)) {
+                              setPos(pos + numOfProd);
+                              setPage(page + 1);
+                            }
+                          }}
+                        >
+                          {" "}
+                          Next &gt;&gt;
+                        </div>
+                      )}
                   </div>
                 </div>
               </div>
@@ -180,7 +181,7 @@ const ProductsDisplay = ({ products, narrowBy, setProducts }) => {
                 ))}
               </div>
             </div>
-            <ProdCard products={products} />
+            <ProdCard products={products} userId={userId} />
           </div>
         </div>
       </div>

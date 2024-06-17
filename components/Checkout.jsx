@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-deprecated */
 "use client";
@@ -5,10 +6,10 @@ import dayjs from "dayjs";
 import React, { useEffect, useReducer, useState } from "react";
 import ReactDOM from "react-dom";
 import Main from "./Main";
-import CartSummary, { CartShow } from "./CartSummary";
+import CartShow from "./CartShow";
 const CheckoutBoard = ({ products, subQuantity }) => {
   const now = dayjs();
-  const [quantity, setQuantity] = useState(() => [...subQuantity]);
+  const [quantity, setQuantity] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [shippingPrice, setShippingPrice] = useState(0);
   const [numOfProd, setNumOfProd] = useState(quantity.length);
@@ -18,15 +19,19 @@ const CheckoutBoard = ({ products, subQuantity }) => {
     { date: now.add(1, "days").format("dddd, MMMM D"), price: 999, chosen: false },
   ]);
   useEffect(() => {
+    setQuantity(subQuantity);
+  }, [products])
+  
+  useEffect(() => {
     let calNum = 0;
     let calPrice = 0;
     quantity.forEach((eachQuan, index) => {
       calNum += eachQuan.value;
       calPrice += eachQuan.value * products[index].price * 100;
     });
-    setNumOfProd(calNum);
-    setTotalPrice(calPrice);
-  }, [quantity, shippingPrice]);
+    setNumOfProd(calNum ? calNum : 0);
+    setTotalPrice(calPrice ? calPrice : 0);
+  }, [quantity, shippingPrice, products, quantity]);
   return (
     <section>
       <div>
@@ -123,11 +128,22 @@ const CheckoutBoard = ({ products, subQuantity }) => {
   );
 };
 const Checkout = () => {
+  const [products, setProducts] = useState([]);
+  const [quantity, setQuantity] = useState([]);
+  useEffect(() => {
+    const getData = async () => {
+      const response = await fetch("http://localhost:3000/api/cart");
+      if (response.ok) {
+        const { products, quantity } = await response.json();
+        setProducts(products);
+        setQuantity(quantity.map((each) => ({value: each, included:true})));
+      }
+    }
+    getData();
+  }, [])
   
   useEffect(() => {
-    const params = new URLSearchParams(document.location.search);
-    const quantity = JSON.parse(decodeURIComponent(params.get("quantity[]")));
-    const products = JSON.parse(decodeURIComponent(params.get("products[]")));
+    
     const mainview = document.getElementById("mainview");
     // eslint-disable-next-line react-hooks/exhaustive-deps, react/no-deprecated
     ReactDOM.render(
@@ -143,7 +159,7 @@ const Checkout = () => {
         </div>,
       mainViewHeading
     );
-  }, []);
+  }, [quantity, products]);
   return <Main />;
 };
 
