@@ -66,7 +66,6 @@ export const GET = async (request) => {
 };
 
 export const PUT = async (request) => {
-  const searchParmas = new URLSearchParams(request.url);
   const products = JSON.parse(
     decodeURIComponent(request.nextUrl.searchParams.get("products"))
   );

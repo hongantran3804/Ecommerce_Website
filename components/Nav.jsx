@@ -13,9 +13,9 @@ const Nav = () => {
     <section>
       <div>
         <div>
-          <div className="flex flex-row  items-end gap-5">
-            <Link href="/" className="w-[max(15%,10rem)]">
-              <Image src={lacacoLogo} className="object-contain" />
+          <div className="flex flex-row  items-end gap-5 ">
+            <Link href="/" className="w-[max(15%,10rem)] items-center flex flex-col">
+              <Image src={lacacoLogo} className="object-contain w-[5rem]" />
             </Link>
             <div className="flex-1 flex-col flex items-end w-auto gap-[1vh]">
               <div className="w-auto flex flex-col items-end gap-[0.3vh]">

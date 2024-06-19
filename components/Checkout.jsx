@@ -7,21 +7,67 @@ import React, { useEffect, useReducer, useState } from "react";
 import ReactDOM from "react-dom";
 import Main from "./Main";
 import CartShow from "./CartShow";
-const CheckoutBoard = ({ products, subQuantity }) => {
+import { useSession } from "next-auth/react";
+const CheckoutBoard = ({ products, subQuantity, userId }) => {
   const now = dayjs();
   const [quantity, setQuantity] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [shippingPrice, setShippingPrice] = useState(0);
   const [numOfProd, setNumOfProd] = useState(quantity.length);
   const [shippingOption, setShippingOption] = useState([
-    { date: now.add(5, "days").format("dddd, MMMM D"), price: 0, chosen: true },
-    { date: now.add(3, "days").format("dddd, MMMM D"), price: 699, chosen: false },
-    { date: now.add(1, "days").format("dddd, MMMM D"), price: 999, chosen: false },
+    { date: now.add(5, "days"), price: 0, chosen: true },
+    {
+      date: now.add(3, "days"),
+      price: 699,
+      chosen: false,
+    },
+    {
+      date: now.add(1, "days"),
+      price: 999,
+      chosen: false,
+    },
   ]);
   useEffect(() => {
     setQuantity(subQuantity);
-  }, [products])
-  
+  }, [products]);
+  const handleOrder = async (e) => {
+    e.preventDefault();
+    try {
+      const filtProducts = products
+        .filter(
+          (product, index) =>
+            quantity[index].included && quantity[index].value > 0
+        )
+        .map((product, index) => ({
+          ...product,
+          quantity: quantity[index].value,
+        }));
+      const totalOrder =
+        (Math.round((totalPrice + shippingPrice) / 10) +
+          shippingPrice +
+          totalPrice) /
+        100;
+      
+      const response = await fetch(`http://localhost:3000/api/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        
+        body: JSON.stringify({
+          products: filtProducts,
+          userId: userId,
+          total: totalOrder,
+          orderPlacedDate: now,
+          deliveredDate: shippingOption.find((option) => option.chosen).date
+        }),
+        
+      });
+      if (response.ok) {
+        window.location.href = "/orders";
+      }
+    } catch (err) {}
+  };
   useEffect(() => {
     let calNum = 0;
     let calPrice = 0;
@@ -73,7 +119,7 @@ const CheckoutBoard = ({ products, subQuantity }) => {
                     />
                     <div>
                       <span className="text-green-600 block">
-                        {option.date}
+                        {option.date.format("dddd, MMMM D")}
                       </span>
                       <span>
                         {option.price
@@ -120,7 +166,12 @@ const CheckoutBoard = ({ products, subQuantity }) => {
                 </div>
               </div>
             </div>
-            <div className="text-center border-[1px] mx-10 bg-mediumPurple text-white hover:bg-Purple cursor-pointer active:bg-LightPurple rounded-[5px]">Place Your Order</div>
+            <div
+              className="text-center border-[1px] mx-10 bg-mediumPurple text-white hover:bg-Purple cursor-pointer active:bg-LightPurple rounded-[5px]"
+              onClick={handleOrder}
+            >
+              Place Your Order
+            </div>
           </div>
         </div>
       </div>
@@ -128,6 +179,7 @@ const CheckoutBoard = ({ products, subQuantity }) => {
   );
 };
 const Checkout = () => {
+  const { data: session } = useSession();
   const [products, setProducts] = useState([]);
   const [quantity, setQuantity] = useState([]);
   useEffect(() => {
@@ -136,27 +188,30 @@ const Checkout = () => {
       if (response.ok) {
         const { products, quantity } = await response.json();
         setProducts(products);
-        setQuantity(quantity.map((each) => ({value: each, included:true})));
+        setQuantity(quantity.map((each) => ({ value: each, included: true })));
       }
-    }
+    };
     getData();
-  }, [])
-  
+  }, []);
+
   useEffect(() => {
-    
     const mainview = document.getElementById("mainview");
     // eslint-disable-next-line react-hooks/exhaustive-deps, react/no-deprecated
     ReactDOM.render(
-        <CheckoutBoard subQuantity={quantity} products={products} />,
+      <CheckoutBoard
+        subQuantity={quantity}
+        products={products}
+        userId={session?.user?.id}
+      />,
       mainview
     );
     const mainViewHeading = document.getElementById("mainViewHeading");
     ReactDOM.render(
-        <div>
-          <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
-            Checkout
-          </h1>
-        </div>,
+      <div>
+        <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
+          Checkout
+        </h1>
+      </div>,
       mainViewHeading
     );
   }, [quantity, products]);

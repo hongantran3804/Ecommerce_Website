@@ -24,6 +24,7 @@ module.exports = {
       },
       boxShadow: {
         navBoxShadow: "0.15em 0.15em 0.1em rgba(0, 0, 0, 0.1)",
+        buttonShadow: "0 2px 5px 0 rgba(213,217,217,.5)",
       },
     },
     screens: {
@@ -48,7 +49,7 @@ module.exports = {
     },
     gridTemplateColumns: {
       OptionCol: "repeat(2,600px)",
-      prodCol: "repeat(4,1fr)"
+      prodCol: "repeat(4,1fr)",
     },
     dropShadow: {
       becomeCustomerHeading: "3px 3px 5px silver",

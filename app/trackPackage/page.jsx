@@ -1,9 +1,9 @@
-import Orders from '@components/Orders'
+import TrackPackage from '@components/TrackPackage'
 import React from 'react'
 
 const page = () => {
   return (
-    <Orders/>
+   <TrackPackage/>
   )
 }
 

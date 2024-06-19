@@ -9,7 +9,9 @@ import cart from "@public/assets/icons/shopping-cart.png";
 import { useState } from "react";
 import checkMark from "@public/assets/icons/checkmark.png";
 import { useSession } from "next-auth/react";
+import dayjs from "dayjs";
 const ProdCard = ({ products, userId }) => {
+  const now = dayjs();
   const [added, setAdded] = useState(Array.from({ length: products.length }, () => (false)));
   
   const AddToCart = async (e, product,userId) => {
@@ -70,13 +72,13 @@ const ProdCard = ({ products, userId }) => {
                 <Image src={reqInfoIcon} className="w-[2rem]" />
               </a>
               <div className="cursor-pointer" onClick={(e) => {
-                setTimeout(() => {
-                  setAdded(() => {
-                    const newAdded = [...added];
-                    newAdded[index] = false;
-                    return newAdded;
-                  });
-                }, 500);
+                // setTimeout(() => {
+                //   setAdded(() => {
+                //     const newAdded = [...added];
+                //     newAdded[index] = false;
+                //     return newAdded;
+                //   });
+                // }, 500);
                 setAdded(() => {
                   const newAdded = [...added];
                   newAdded[index] = true;
@@ -86,7 +88,10 @@ const ProdCard = ({ products, userId }) => {
               }}>
                 <Image src={cart} className="w-[1.5rem]" />
               </div>
-              <div className="border-[1px] border-gray-300 text-[.7rem] p-[5px] hover:bg-Purple hover:text-white rounded-[5px] cursor-pointer active:bg-LightPurple duration-300 text-center">
+              <div className="border-[1px] border-gray-300 text-[.7rem] p-[5px] hover:bg-Purple hover:text-white rounded-[5px] cursor-pointer active:bg-LightPurple duration-300 text-center" onClick={(e) => {
+                AddToCart(e, product, userId);
+                window.location.href = "/checkout";
+              }}>
                 Buy now
               </div>
             </div>
