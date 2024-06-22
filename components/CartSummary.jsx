@@ -49,8 +49,8 @@ const CartSummary = ({ products, oldQuantity, userId }) => {
     let calNum = 0;
     quantity.forEach((element, index) => {
       if (element.included) {
-        if (products[index]?.price) {
-          calTotal += element.value * products[index].price * 100;
+        if (products[index]?.casePrice) {
+          calTotal += element.value * products[index].casePrice * 100;
           calNum += element.value;
         }
       }

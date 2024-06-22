@@ -13,7 +13,7 @@ const Cart = () => {
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/cart");
+        const response = await fetch(`http://localhost:3000/api/cart?userId=${session?.user?.id}`);
         if (response.ok) {
           const { products, quantity } = await response.json();
           setProducts(products);

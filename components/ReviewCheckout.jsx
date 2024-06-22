@@ -8,7 +8,9 @@ import ReactDOM from "react-dom";
 import Main from "./Main";
 import CartShow from "./CartShow";
 import { useSession } from "next-auth/react";
-const CheckoutBoard = ({ products, subQuantity, userId }) => {
+import { checkoutNav } from "@utils/utils";
+import Link from "next/link";
+const ReviewCheckoutBoard = ({ products, subQuantity, userId }) => {
   const now = dayjs();
   const [quantity, setQuantity] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -73,66 +75,83 @@ const CheckoutBoard = ({ products, subQuantity, userId }) => {
     let calPrice = 0;
     quantity.forEach((eachQuan, index) => {
       calNum += eachQuan.value;
-      calPrice += eachQuan.value * products[index].price * 100;
+      calPrice += eachQuan.value * products[index].casePrice * 100;
     });
     setNumOfProd(calNum ? calNum : 0);
     setTotalPrice(calPrice ? calPrice : 0);
   }, [quantity, shippingPrice, products, quantity]);
   return (
     <section>
-      <div>
-        <div className="flex flex-row items-start gap-5">
-          <div className="flex flex-row justify-between gap-5 flex-1">
+      <div className="mt-[5rem] ">
+        <div className="flex flex-row items-start gap-5 ">
+          <div className="flex flex-row items-start flex-1 gap-5 border-[1px] p-5">
             <div className="flex-1">
-              <CartShow
-                products={products}
-                quantity={quantity}
-                setQuantity={setQuantity}
-              />
-            </div>
-          </div>
-          <div>
-            <div>Choose a delivery option:</div>
-            <div>
-              {shippingOption.map((option, index) => {
-                return (
-                  <div className="flex flex-row gap-2" key={option.date}>
-                    <input
-                      type="radio"
-                      checked={option.chosen}
-                      onClick={(e) => {
-                        setShippingPrice(option.price);
-                        setShippingOption((currentOption) => {
-                          const newShippingOption = [...shippingOption];
-                          newShippingOption.forEach(
-                            (eachOption, optionIndex) => {
-                              if (optionIndex === index) {
-                                eachOption.chosen = true;
-                              } else {
-                                eachOption.chosen = false;
-                              }
-                            }
-                          );
-                          return newShippingOption;
-                        });
-                      }}
+              <div className="text-[1.2rem]">
+                <span className="text-green-500">
+                  Arriving{" "}
+                  {shippingOption
+                    .find((option) => option.chosen)
+                    .date.format("MMMM D, YYYY")}
+                </span>
+              </div>
+              <div className="flex flex-row items-start gap-5">
+                <div className="flex flex-row justify-between gap-5 flex-1">
+                  <div className="flex-1">
+                    <CartShow
+                      products={products}
+                      quantity={quantity}
+                      setQuantity={setQuantity}
+                      checkoutPage = {true}
                     />
-                    <div>
-                      <span className="text-green-600 block">
-                        {option.date.format("dddd, MMMM D")}
-                      </span>
-                      <span>
-                        {option.price
-                          ? `$${option.price / 100}`
-                          : "Free Delivery"}
-                      </span>
-                    </div>
                   </div>
-                );
-              })}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div>Choose a delivery option:</div>
+              <div>
+                {shippingOption.map((option, index) => {
+                  return (
+                    <div className="flex flex-row gap-2" key={option.date}>
+                      <input
+                        type="radio"
+                        checked={option.chosen}
+                        onClick={(e) => {
+                          setShippingPrice(option.price);
+                          setShippingOption((currentOption) => {
+                            const newShippingOption = [...shippingOption];
+                            newShippingOption.forEach(
+                              (eachOption, optionIndex) => {
+                                if (optionIndex === index) {
+                                  eachOption.chosen = true;
+                                } else {
+                                  eachOption.chosen = false;
+                                }
+                              }
+                            );
+                            return newShippingOption;
+                          });
+                        }}
+                      />
+                      <div>
+                        <span className="text-green-600 block">
+                          {option.date.format("dddd, MMMM D")}
+                        </span>
+                        <span>
+                          {option.price
+                            ? `$${option.price / 100}`
+                            : "Free Delivery"}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-          <div>
+
+          <div className="border-[1px] p-5">
             <div className="font-bold text-[1.2rem]">Order Summary</div>
             <div className="text-[.8rem] w-full">
               <div className="flex flex-row justify-between">
@@ -167,7 +186,7 @@ const CheckoutBoard = ({ products, subQuantity, userId }) => {
               </div>
             </div>
             <div
-              className="text-center border-[1px] mx-10 bg-mediumPurple text-white hover:bg-Purple cursor-pointer active:bg-LightPurple rounded-[5px]"
+              className="text-center border-[1px] mx-10 bg-mediumPurple text-white hover:bg-Purple cursor-pointer active:bg-LightPurple rounded-[5px] mt-5"
               onClick={handleOrder}
             >
               Place Your Order
@@ -178,13 +197,13 @@ const CheckoutBoard = ({ products, subQuantity, userId }) => {
     </section>
   );
 };
-const Checkout = () => {
+const ReviewCheckout = () => {
   const { data: session } = useSession();
   const [products, setProducts] = useState([]);
   const [quantity, setQuantity] = useState([]);
   useEffect(() => {
     const getData = async () => {
-      const response = await fetch("http://localhost:3000/api/cart");
+      const response = await fetch(`http://localhost:3000/api/cart?userId=${session?.user.id}`);
       if (response.ok) {
         const { products, quantity } = await response.json();
         setProducts(products);
@@ -192,30 +211,22 @@ const Checkout = () => {
       }
     };
     getData();
-  }, []);
+  }, [session?.user]);
 
   useEffect(() => {
     const mainview = document.getElementById("mainview");
     // eslint-disable-next-line react-hooks/exhaustive-deps, react/no-deprecated
     ReactDOM.render(
-      <CheckoutBoard
+      <ReviewCheckoutBoard
         subQuantity={quantity}
         products={products}
         userId={session?.user?.id}
       />,
       mainview
     );
-    const mainViewHeading = document.getElementById("mainViewHeading");
-    ReactDOM.render(
-      <div>
-        <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
-          Checkout
-        </h1>
-      </div>,
-      mainViewHeading
-    );
+    
   }, [quantity, products]);
   return <Main />;
 };
 
-export default Checkout;
+export default ReviewCheckout;

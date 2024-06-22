@@ -2,11 +2,13 @@ import Brand from "@models/Brand";
 import { connectToDB } from "@utils/database";
 import Product from "@models/Product";
 export const POST = async (request) => {
-  let { brand, prodDesc, upc, price, caseVal } = await request.json();
+  let { brand, prodDesc, upc, unitPrice, unitPerCase, numInStock } =
+    await request.json();
   brand = brand.trim()
   upc = upc.replace(" ", "");
-  price = price.replace(" ").replace("$", "");
-  caseVal = caseVal.replace(" ", "");
+  unitPrice = unitPrice.replace(" ").replace("$", "");
+  unitPerCase = unitPerCase.replace(" ", "");
+  numInStock = numInStock.replace(" ", "");
   try {
     await connectToDB();
     const brandExist = await Brand.findOne({ name: brand });
@@ -17,24 +19,41 @@ export const POST = async (request) => {
           photo: "",
           prodDesc: prodDesc,
           upc: upc,
-          price: parseFloat(price),
+          casePrice:
+            Math.round(parseFloat(unitPrice) * 100 * parseInt(unitPerCase)) /
+            100,
           brand: brandExist._id,
-          caseVal: parseInt(caseVal),
+          unitPerCase: parseInt(unitPerCase),
+          numInStock: parseInt(numInStock),
           popularity: 0,
         });
 
         await product.save();
+      } else {
+        await Product.findByIdAndUpdate(productExist._id, {
+          photo: "",
+          prodDesc: prodDesc,
+          upc: upc,
+          casePrice:
+            Math.round(parseFloat(unitPrice) * 100 * parseInt(unitPerCase)) /
+            100,
+          brand: brandExist._id,
+          unitPerCase: parseInt(unitPerCase),
+          numInStock: parseInt(numInStock),
+          popularity: 0,
+        });
       }
     } else {
       const brandProd = new Brand({ name: brand });
       await brandProd.save();
       const product = new Product({
-        photo: null,
+        photo: "",
         prodDesc: prodDesc,
         upc: upc,
-        price: parseFloat(price),
-        brand: brandProd._id,
-        caseVal: parseInt(caseVal),
+        casePrice: Math.round(parseFloat(unitPrice) * 100 * parseInt(unitPerCase))/100,
+        brand: brandExist._id,
+        unitPerCase: parseInt(unitPerCase),
+        numInStock: parseInt(numInStock),
         popularity: 0,
       });
       await product.save();

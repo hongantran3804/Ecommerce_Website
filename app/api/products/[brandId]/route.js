@@ -6,48 +6,42 @@ export const GET = async (request, { params }) => {
   const searchParams = new URLSearchParams(url.searchParams);
   try {
     await connectToDB();
-    const products = await Product.find({ brand: brandId }).populate("brand");
-    const priceUnder5 = {
-      name: "Under 5",
-      quan: products.filter((product) => product.price < 5).length,
-      range: [0, 5],
+    let products = await Product.find({ brand: brandId }).populate("brand");
+    const priceUnder100 = {
+      name: "Under 100",
+      quan: products.filter((product) => product.casePrice < 100).length,
+      range: [0, 100],
     };
-    const priceUnder10 = {
-      name: "5 - 10",
+    const priceUnder500 = {
+      name: "100 - 500",
       quan: products.filter(
-        (product) => product.price > 5 && product.price < 10
+        (product) => product.casePrice > 100 && product.casePrice < 500
       ).length,
-      range: [5, 10],
+      range: [100, 500],
     };
-    const priceUnder15 = {
-      name: "10 - 15",
+    const priceUnder1000 = {
+      name: "500 - 1000",
       quan: products.filter(
-        (product) => product.price > 10 && product.price < 15
+        (product) => product.casePrice > 500 && product.casePrice < 1000
       ).length,
-      range: [10, 15],
+      range: [500, 1000],
     };
-    const priceUnder20 = {
-      name: "15 - 20",
-      quan: products.filter(
-        (product) => product.price > 15 && product.price < 20
-      ).length,
-      range: [15, 20],
-    };
-    const priceOver20 = {
-      name: "20+",
-      quan: products.filter((product) => product.price >= 20).length,
-      range: [20, null],
+    const priceOver1000 = {
+      name: "1000+",
+      quan: products.filter((product) => product.casePrice >= 1000).length,
+      range: [1000, null],
     };
     const priceRanges = [
-      priceUnder5,
-      priceUnder10,
-      priceUnder15,
-      priceUnder20,
-      priceOver20,
+      priceUnder100,
+      priceUnder500,
+      priceUnder1000,
+      priceOver1000,
     ].filter((element) => element.quan > 0);
+    products = products.filter((product) => product.numInStock > 0);
     return new Response(JSON.stringify({prods:products,priceRanges}), {
       status: 200,
     });
+
   } catch (err) {
     console.log(err);
   }

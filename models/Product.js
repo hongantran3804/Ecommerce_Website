@@ -17,13 +17,17 @@ const productSchema = new Schema({
     type: String,
     required: [true, "Please provide product upc"],
   },
-  price: {
+  casePrice: {
     type: Number,
     required: [true, "Please provide product price"],
   },
-  caseVal: {
+  unitPerCase: {
     type: Number,
     required: [true, "Please provide case"],
+  },
+  numInStock: {
+    type: Number,
+    required: true
   },
   popularity: {
     type: Number,

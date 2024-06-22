@@ -4,8 +4,9 @@ import Nav from "@components/Nav";
 import "@styles/global.css";
 import Provider from "@components/Provider";
 import Departments from "@components/Departments";
+import SearchInput from "@components/SearchInput";
 export const metadata = {
-  title: "Lacaco Shop",
+  title: "eShop",
 };
 
 const RootLayout = ({ children }) => {
@@ -27,7 +28,10 @@ const RootLayout = ({ children }) => {
                   <Departments />
                 </div>
               </div>
-              <div className="flex-1">{children}</div>
+              <div className="flex-1 flex flex-col">
+                <SearchInput />
+                <div className="flex-1">{children}</div>
+              </div>
             </div>
           </div>
           <script stc="https://code.jquery.com/jquery-3.4.1.min.js"></script>

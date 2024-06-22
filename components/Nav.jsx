@@ -7,6 +7,7 @@ import GoogleTranslate from "./GoogleTranslate";
 import { shoppingTools } from "@utils/utils";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
+import SearchInput from "./SearchInput";
 const Nav = () => {
   const { data: session } = useSession();
   return (
@@ -14,7 +15,10 @@ const Nav = () => {
       <div>
         <div>
           <div className="flex flex-row  items-end gap-5 ">
-            <Link href="/" className="w-[max(15%,10rem)] items-center flex flex-col">
+            <Link
+              href="/"
+              className="w-[max(15%,10rem)] items-center flex flex-col"
+            >
               <Image src={lacacoLogo} className="object-contain w-[5rem]" />
             </Link>
             <div className="flex-1 flex-col flex items-end w-auto gap-[1vh]">
@@ -93,6 +97,7 @@ const Nav = () => {
                   </ul>
                 </div>
               </div>
+              
             </div>
           </div>
         </div>

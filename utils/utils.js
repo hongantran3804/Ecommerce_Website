@@ -190,7 +190,6 @@ export const dbInfo = [
   {
     label: "Brand",
     id: "brand",
-    id: "brand",
     type: "text",
     size: 60,
     title: "Required",
@@ -212,7 +211,7 @@ export const dbInfo = [
     title: "Required",
   },
   {
-    label: "Price",
+    label: "Unit Price",
     name: "price",
     id: "price",
     type: "text",
@@ -220,9 +219,17 @@ export const dbInfo = [
     title: "Required",
   },
   {
-    label: "Case",
+    label: "Unit per Case",
     name: "case",
     id: "case",
+    type: "text",
+    size: 60,
+    title: "Required",
+  },
+  {
+    label: "Number in Stock",
+    name: "stock",
+    id: "stock",
     type: "text",
     size: 60,
     title: "Required",
@@ -331,4 +338,70 @@ export const testProducts = [
     price: 15.99,
   },
   
+];
+
+export const checkoutNav = [
+  {
+    label: "Adresses",
+    url: "/checkout"
+  },
+  {
+    label: "Payment",
+    url:"/checkout/payment"
+  },
+  {
+    label: "Review items and shipping",
+    url:"/checkout/review"
+  },
+];
+
+export const addressInfo = [
+  {
+    label: "Full name (First and Last name)",
+    type: "text",
+    name: "name",
+    id: "name",
+    title: "Required",
+    size: 60,
+  },
+  {
+    label: "Phone number",
+    type: "text",
+    name: "phone",
+    id: "phone",
+    title: "Required",
+    size: 60,
+  },
+  {
+    label: "Street Address",
+    type: "text",
+    name: "address",
+    id: "address",
+    title: "Required",
+    size: 60,
+  },
+  {
+    label: "City",
+    type: "text",
+    name: "city",
+    id: "city",
+    title: "Required",
+    size: 20,
+  },
+  {
+    label: "State",
+    type: "text",
+    name: "state",
+    id: "state",
+    title: "Required",
+    size: 20,
+  },
+  {
+    label: "ZIP Code",
+    type: "text",
+    name: "zipcode",
+    id: "zipcode",
+    title: "Required",
+    size: 20,
+  },
 ];

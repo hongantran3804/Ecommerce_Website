@@ -1,9 +1,14 @@
-import Checkout from '@components/Checkout'
+import Address from '@components/Address'
+import CheckoutNav from '@components/CheckoutNav'
+import Checkout from '@components/ReviewCheckout'
 import React from 'react'
 
 const page = () => {
   return (
-    <Checkout />
+    <div>
+      <CheckoutNav page={0} />
+      <Address/>
+    </div>
   )
 }
 

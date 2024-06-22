@@ -1,7 +1,8 @@
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import defaultImg from "@public/assets/images/defaultProductPhoto.png";
-const CartShow = ({ products, quantity, setQuantity, userId }) => {
+import { checkoutNav } from "@utils/utils";
+const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => {
   if (!products || !quantity) return;
   const [update, setUpdate] = useState(
     Array.from({ length: products.length }, () => true)
@@ -13,47 +14,52 @@ const CartShow = ({ products, quantity, setQuantity, userId }) => {
     <div>
       {products.map((product, index) => (
         <div
-          className={`w-full flex flex-row items-start border-t-[1px] border-b-[1px] border-t-gray-300 border-b-gray-300 py-[1rem] text-[.9rem] ${
+          className={`w-full flex flex-row items-start font-bold ${
+            !checkoutPage &&
+            "border-t-[1px] border-b-[1px] border-t-gray-300 border-b-gray-300"
+          } py-[1rem] text-[.9rem] ${
             quantity[index]?.included ? "opacity-100" : "opacity-50"
           }`}
           key={product.upc}
         >
-          <input
-            type="checkbox"
-            checked={quantity[index]?.included}
-            className="self-center mr-4"
-            onChange={(e) => {
-              
-              setQuantity(() => {
-                const newQuantity = [...quantity];
-                if (newQuantity[index]?.included !== null)
-                  newQuantity[index].included = e.target.checked;
-                return newQuantity;
-              });
-            }}
-          />
+          {!checkoutPage && (
+            <input
+              type="checkbox"
+              checked={quantity[index]?.included}
+              className="self-center mr-4"
+              onChange={(e) => {
+                setQuantity(() => {
+                  const newQuantity = [...quantity];
+                  if (newQuantity[index]?.included !== null)
+                    newQuantity[index].included = e.target.checked;
+                  return newQuantity;
+                });
+              }}
+            />
+          )}
           <div className="flex flex-row items-start flex-1 gap-4 h-fit">
             <div className="h-full">
               <Image src={product.photo ? product.photo : defaultImg} />
             </div>
-            <div className="flex flex-col justify-between items-start  h-[10rem] w-[80%]">
-              <div>
-                <strong>Product Description:</strong> {product?.prodDesc}
-              </div>
-              <div>
-                <strong>Brand:</strong> {product?.brand?.name}
-              </div>
-              <div>
-                <strong>UPC:</strong> {product?.upc}
-              </div>
-              <div>
-                <strong>Case:</strong> {product?.caseVal}
-              </div>
+            <div className="flex flex-col justify-between items-start w-[80%]">
+              <div>{product?.prodDesc}</div>
+              <div>{product?.brand?.name}</div>
+              {checkoutPage && (
+                <div className="font-bold">
+                  $
+                  {(product.casePrice * 100 * quantity[index]?.value) / 100
+                    ? Math.round(
+                        product.casePrice * 100 * quantity[index]?.value
+                      ) / 100
+                    : 0}
+                </div>
+              )}
               <div className="flex flex-row items-center gap-3">
                 {update[index] ? (
                   <div className="flex flex-row items-center gap-3">
                     <div>
-                      <strong>Quantity:</strong> {`${quantity[index]?.value?quantity[index]?.value:0}`}
+                      <strong>Quantity:</strong>{" "}
+                      {`${quantity[index]?.value ? quantity[index]?.value : 0}`}
                     </div>
                     <div
                       className="text-blue-600 hover:underline cursor-pointer"
@@ -75,6 +81,7 @@ const CartShow = ({ products, quantity, setQuantity, userId }) => {
                       type="number"
                       id="quantity"
                       name="quantity"
+                      min="1"
                       className="border-[1px] border-black w-[3.5rem] pl-[1rem]"
                       onChange={(e) => {
                         setQuantity(() => {
@@ -120,12 +127,15 @@ const CartShow = ({ products, quantity, setQuantity, userId }) => {
               </div>
             </div>
           </div>
-          <div className="font-bold">
-            $
-            {(product.price * 100 * quantity[index]?.value) / 100
-              ? Math.round(product.price * 100 * quantity[index]?.value) / 100
-              : 0}
-          </div>
+          {!checkoutPage && (
+            <div className="font-bold">
+              $
+              {(product.casePrice * 100 * quantity[index]?.value) / 100
+                ? Math.round(product.casePrice * 100 * quantity[index]?.value) /
+                  100
+                : 0}
+            </div>
+          )}
         </div>
       ))}
     </div>

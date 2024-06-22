@@ -12,7 +12,7 @@ import { useSession } from "next-auth/react";
 const UpdateDataBaseForm = () => {
   const updateDataBase = async (e) => {
     e.preventDefault();
-    const [brand, prodDesc, upc, price, caseVal] = inputs
+    const [brand, prodDesc, upc, unitPrice, unitPerCase, numInStock] = inputs
     try {
       const response = await fetch("http://localhost:3000/api/admin/update", {
         method: "POST",
@@ -23,8 +23,9 @@ const UpdateDataBaseForm = () => {
           brand: brand.value,
           prodDesc: prodDesc.value,
           upc: upc.value,
-          price: price.value,
-          caseVal: caseVal.value
+          unitPrice: unitPrice.value,
+          unitPerCase: unitPerCase.value,
+          numInStock: numInStock.value,
         })
       });
       if (response.ok) {

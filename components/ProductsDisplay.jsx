@@ -7,7 +7,7 @@ import { narrowCategories } from "@utils/utils";
 import { testProducts } from "@utils/utils";
 const ProductsDisplay = ({ products, narrowBy, setProducts, userId }) => {
   if (!products || !narrowBy) return <div></div>;
-  const [originalProducts, setOriginalProducts] = useState([]);
+  const [originalProducts, setOriginalProducts] = useState([])
   const [totalProd, setTotalProd] = useState(0);
   const [numOfProd, setNumOfProd] = useState(0);
   const [sortOption, setSortOption] = useState(0);
@@ -15,35 +15,38 @@ const ProductsDisplay = ({ products, narrowBy, setProducts, userId }) => {
   const [page, setPage] = useState(1);
   const [pos, setPos] = useState(0);
   useEffect(() => {
-    setOriginalProducts([...products]);
+    setOriginalProducts(() => [...products])
     setTotalProd(products.length);
     setNumOfProd(products.length);
     setRangeValue(Array.from({ length: narrowBy[0].length }, () => null));
   }, [narrowBy]);
   useEffect(() => {
-    setProducts(() => [...originalProducts]);
+    setProducts((currentProducts) => [...originalProducts]);
     setProducts((currentProducts) => [
       ...currentProducts.slice(pos, numOfProd + pos),
     ]);
-    rangeValue.forEach((range, rangeIndex) => {
+   
+    let filtValueProds = [];
+    rangeValue.forEach((range) => {
       if (range) {
-        setProducts((currentProducts) =>
-          currentProducts.filter((product) => {
-            {
-              if (product.price > range[0]) {
-                if (range[1]) {
-                  return product.price < range[1];
-                } else return true;
+        filtValueProds.push(...[...originalProducts].filter(product => {
+          if (product.casePrice > range[0]) {
+            if (range[1]) {
+              if (product.casePrice > range[1]) {
+                return false;
               }
-              return false
             }
-          })
-        );
+            return true
+          } 
+          return false;
+        }))
       }
-    });
-
+    })
+    if (filtValueProds.length) {
+      setProducts(() => [...filtValueProds]);
+    }
     setProducts((currentProducts) =>
-      currentProducts.sort((a, b) => sortOption * (a.price - b.price))
+      currentProducts.sort((a, b) => sortOption * (a.casePrice - b.casePrice))
     );
   }, [numOfProd, page, rangeValue, sortOption]);
   return (
@@ -106,14 +109,7 @@ const ProductsDisplay = ({ products, narrowBy, setProducts, userId }) => {
                       </div>
                     )}
                     <div>Page</div>
-                    <input
-                      type="number"
-                      name="pg"
-                      min="1"
-                      value={`${page}`}
-                      max={`${Math.ceil(totalProd / numOfProd)}`}
-                      className="border-[1px] border-black rounded-[2px] pl-[1rem]"
-                    />
+                    {page}
                     <div> of {`${Math.ceil(totalProd / numOfProd)}`}</div>
                     {Math.ceil(totalProd / numOfProd) > 1 &&
                       Math.ceil(totalProd / numOfProd) > page && (

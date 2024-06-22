@@ -24,14 +24,14 @@ export const POST = async (request) => {
         } else {
           const shoppingCart = new ShoppingCart({
             userId: id,
-            product: { ...product, quantity: 1 },
+            product: { ...product},
           });
           await shoppingCart.save();
         }
       } else {
         const shoppingCart = new ShoppingCart({
           userId: id,
-          product: { ...product, quantity: 1 },
+          product: { ...product},
         });
         await shoppingCart.save();
       }
@@ -49,9 +49,10 @@ export const POST = async (request) => {
 };
 
 export const GET = async (request) => {
+  const userId = request.nextUrl.searchParams.get("userId");
   try {
     await connectToDB();
-    const productDocuments = await ShoppingCart.find({});
+    const productDocuments = await ShoppingCart.find({userId: userId});
     const products = productDocuments.map((prod) => prod.product);
     const quantity = productDocuments.map((prod) => prod.product.quantity);
     return new Response(JSON.stringify({ products, quantity }), {
@@ -73,7 +74,7 @@ export const PUT = async (request) => {
   console.log(products)
   try {
     await connectToDB();
-    await ShoppingCart.deleteMany({});
+    await ShoppingCart.deleteMany({userId: userId});
     await ShoppingCart.insertMany(products.map((product) => ({product:product, userId: userId })));
     return new Response(JSON.stringify({ message: "Success" }), {
       status: 200,

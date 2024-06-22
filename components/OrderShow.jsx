@@ -74,8 +74,13 @@ const OrderShow = ({ originalOrders, session }) => {
           <div className="p-3 flex flex-row justify-between">
             <div className="flex flex-col items-start gap-3">
               <div className="font-bold">
-                {order.delivered &&
-                  `Delivered ${dayjs(order.deliveredDate).format("MMMM D")}`}
+                {order.delivered ? (
+                  `Delivered ${dayjs(order.deliveredDate).format("MMMM D, YYYY")}`
+                ) : (
+                  <span className="text-green-500">
+                    Arriving {dayjs(order.deliveredDate).format("MMMM D, YYYY")}
+                  </span>
+                )}
               </div>
               {order.products?.map((product) => (
                 <div
