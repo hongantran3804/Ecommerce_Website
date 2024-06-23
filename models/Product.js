@@ -21,6 +21,10 @@ const productSchema = new Schema({
     type: Number,
     required: [true, "Please provide product price"],
   },
+  unitPrice: {
+    type: Number,
+    required: true,
+  },
   unitPerCase: {
     type: Number,
     required: [true, "Please provide case"],
@@ -29,7 +33,7 @@ const productSchema = new Schema({
     type: Number,
     required: true
   },
-  popularity: {
+  numPurchased: {
     type: Number,
     required: [true, "Please provide number of customer for this product"],
   },

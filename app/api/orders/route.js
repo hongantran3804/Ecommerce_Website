@@ -1,5 +1,5 @@
 import { connectToDB } from "@utils/database";
-import Orders from "@models/Orders";
+import Orders from "@models/Order";
 import dayjs from "dayjs";
 import ShoppingCart from "@models/ShoppingCart";
 export const POST = async (request) => {
@@ -34,14 +34,22 @@ export const GET = async (request) => {
   try {
     await connectToDB();
     const now = dayjs();
-    await Orders.updateMany({ deliveredDate: { $lt: now.toDate() } }, {
-      $set: {
-        delivered: true
+    await Orders.updateMany(
+      { deliveredDate: { $lt: now.toDate() } },
+      {
+        $set: {
+          delivered: true,
+        },
       }
-    });
-    const orders = await Orders.find({});
-    console.log(orders)
-    return new Response(JSON.stringify({ orders }), { status: 200 });
+    );
+    let orders = await Orders.find({});
+    if (orders.length) {
+      orders = orders.map((order) => {
+        const { userId, ...rest } = order;
+        return rest;
+      });
+      return new Response(JSON.stringify({ orders }), { status: 200 });
+    } else return new Response(null, { status: 404 });
   } catch (err) {
     console.log(err);
   }
@@ -53,12 +61,14 @@ export const GET = async (request) => {
 
 export const PUT = async (request) => {
   const orderId = request.nextUrl.searchParams.get("orderId");
-  console.log(orderId)
+  console.log(orderId);
   try {
     await connectToDB();
     await Orders.findByIdAndDelete(orderId);
-     return new Response(JSON.stringify({message:"successfully"}), { status: 200 });
+    return new Response(JSON.stringify({ message: "successfully" }), {
+      status: 200,
+    });
   } catch (error) {
-    return new Response("Failed to delete prompt", {status: 500})
+    return new Response("Failed to delete prompt", { status: 500 });
   }
 };

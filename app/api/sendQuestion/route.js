@@ -9,8 +9,8 @@ export const POST = async (req) => {
       port: 587,
       secure: false,
       auth: {
-        user: env["GMAIL_ADDRESS"],
-        pass: env["APP_PASSWORD"],
+        user: process.env.GMAIL_ADDRESS,
+        pass: process.env.APP_PASSWORD,
       },
   });
   const verificationMessage = `
@@ -25,7 +25,7 @@ export const POST = async (req) => {
   const mailOptions = {
     from: {
       name: "Lacaco Account",
-      address: env["GMAIL_ADDRESS"],
+      address: process.env.GMAIL_ADDRESS,
     },
     to: "hongantran3804@gmail.com",
     subject: "Customer Question",

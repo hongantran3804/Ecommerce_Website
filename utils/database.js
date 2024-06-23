@@ -9,7 +9,7 @@ export const connectToDB = async () => {
     return;
   }
   try {
-    await mongoose.connect(env["MONGODB_URI"], {
+    await mongoose.connect(process.env.MONGODB_URI, {
       dbName: "lacaco",
       useNewUrlParser: true,
       useUnifiedTopology: true,

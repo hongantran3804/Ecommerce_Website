@@ -30,7 +30,7 @@ const UserReqInfo = () => {
         </div>,
       mainViewHeading
     );
-  }, [upc, prodDesc]);
+  }, []);
   return <Main/>
 }
 

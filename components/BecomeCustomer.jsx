@@ -5,7 +5,6 @@ import Main from "./Main";
 import { becomeCustomerInfo } from "@utils/utils";
 import ReCAPTCHA from "react-google-recaptcha";
 const SignUpForm = () => {
-  const env = require("@env/env");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [compName, setCompName] = useState("");
@@ -147,7 +146,7 @@ const SignUpForm = () => {
             <div id="captcha">
               <ReCAPTCHA
                 ref={recaptchaRef}
-                sitekey={env["NEXT_PUBLIC_RECAPTCHA_KEY"]}
+                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_KEY}
                 onChange={(value) => {
                   handleRecaptchaChange(value);
                 }}

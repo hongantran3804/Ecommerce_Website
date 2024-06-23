@@ -24,7 +24,7 @@ export const POST = async (request) => {
         } else {
           const shoppingCart = new ShoppingCart({
             userId: id,
-            product: { ...product},
+            product: { ...product },
           });
           await shoppingCart.save();
         }
@@ -50,19 +50,29 @@ export const POST = async (request) => {
 
 export const GET = async (request) => {
   const userId = request.nextUrl.searchParams.get("userId");
-  try {
-    await connectToDB();
-    const productDocuments = await ShoppingCart.find({userId: userId});
-    const products = productDocuments.map((prod) => prod.product);
-    const quantity = productDocuments.map((prod) => prod.product.quantity);
-    return new Response(JSON.stringify({ products, quantity }), {
-      status: 200,
-    });
-  } catch (err) {
-    console.log(err);
-  }
-  return new Response(JSON.stringify({ message: "Something went wrong" }), {
+  if (userId) {
+    try {
+      await connectToDB();
+      const productDocuments = await ShoppingCart.find({ userId: userId });
+      if (productDocuments.length) {
+        const products = productDocuments.map((prod) => prod.product);
+        const quantity = productDocuments.map((prod) => prod.product.quantity);
+        return new Response(JSON.stringify({ products, quantity }), {
+          status: 200,
+        });
+      } else {
+        return new Response(JSON.stringify({ message: "not found" }), {
     status: 404,
+  });
+      }
+      
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  
+  return new Response(JSON.stringify({ message: "Something went wrong" }), {
+    status: 422,
   });
 };
 
@@ -72,17 +82,22 @@ export const PUT = async (request) => {
   );
   const userId = request.nextUrl.searchParams.get("userId");
   console.log(products)
-  try {
-    await connectToDB();
-    await ShoppingCart.deleteMany({userId: userId});
-    await ShoppingCart.insertMany(products.map((product) => ({product:product, userId: userId })));
-    return new Response(JSON.stringify({ message: "Success" }), {
-      status: 200,
-    });
-  } catch (err) {
-    console.log(err)
-    return new Response(JSON.stringify({ message: "Something went wrong" }), {
-      status: 422,
-    });
+  if (userId) {
+    try {
+      await connectToDB();
+      await ShoppingCart.deleteMany({ userId: userId });
+      await ShoppingCart.insertMany(
+        products.map((product) => ({ product: product, userId: userId }))
+      );
+      return new Response(JSON.stringify({ message: "Success" }), {
+        status: 200,
+      });
+    } catch (err) {
+      console.log(err);
+      
+    }
   }
+  return new Response(JSON.stringify({ message: "Something went wrong" }), {
+    status: 422,
+  });
 }

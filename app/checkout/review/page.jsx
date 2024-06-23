@@ -5,7 +5,7 @@ import React from 'react'
 const page = () => {
   return (
     <div>
-      <CheckoutNav page = {2}/>
+      <CheckoutNav page = {1}/>
       <ReviewCheckout />
     </div>
   );

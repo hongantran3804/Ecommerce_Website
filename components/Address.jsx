@@ -5,10 +5,13 @@ import plus from "@public/assets/icons/plus.png";
 import close from "@public/assets/icons/close.png";
 import { addressInfo } from "@utils/utils";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 const Address = () => {
   const { data: session } = useSession();
   const [toggleAddressBoard, setToggleAddressBoard] = useState(false);
-  const [inputValue, setInputValue] = useState([]);
+  const [inputValue, setInputValue] = useState(
+    Array.from({ length: addressInfo.length }, () => ({ value: "" }))
+  );
   const [userAddress, setUserAddress] = useState([]);
   const [status, setStatus] = useState(true);
   const [addressId, setAddressId] = useState("");
@@ -27,10 +30,7 @@ const Address = () => {
       }
     };
     getUserAddress();
-    setInputValue(
-      Array.from({ length: addressInfo.length }, () => ({ value: "" }))
-    );
-  }, [session?.user]);
+  }, [session?.user, inputValue]);
 
   const AddAddress = async (e) => {
     e.preventDefault();
@@ -58,8 +58,13 @@ const Address = () => {
         }),
       });
       if (response.ok) {
-        location.reload();
+        const { addresses } = await response.json();
+        setUserAddress(() => addresses);
+        setInputValue(
+          Array.from({ length: addressInfo.length }, () => ({ value: "" }))
+        );
       }
+      
     } catch (err) {
       alert(err);
     }
@@ -70,7 +75,7 @@ const Address = () => {
       const response = await fetch(
         `http://localhost:3000/api/address?addressId=${addressId}&data=${encodeURIComponent(
           JSON.stringify(inputValue)
-        )}`,
+        )}&userId=${session?.user?.id}`,
         {
           method: "PUT",
         }
@@ -79,26 +84,48 @@ const Address = () => {
         setInputValue(
           Array.from({ length: addressInfo.length }, () => ({ value: "" }))
         );
-        location.reload();
       }
     } catch (err) {}
   };
-  const setDefault = async (e, id) => {
-    e.preventDefault();
+  const setDefault = async (e, id, defaultStatus) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/address?setDefault=${e.target.checked}&addressId=${id}`,
+        `http://localhost:3000/api/address?setDefault=${e.target.checked}&addressId=${id}&userId=${session?.user?.id}`,
         {
           method: "PUT",
         }
       );
       if (response.ok) {
-        location.reload();
+         setInputValue(
+           Array.from({ length: addressInfo.length }, () => ({ value: "" }))
+         );
       }
     } catch (err) {
-      alert(err)
+      alert(err);
     }
   };
+  const deleteAddress = async (e, addressId) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/address?userId=${session?.user?.id}`,
+        {
+          method: "DELETE",
+          body: JSON.stringify({
+            addressId,
+          }),
+        }
+      );
+      if (response.ok) {
+        // location.reload()
+        setInputValue( (curr) => 
+          Array.from({ length: addressInfo.length }, () => ({ value: "" }))
+        );
+      }
+    } catch (e) {
+      
+    }
+  }
   return (
     <section className="relative">
       <div>
@@ -190,54 +217,84 @@ const Address = () => {
               <div key={userAddress.zipcode} className="">
                 <div>
                   {userAddress.map((eachAddress) => (
-                    <div
-                      key={eachAddress}
-                      className="border-[1px] border-gray-200 flex flex-row justify-between p-3 items-center bg-gray-100"
-                    >
-                      <div>
-                        <div>{eachAddress.country}</div>
-                        <div>{eachAddress.streetAddress}</div>
+                    <div className="bg-gray-100 border-[1px] border-gray-200 flex flex-col p-3">
+                      <div
+                        className="self-end cursor-pointer"
+                        onClick={(e) => {
+                          deleteAddress(e, eachAddress._id);
+                        }}
+                      >
+                        <Image src={close} className="w-[2rem]" />
+                      </div>
+                      <div
+                        key={eachAddress}
+                        className=" flex flex-row justify-between  items-center  "
+                      >
                         <div>
-                          {eachAddress.city}, {eachAddress.state}{" "}
-                          {eachAddress.zipcode}{" "}
+                          <div>{eachAddress.country}</div>
+                          <div>{eachAddress.streetAddress}</div>
+                          <div>
+                            {eachAddress.city}, {eachAddress.state}{" "}
+                            {eachAddress.zipcode}{" "}
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="flex flex-row items-center gap-3">
-                        <span
-                          className="underline text-blue-600 cursor-pointer"
-                          onClick={(e) => {
-                            setAddressId((curr) => eachAddress._id);
-                            setStatus(false);
-                            setInputValue(() => [
-                              { value: eachAddress.name },
-                              { value: eachAddress.phone },
-                              { value: eachAddress.streetAddress },
-                              { value: eachAddress.city },
-                              { value: eachAddress.state },
-                              { value: eachAddress.zipcode },
-                            ]);
-                            setToggleAddressBoard(true);
-                            
-                          }}
-                        >
-                          Edit Address
-                        </span>
-                        <div className="flex flex-row items-center gap-1">
-                          <input
-                            type="checkbox"
-                            id="setDefault"
-                            checked={eachAddress.default}
-                            onChange={(e) => {
-                              setDefault(e, eachAddress._id);
+                        <div className="flex flex-row items-center gap-3">
+                          <span
+                            className="underline text-blue-600 cursor-pointer"
+                            onClick={(e) => {
+                              setAddressId((curr) => eachAddress._id);
+                              setStatus(false);
+                              setInputValue(() => [
+                                { value: eachAddress.name },
+                                { value: eachAddress.phone },
+                                { value: eachAddress.streetAddress },
+                                { value: eachAddress.city },
+                                { value: eachAddress.state },
+                                { value: eachAddress.zipcode },
+                              ]);
+                              setToggleAddressBoard(true);
                             }}
-                            className="cursor-pointer"
-                          />
-                          <label htmlFor="setDefault">Set as Default</label>
+                          >
+                            Edit Address
+                          </span>
+                          <div className="flex flex-row items-center gap-1">
+                            <input
+                              type="checkbox"
+                              id="setDefault"
+                              onChange={(e) => {
+                                setDefault(
+                                  e,
+                                  eachAddress._id,
+                                  eachAddress.default
+                                );
+                              }}
+                              checked={eachAddress.default}
+                              className={`cursor-pointer`}
+                            />
+                            <label htmlFor="setDefault">Set as Default</label>
+                          </div>
                         </div>
-                      </div>
-                      <div className="border-[1px] px-2 py-1 text-white bg-LightPurple active:bg-Purple cursor-pointer rounded-[5px]">
-                        Deliver Here
+                        <div className="border-[1px] px-2 py-1 text-white bg-LightPurple active:bg-Purple cursor-pointer rounded-[5px]">
+                          <Link
+                            href={{
+                              pathname: "/checkout/review",
+                              query: {
+                                data: encodeURIComponent(
+                                  JSON.stringify([
+                                    eachAddress.country,
+                                    eachAddress.streetAddress,
+                                    eachAddress.city,
+                                    eachAddress.state,
+                                    eachAddress.zipcode,
+                                  ])
+                                ),
+                              },
+                            }}
+                          >
+                            Deliver Here
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   ))}

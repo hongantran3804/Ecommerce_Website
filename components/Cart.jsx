@@ -18,11 +18,12 @@ const Cart = () => {
           const { products, quantity } = await response.json();
           setProducts(products);
           setQuantity((curr) => quantity);
+          
         }
       } catch (e) {}
     };
     getProducts();
-  }, []);
+  }, [session?.user?.id]);
   useEffect(() => {
     const mainview = document.getElementById("mainview");
     // eslint-disable-next-line react-hooks/exhaustive-deps, react/no-deprecated
@@ -36,7 +37,7 @@ const Cart = () => {
       </div>,
       mainViewHeading
     );
-  }, [products, quantity]);
+  }, [products, quantity, session?.user?.id]);
 
   return <Main />;
 };

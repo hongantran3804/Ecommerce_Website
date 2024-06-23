@@ -346,10 +346,6 @@ export const checkoutNav = [
     url: "/checkout"
   },
   {
-    label: "Payment",
-    url:"/checkout/payment"
-  },
-  {
     label: "Review items and shipping",
     url:"/checkout/review"
   },

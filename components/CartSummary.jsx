@@ -12,11 +12,15 @@ const CartSummary = ({ products, oldQuantity, userId }) => {
   const handleCheckout = async (e) => {
     e.preventDefault();
     try {
-      const checkoutProducts = products.filter((product, index) => {
+
+      let checkoutProducts = products.filter((product, index) => {
         if (quantity[index].included && quantity[index].value > 0) {
           return true
         }
-      }).map((prod, index) => ({ ...prod, quantity: quantity[index].value }));
+      })
+      const filtQuantity = quantity.filter(each => each.included && each.value);
+      checkoutProducts = checkoutProducts.map((product, index) => ({ ...product, quantity: filtQuantity[index].value }))
+      
       const response = await fetch(
         `http://localhost:3000/api/cart?products=${encodeURIComponent(
           JSON.stringify(checkoutProducts)

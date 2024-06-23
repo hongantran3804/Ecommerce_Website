@@ -10,7 +10,7 @@ export const GET = async (request, { params }) => {
   try {
     const {
       email: { email },
-    } = jwt.verify(token, env["JWT_SECRET"]);
+    } = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findOne({ email: email });
     if (user) {
       if (user.confirmed) {

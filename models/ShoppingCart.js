@@ -5,9 +5,8 @@ const shoppingSchema = new Schema({
     required: true,
   },
   userId: {
-    type: Schema.Types.ObjectId,
-    ref:"User",
-    required: [true, "Please provide userId"],
+    type: String,
+    required: true,
   },
 });
 

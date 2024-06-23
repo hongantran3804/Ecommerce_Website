@@ -12,13 +12,13 @@ export const POST = async (request) => {
     port: 587,
     secure: false, // Use `true` for port 465, `false` for all other ports
     auth: {
-      user: env["GMAIL_ADDRESS"],
-      pass: env["APP_PASSWORD"],
+      user: process.env.GMAIL_ADDRESS,
+      pass: process.env.APP_PASSWORD,
     },
   });
   try {
     await connectToDB();
-    const token = jwt.sign({ email }, env["JWT_SECRET"], {
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
     const url = `http://localhost:3000/pwChange?token=${token}`;
@@ -34,7 +34,7 @@ export const POST = async (request) => {
     const mailOptions = {
       from: {
         name: "Lacaco Reset Password",
-        address: env["GMAIL_ADDRESS"],
+        address: process.env.GMAIL_ADDRESS,
       },
       to: "hongantran3804@gmail.com",
       subject: "Verification Email For New Password",
@@ -74,7 +74,7 @@ export const PATCH = async (request) => {
     await connectToDB();
 
     try {
-      const { email } = jwt.verify(token, env["JWT_SECRET"]);
+      const { email } = jwt.verify(token, process.env.JWT_SECRET);
       try {
         const user = await User.findOne({ email });
         if (user) {

@@ -4,7 +4,7 @@ export const POST = async (request) => {
   const env = require("@env/env"),
     userEmail = await request.json(),
     nodemailer = require("nodemailer"),
-    token = jwt.sign({ email: userEmail }, env["JWT_SECRET"], {
+    token = jwt.sign({ email: userEmail }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     }),
     url = `http://localhost:3000/api/emailVerification/confirmation/${token}`,
@@ -14,8 +14,8 @@ export const POST = async (request) => {
       port: 587,
       secure: false,
       auth: {
-        user: env["GMAIL_ADDRESS"],
-        pass: env["APP_PASSWORD"],
+        user: process.env.GMAIL_ADDRESS,
+        pass: process.env.APP_PASSWORD,
       },
     });
   const verificationMessage = `
@@ -30,7 +30,7 @@ export const POST = async (request) => {
   const mailOptions = {
     from: {
       name: "Lacaco Account",
-      address: env["GMAIL_ADDRESS"],
+      address: process.env.GMAIL_ADDRESS,
     },
     to: "hongantran3804@gmail.com",
     subject: "Your Lacaco Account Email Confirmation Link",

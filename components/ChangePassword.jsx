@@ -4,7 +4,6 @@ import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import ReactDOM from "react-dom";
 import Main from "./Main";
-import { env } from "@utils/utils";
 const UpdatePassword = ({ token }) => {
   const [validToken, setValidToken] = useState(false)
   const [password, setPassword] = useState("");

@@ -6,7 +6,7 @@ export const POST = async (request, { params }) => {
   try {
     const {
       email
-    } = jwt.verify(token, env["JWT_SECRET"]);
+    } = jwt.verify(token, process.env.JWT_SECRET);
     if (email) {
       return new Response(JSON.stringify({ message: "Ok" }), {
         status: 200,

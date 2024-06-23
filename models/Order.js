@@ -1,5 +1,5 @@
 import { Schema, model, models } from "mongoose";
-const ordersSchema = new Schema({
+const orderSchema = new Schema({
   products: {
     type: Object,
     required: [true, "Please provide product ids or empty array"],
@@ -26,6 +26,6 @@ const ordersSchema = new Schema({
   },
 });
 
-const Orders = models.Orders || model("Orders", ordersSchema);
+const Order = models.Order || model("Orders", orderSchema);
 
-export default Orders;
+export default Order;

@@ -5,7 +5,6 @@ import { addressInfo } from "@utils/utils";
 export const POST = async (request) => {
   const { userId, country, name, phone, streetAddress, city, state, zipcode } =
     await request.json();
-  console.log(userId)
   if (userId) {
     try {
       await connectToDB();
@@ -35,15 +34,49 @@ export const POST = async (request) => {
 
 export const GET = async (request) => {
   const userId = request.nextUrl.searchParams.get("userId");
-  console.log(userId);
+  const getDefaultAddress =
+    request.nextUrl.searchParams.get("getDefaultAddress");
+  
   if (userId) {
     try {
+      if (getDefaultAddress) {
+        const defaultAddress = await Address.findOne({
+          default: true,
+          userId: userId,
+        });
+        console.log(defaultAddress);
+        return new Response(
+          JSON.stringify([
+            defaultAddress.country,
+            defaultAddress.streetAddress,
+            defaultAddress.city,
+            defaultAddress.state,
+            defaultAddress.zipcode,
+          ]),
+          { status: 200 }
+        );
+      }
       connectToDB();
-      const addresses = await Address.find({ userId: userId });
-      console.log(addresses)
-      return new Response(JSON.stringify({addresses}), {
+      let addresses = await Address.find({ userId: userId });
+      if (addresses.length) {
+        addresses = addresses.map((address) => {
+          return {
+            _id: address._id,
+            name: address.name,
+            phone: address.phone,
+            country: address.country,
+            streetAddress: address.streetAddress,
+            city: address.city,
+            state: address.state,
+            zipcode: address.zipcode,
+            default: address.default,
+          };
+        });
+      }
+      return new Response(JSON.stringify({ addresses }), {
         status: 200,
       });
+      
     } catch (err) {
       console.log(err);
     }
@@ -54,33 +87,72 @@ export const GET = async (request) => {
 };
 
 export const PUT = async (request) => {
+  const userId = request.nextUrl.searchParams.get("userId");
   const addressId = request.nextUrl.searchParams.get("addressId");
   const setDefault = request.nextUrl.searchParams.get("setDefault");
   const data = JSON.parse(
     decodeURIComponent(request.nextUrl.searchParams.get("data"))
   );
-  console.log(setDefault)
-  if (addressId !== null && data !== null) {
-    const [{ value: name }, { value: phone }, { value: streetAddress},{ value: city}, {value: state}, {value: zipcode}] = data
+  
+  if (userId) {
     try {
       await connectToDB();
-      const userAddress = await Address.findByIdAndUpdate({ _id: addressId }, {
-        name, phone, streetAddress, city, state, zipcode
-      });
-      return new Response(JSON.stringify({ message: "Success" }), { status: 200 });
+      if (addressId && data) {
+        const [
+          { value: name },
+          { value: phone },
+          { value: streetAddress },
+          { value: city },
+          { value: state },
+          { value: zipcode },
+        ] = data;
+        const userAddress = await Address.findByIdAndUpdate(
+          { _id: addressId },
+          {
+            name,
+            phone,
+            streetAddress,
+            city,
+            state,
+            zipcode,
+          }
+        );
+        return new Response(JSON.stringify({ message: "Success" }), {
+          status: 200,
+        });
+      } else if (addressId) {
+        console.log(addressId)
+        await Address.findByIdAndUpdate(
+          { _id: addressId },
+          { default: setDefault }
+        );
+        return new Response(JSON.stringify({ message: "Success" }), {
+          status: 200,
+        });
+      }
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  } else if(addressId !== null && setDefault !== null) {
+  }
+  
+  
+  return new Response(JSON.stringify({ message: "Something went wrong" }), { status: 422 });
+}
+
+export const DELETE = async (request) => {
+  const userId = request.nextUrl.searchParams.get("userId");
+  const { addressId } = await request.json();
+  if (userId && addressId) {
     try {
       await connectToDB();
-      await Address.findByIdAndUpdate({ _id: addressId }, { default: setDefault });
+      await Address.findByIdAndDelete({ _id: addressId, userId: userId });
       return new Response(JSON.stringify({ message: "Success" }), {
         status: 200,
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
   }
+  
   return new Response(JSON.stringify({ message: "Something went wrong" }), { status: 422 });
 }

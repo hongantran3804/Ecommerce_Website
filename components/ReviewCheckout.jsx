@@ -10,11 +10,27 @@ import CartShow from "./CartShow";
 import { useSession } from "next-auth/react";
 import { checkoutNav } from "@utils/utils";
 import Link from "next/link";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import Payment from "./Payment";
+import close from "@public/assets/icons/close.png";
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+if (process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY === undefined) {
+  throw new Error("NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined");
+}
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+);
 const ReviewCheckoutBoard = ({ products, subQuantity, userId }) => {
   const now = dayjs();
+  const [shippingAddress, setShippingAddress] = useState([]);
+  const [placeOrder, setPlaceOrder] = useState(false);
   const [quantity, setQuantity] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [shippingPrice, setShippingPrice] = useState(0);
+  const [totalOrder, setTotalOrder] = useState(0);
   const [numOfProd, setNumOfProd] = useState(quantity.length);
   const [shippingOption, setShippingOption] = useState([
     { date: now.add(5, "days"), price: 0, chosen: true },
@@ -30,7 +46,22 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId }) => {
     },
   ]);
   useEffect(() => {
+    const searchParams = new URLSearchParams(document.location.search);
+    const data = JSON.parse(decodeURIComponent(searchParams.get("data")));
+    setShippingAddress(data);
     setQuantity(subQuantity);
+    if (!shippingAddress) {
+      const getAddress = async () => {
+        const response = await fetch(
+          `http://localhost:3000/api/address?getDefaultAddress=true&userId=${userId}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setShippingAddress(data);
+        }
+      };
+      getAddress();
+    }
   }, [products]);
   const handleOrder = async (e) => {
     e.preventDefault();
@@ -49,21 +80,20 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId }) => {
           shippingPrice +
           totalPrice) /
         100;
-      
+
       const response = await fetch(`http://localhost:3000/api/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        
+
         body: JSON.stringify({
           products: filtProducts,
           userId: userId,
           total: totalOrder,
           orderPlacedDate: now,
-          deliveredDate: shippingOption.find((option) => option.chosen).date
+          deliveredDate: shippingOption.find((option) => option.chosen).date,
         }),
-        
       });
       if (response.ok) {
         window.location.href = "/orders";
@@ -77,12 +107,37 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId }) => {
       calNum += eachQuan.value;
       calPrice += eachQuan.value * products[index].casePrice * 100;
     });
+
     setNumOfProd(calNum ? calNum : 0);
     setTotalPrice(calPrice ? calPrice : 0);
-  }, [quantity, shippingPrice, products, quantity]);
+    setTotalOrder(
+      Math.round((totalPrice + shippingPrice) / 10) + shippingPrice + totalPrice
+    );
+  }, [quantity, shippingPrice, products]);
+
   return (
     <section>
       <div className="mt-[5rem] ">
+        <div className="bg-LightPurple p-3 text-white">
+          <div className="flex flex-row items-center w-[50%] justify-between">
+            <div>Shipping Address</div>
+            {shippingAddress ? (
+              <div className="flex flex-col items-start">
+                <div>
+                  <div>{shippingAddress[0]}</div>
+                  <div>{shippingAddress[1]}</div>
+                </div>
+                <div className="flex flex-row items-center gap-1">
+                  <span>{shippingAddress[2]},</span>
+                  <span>{shippingAddress[3]}</span>
+                  <span>{shippingAddress[4]}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="font-bold">No address found</div>
+            )}
+          </div>
+        </div>
         <div className="flex flex-row items-start gap-5 ">
           <div className="flex flex-row items-start flex-1 gap-5 border-[1px] p-5">
             <div className="flex-1">
@@ -101,13 +156,12 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId }) => {
                       products={products}
                       quantity={quantity}
                       setQuantity={setQuantity}
-                      checkoutPage = {true}
+                      checkoutPage={true}
                     />
                   </div>
                 </div>
               </div>
             </div>
-
             <div>
               <div>Choose a delivery option:</div>
               <div>
@@ -185,11 +239,49 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId }) => {
                 </div>
               </div>
             </div>
-            <div
-              className="text-center border-[1px] mx-10 bg-mediumPurple text-white hover:bg-Purple cursor-pointer active:bg-LightPurple rounded-[5px] mt-5"
-              onClick={handleOrder}
-            >
-              Place Your Order
+            <div>
+              {placeOrder ? (
+                <div className="flex flex-col gap-2">
+                  <div
+                    className="self-end cursor-pointer"
+                    onClick={(e) => {
+                      setPlaceOrder(false);
+                    }}
+                  >
+                    <Image src={close} className="w-[2rem]" />
+                  </div>
+                  <Elements
+                    stripe={stripePromise}
+                    options={{
+                      mode: "payment",
+                      amount:
+                        Math.round((totalPrice + shippingPrice) / 10) +
+                        shippingPrice +
+                        totalPrice,
+                      currency: "usd",
+                    }}
+                  >
+                    <Payment
+                      products={products}
+                      quantity={quantity}
+                      amount={
+                        Math.round((totalPrice + shippingPrice) / 10) +
+                        shippingPrice +
+                        totalPrice
+                      }
+                    />
+                  </Elements>
+                </div>
+              ) : (
+                <div
+                  className="text-center border-[1px] mx-10 bg-mediumPurple text-white hover:bg-Purple cursor-pointer active:bg-LightPurple rounded-[5px] mt-5"
+                  onClick={(e) => {
+                    setPlaceOrder(true);
+                  }}
+                >
+                  Place Your Order
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -203,7 +295,9 @@ const ReviewCheckout = () => {
   const [quantity, setQuantity] = useState([]);
   useEffect(() => {
     const getData = async () => {
-      const response = await fetch(`http://localhost:3000/api/cart?userId=${session?.user.id}`);
+      const response = await fetch(
+        `http://localhost:3000/api/cart?userId=${session?.user.id}`
+      );
       if (response.ok) {
         const { products, quantity } = await response.json();
         setProducts(products);
@@ -224,8 +318,7 @@ const ReviewCheckout = () => {
       />,
       mainview
     );
-    
-  }, [quantity, products]);
+  }, [quantity, products, session?.user?.id]);
   return <Main />;
 };
 
