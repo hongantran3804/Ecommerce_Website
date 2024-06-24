@@ -9,7 +9,57 @@ const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => 
   );
   useEffect(() => {
     setUpdate(Array.from({ length: products.length }, () => true));
-  },[products])
+  }, [products])
+  const handleDelete = async (e, product, quantityValue) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:3000/api/cart", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          product: { ...product, quantityValue },
+          userId
+        })
+      })
+    } catch (err) {
+      alert(err);
+    }
+  }
+  const handleSave = async (e) => {
+    e.preventDefault();
+    try {
+      let checkoutProducts = products.filter((product, index) => {
+        if (quantity[index].included && quantity[index].value > 0) {
+          return true;
+        }
+      });
+      const filtQuantity = quantity.filter(
+        (each) => each.included && each.value
+      );
+      checkoutProducts = checkoutProducts.map((product, index) => ({
+        ...product,
+        quantity: filtQuantity[index].value,
+      }));
+
+      const response = await fetch(
+        `http://localhost:3000/api/cart`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type":"application/json"
+          },
+          body: JSON.stringify({
+            products: checkoutProducts,
+            userId
+          })
+        }
+      );
+    } catch (err) {
+      alert(err);
+    }
+  };
   return (
     <div>
       {products.map((product, index) => (
@@ -22,7 +72,7 @@ const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => 
           }`}
           key={product.upc}
         >
-          {!checkoutPage && (
+          {/* {!checkoutPage && (
             <input
               type="checkbox"
               checked={quantity[index]?.included}
@@ -36,7 +86,7 @@ const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => 
                 });
               }}
             />
-          )}
+          )} */}
           <div className="flex flex-row items-start flex-1 gap-4 h-fit">
             <div className="h-full">
               <Image src={product.photo ? product.photo : defaultImg} />
@@ -98,12 +148,13 @@ const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => 
                     />
                     <div
                       className="text-blue-600 hover:underline cursor-pointer"
-                      onClick={() => {
+                      onClick={(e) => {
                         setUpdate(() => {
                           const newUpdate = [...update];
                           newUpdate[index] = true;
                           return newUpdate;
                         });
+                        handleSave(e)
                       }}
                     >
                       Save
@@ -119,7 +170,9 @@ const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => 
                       newQuantity.splice(index, 1);
                       return newQuantity;
                     });
+                    handleDelete(e, product, quantity[index].value)
                     products.splice(index, 1);
+
                   }}
                 >
                   Delete

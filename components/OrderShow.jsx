@@ -1,17 +1,16 @@
 "use client";
 import React, { useEffect, useReducer, useRef, useState } from "react";
-import ReactDOM from "react-dom";
-import Main from "./Main";
-import { testProducts } from "@utils/utils";
-import prod6 from "@public/assets/images/prod6.png";
+import checkmark from "@public/assets/icons/checkmark.png"
 import Image from "next/image";
 import defaultImg from "@public/assets/images/defaultProductPhoto.png";
 import dayjs from "dayjs";
 const OrderShow = ({ originalOrders, session }) => {
   if (!originalOrders) return;
   const [orders, setOrders] = useState(() => [...originalOrders]);
+  const [buyAgainStatus, setBuyAgainStatus] = useState([])
   useEffect(() => {
-    setOrders(() => [...originalOrders])
+    setOrders(() => [...originalOrders]);
+    setBuyAgainStatus(() => orders.map(order => (Array.from({ length: order.length }, () => (false)))));
   },[originalOrders])
   const buyAgain = async (e, product) => {
     e.preventDefault();
@@ -48,9 +47,9 @@ const OrderShow = ({ originalOrders, session }) => {
   };
   return (
     <div className="flex flex-col gap-10">
-      {orders?.map((order) => (
+      {orders?.map((order,orderIndex) => (
         <div className="border-[1px]">
-          <div className="p-3 text-[.9rem] flex flex-row items-center justify-between bg-gray-200">
+          <div className="p-3 text-[.9rem] flex flex-row items-center justify-between bg-gray-200 font-bold">
             <div className="flex flex-row justify-between w-[50%]">
               <div className="flex flex-col items-start">
                 <span>ORDER PLACED</span>
@@ -82,9 +81,9 @@ const OrderShow = ({ originalOrders, session }) => {
                   </span>
                 )}
               </div>
-              {order.products?.map((product) => (
+              {order.products?.map((product, productIndex) => (
                 <div
-                  className="flex flex-row items-start text-[.9rem] justify-between "
+                  className="flex flex-row items-start text-[.9rem] justify-between font-bold"
                   key={product._id}
                 >
                   <div className="flex flex-row items-start gap-5 h-full">
@@ -96,13 +95,21 @@ const OrderShow = ({ originalOrders, session }) => {
                     </div>
                     <div className="flex flex-col items-start justify-between gap-3 ">
                       <span>{product.prodDesc}</span>
+                      <span>{product.brand.name}</span>
+                      <span>${product.casePrice}</span>
+                      <span>Quantity: {product.quantity}</span>
                       <div
                         className="px-2 py-1 border-[1px] rounded-[5px] bg-LightPurple active:bg-Purple cursor-pointer text-white shadow-buttonShadow"
                         onClick={(e) => {
+                          setBuyAgainStatus(() => {
+                            const newBuyAgainStatus = [...buyAgainStatus];
+                            newBuyAgainStatus[orderIndex][productIndex] = true;
+                            return newBuyAgainStatus;
+                          })
                           buyAgain(e, product);
                         }}
                       >
-                        Buy it again
+                       {buyAgainStatus[orderIndex] && buyAgainStatus[orderIndex][productIndex] ? <Image src={checkmark} className="w-[1rem]"/> : "Buy it again"}
                       </div>
                     </div>
                   </div>

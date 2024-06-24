@@ -7,35 +7,9 @@ import { testProducts } from "@utils/utils";
 import defaultImg from "@public/assets/images/defaultProductPhoto.png";
 import { redirect } from "next/navigation";
 import CartShow from "./CartShow";
+import Link from "next/link";
 const CartSummary = ({ products, oldQuantity, userId }) => {
   if (!oldQuantity || !products) return;
-  const handleCheckout = async (e) => {
-    e.preventDefault();
-    try {
-
-      let checkoutProducts = products.filter((product, index) => {
-        if (quantity[index].included && quantity[index].value > 0) {
-          return true
-        }
-      })
-      const filtQuantity = quantity.filter(each => each.included && each.value);
-      checkoutProducts = checkoutProducts.map((product, index) => ({ ...product, quantity: filtQuantity[index].value }))
-      
-      const response = await fetch(
-        `http://localhost:3000/api/cart?products=${encodeURIComponent(
-          JSON.stringify(checkoutProducts)
-        )}&userId=${userId}`,
-        {
-          method: "PUT",
-        }
-      );
-      if (response.ok) {
-        window.location.href = "/checkout"
-      }
-    } catch (err) {
-      alert(err)
-    }
-  };
 
   const filtQuantity = oldQuantity.map((eachVal) => ({
     value: eachVal,
@@ -72,11 +46,12 @@ const CartSummary = ({ products, oldQuantity, userId }) => {
               products={products}
               quantity={quantity}
               setQuantity={setQuantity}
+              userId={userId}
             />
             <div className="self-end font-bold">
               {`Subtotal (${numOfProd} items):`}{" "}
               <span className="font-extrabold">
-                ${`${totalPrice / 100 ? totalPrice / 100 : 0}`}
+                ${`${totalPrice / 100 ? Math.round(totalPrice) / 100 : 0}`}
               </span>
             </div>
           </div>
@@ -91,9 +66,8 @@ const CartSummary = ({ products, oldQuantity, userId }) => {
               <div
                 className=" bg-LightPurple text-[.8rem] p-1 w-full text-center 
                 rounded-[5px] font-bold cursor-pointer hover:bg-Purple text-white"
-                onClick={handleCheckout}
               >
-                Proceed to checkout
+                <Link href="/checkout">Proceed to checkout</Link>
               </div>
             </div>
           </div>

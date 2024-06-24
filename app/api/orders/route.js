@@ -1,5 +1,5 @@
 import { connectToDB } from "@utils/database";
-import Orders from "@models/Order";
+import Order from "@models/Order";
 import dayjs from "dayjs";
 import ShoppingCart from "@models/ShoppingCart";
 export const POST = async (request) => {
@@ -9,7 +9,7 @@ export const POST = async (request) => {
   const now = dayjs();
   try {
     await connectToDB();
-    const newOrder = new Orders({
+    const newOrder = new Order({
       userId: userId,
       products: products,
       orderPlacedDate: new Date(orderPlacedDate),
@@ -34,7 +34,7 @@ export const GET = async (request) => {
   try {
     await connectToDB();
     const now = dayjs();
-    await Orders.updateMany(
+    await Order.updateMany(
       { deliveredDate: { $lt: now.toDate() } },
       {
         $set: {
@@ -42,11 +42,10 @@ export const GET = async (request) => {
         },
       }
     );
-    let orders = await Orders.find({});
+    let orders = await Order.find({});
     if (orders.length) {
       orders = orders.map((order) => {
-        const { userId, ...rest } = order;
-        return rest;
+        return order
       });
       return new Response(JSON.stringify({ orders }), { status: 200 });
     } else return new Response(null, { status: 404 });
@@ -64,7 +63,7 @@ export const PUT = async (request) => {
   console.log(orderId);
   try {
     await connectToDB();
-    await Orders.findByIdAndDelete(orderId);
+    await Order.findByIdAndDelete(orderId);
     return new Response(JSON.stringify({ message: "successfully" }), {
       status: 200,
     });

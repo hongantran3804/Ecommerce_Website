@@ -5,7 +5,41 @@ import {
   useElements,
   PaymentElement,
 } from "@stripe/react-stripe-js";
-const Payment = ({ products, quantity, amount }) => {
+const Payment = ({ products, quantity, amount, userId, now, shippingOption, shippingPrice, totalPrice }) => {
+  const handleOrder = async (e) => {
+    e.preventDefault();
+    try {
+      const filtProducts = products
+        .filter(
+          (product, index) =>
+            quantity[index].included && quantity[index].value > 0
+        )
+        .map((product, index) => ({
+          ...product,
+          quantity: quantity[index].value,
+        }));
+      const totalOrder =
+        (Math.round((totalPrice + shippingPrice) / 10) +
+          shippingPrice +
+          totalPrice) /
+        100;
+
+      const response = await fetch(`http://localhost:3000/api/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          products: filtProducts,
+          userId: userId,
+          total: totalOrder,
+          orderPlacedDate: now,
+          deliveredDate: shippingOption.find((option) => option.chosen).date,
+        }),
+      });
+    } catch (err) {}
+  };
   if (!products || !quantity || amount < 0) return null;
   const stripe = useStripe();
   const elements = useElements();
@@ -13,16 +47,6 @@ const Payment = ({ products, quantity, amount }) => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {
-    // let checkoutProducts = products.filter((product, index) => {
-    //   if (quantity[index]?.included && quantity[index]?.value > 0) {
-    //     return true;
-    //   }
-    // });
-    // const filtQuantity = quantity.filter((each) => each.included && each.value);
-    // checkoutProducts = checkoutProducts.map((product, index) => ({
-    //   ...products,
-    //   quantity: filtQuantity[index]?.value,
-    // }));
 
     const getStripeElement = async () => {
       try {
@@ -72,6 +96,7 @@ const Payment = ({ products, quantity, amount }) => {
       setErrorMessage(error.message);
     }
     setLoading(false);
+    handleOrder(e)
   };
   if (!clientSecret || !stripe || !elements) {
     return (

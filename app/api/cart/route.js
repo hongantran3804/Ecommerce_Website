@@ -17,7 +17,7 @@ export const POST = async (request) => {
           await ShoppingCart.findByIdAndUpdate(products[idx]._id, {
             product: {
               ...products[idx].product,
-              quantity: currentQuan + 1,
+              quantity: currentQuan + product.quantity,
             },
           });
           await products[idx].save();
@@ -77,11 +77,7 @@ export const GET = async (request) => {
 };
 
 export const PUT = async (request) => {
-  const products = JSON.parse(
-    decodeURIComponent(request.nextUrl.searchParams.get("products"))
-  );
-  const userId = request.nextUrl.searchParams.get("userId");
-  console.log(products)
+  const { products, userId } = await request.json();
   if (userId) {
     try {
       await connectToDB();
@@ -96,6 +92,27 @@ export const PUT = async (request) => {
       console.log(err);
       
     }
+  }
+  return new Response(JSON.stringify({ message: "Something went wrong" }), {
+    status: 422,
+  });
+}
+
+export const DELETE = async (request) => {
+  const { product, userId } = await request.json();
+  console.log(userId)
+  try {
+    await connectToDB();
+    let productDocuments = await ShoppingCart.find({ userId: userId });
+    const targetIdx = productDocuments.findIndex((prod) => prod.product._id === product._id);
+    productDocuments.splice(targetIdx, 1);
+    await ShoppingCart.deleteMany({ userId: userId });
+    await ShoppingCart.insertMany(productDocuments);
+    return new Response(JSON.stringify({ message: "Success" }), {
+      status: 200,
+    });
+  } catch (err) {
+    console.log(err)
   }
   return new Response(JSON.stringify({ message: "Something went wrong" }), {
     status: 422,

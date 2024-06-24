@@ -63,43 +63,7 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId }) => {
       getAddress();
     }
   }, [products]);
-  const handleOrder = async (e) => {
-    e.preventDefault();
-    try {
-      const filtProducts = products
-        .filter(
-          (product, index) =>
-            quantity[index].included && quantity[index].value > 0
-        )
-        .map((product, index) => ({
-          ...product,
-          quantity: quantity[index].value,
-        }));
-      const totalOrder =
-        (Math.round((totalPrice + shippingPrice) / 10) +
-          shippingPrice +
-          totalPrice) /
-        100;
-
-      const response = await fetch(`http://localhost:3000/api/orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          products: filtProducts,
-          userId: userId,
-          total: totalOrder,
-          orderPlacedDate: now,
-          deliveredDate: shippingOption.find((option) => option.chosen).date,
-        }),
-      });
-      if (response.ok) {
-        window.location.href = "/orders";
-      }
-    } catch (err) {}
-  };
+  
   useEffect(() => {
     let calNum = 0;
     let calPrice = 0;
@@ -269,6 +233,11 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId }) => {
                         shippingPrice +
                         totalPrice
                       }
+                      userId={userId}
+                      shippingOption={shippingOption}
+                      shippingPrice={shippingPrice}
+                      now={now}
+                      totalPrice={totalPrice}
                     />
                   </Elements>
                 </div>

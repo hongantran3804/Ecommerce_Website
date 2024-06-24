@@ -44,7 +44,6 @@ export const GET = async (request) => {
           default: true,
           userId: userId,
         });
-        console.log(defaultAddress);
         return new Response(
           JSON.stringify([
             defaultAddress.country,
@@ -60,17 +59,7 @@ export const GET = async (request) => {
       let addresses = await Address.find({ userId: userId });
       if (addresses.length) {
         addresses = addresses.map((address) => {
-          return {
-            _id: address._id,
-            name: address.name,
-            phone: address.phone,
-            country: address.country,
-            streetAddress: address.streetAddress,
-            city: address.city,
-            state: address.state,
-            zipcode: address.zipcode,
-            default: address.default,
-          };
+          return address
         });
       }
       return new Response(JSON.stringify({ addresses }), {
