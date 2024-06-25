@@ -105,9 +105,8 @@ export const DELETE = async (request) => {
     await connectToDB();
     let productDocuments = await ShoppingCart.find({ userId: userId });
     const targetIdx = productDocuments.findIndex((prod) => prod.product._id === product._id);
-    productDocuments.splice(targetIdx, 1);
-    await ShoppingCart.deleteMany({ userId: userId });
-    await ShoppingCart.insertMany(productDocuments);
+    console.log(targetIdx)
+    await ShoppingCart.findByIdAndDelete(productDocuments[targetIdx]._id)
     return new Response(JSON.stringify({ message: "Success" }), {
       status: 200,
     });

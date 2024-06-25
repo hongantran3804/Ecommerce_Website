@@ -1,32 +1,181 @@
-"use client"
-import React, { useEffect, useReducer, useRef, useState } from "react";
-import ReactDOM from "react-dom";
-import Main from "./Main";
-
-import Map from "./Map";
-const TrackPackageBoard = () => {
-  return (<div></div>);
-};
+"use client";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useJsApiLoader,
+  GoogleMap,
+  Marker,
+  Autocomplete,
+  DirectionsRenderer,
+  InfoWindow,
+} from "@react-google-maps/api"; // indicate whether the map is loaded or not
+import { useSession } from "next-auth/react";
+import defaultImg from "@public/assets/images/defaultProductPhoto.png";
+import Image from "next/image";
+import dayjs from "dayjs";
+import OrderCard from "./OrderCard";
 const TrackPackage = () => {
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    libraries: ["places"],
+  });
+  const { data: session } = useSession();
+  const [longitude, setLongitude] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [address, setAddress] = useState();
+  const [order, setOrder] = useState("");
+  const [openWindow, setOpenWindow] = useState(true);
   useEffect(() => {
-    const mainview = document.getElementById("mainview");
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react/no-deprecated
-    ReactDOM.render(
-        <Map address="1600 Amphitheatre Parkway, Mountain View, CA" />,
-      mainview
+    const searchParams = new URLSearchParams(document.location.search);
+    const addressObj = JSON.parse(
+      decodeURIComponent(searchParams.get("address"))
     );
-    const mainViewHeading = document.getElementById("mainViewHeading");
-    ReactDOM.render(
-      <div>
-        <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
-          Tracking Your Order
-        </h1>
-      </div>,
-      mainViewHeading
+    const orderId = searchParams.get("id");
+    setAddress(addressObj);
+    const getOrder = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/orders/${orderId}?userId=${session?.user?.id}`
+        );
+        if (response.ok) {
+          const { order } = await response.json();
+          setOrder(order);
+        }
+      } catch (err) {
+        alert(err);
+      }
+    };
+    getOrder();
+  }, [session?.user?.id]);
+  useEffect(() => {
+    if (address) {
+      fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+          address.streetAddress +
+            ", " +
+            address.city +
+            " " +
+            address.state +
+            " " +
+            address.zipcode
+        )}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.results.length > 0) {
+            const { lat, lng } = data.results[0].geometry.location;
+            setLatitude(lat);
+            setLongitude(lng);
+          } else {
+            console.error("No results found for the given address.");
+          }
+        })
+        .catch((error) => console.error("Error:", error));
+    }
+  }, [address]);
+  const center = useMemo(
+    () => ({ lat: latitude, lng: longitude }),
+    [longitude, latitude]
+  );
+  const [map, setMap] = useState(/**@type google.maps.Map */ (null));
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center">
+        <div
+          className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-black"
+          role="status"
+        >
+          <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+            Loading...
+          </span>
+        </div>
+      </div>
     );
-  }, []);
-
-  return <Main />;
+  }
+  return (
+    <div>
+      <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
+        Tracking Your Order
+      </h1>
+      <div className="w-full relative">
+        <div className={`absolute left-0 top-0 z-10 bg-white mt-[2rem] ml-[2rem] w-[30%] p-2 overflow-y-scroll flex flex-col items-start ${order?.products?.length >= 2 ? "h-[50vh]" : "h-fit"} gap-3`}>
+          <div className="flex flex-col items-start">
+            {order.delivered ? (
+              <span className="text-black font-bold">
+                `Delivered` {dayjs(order.deliveredDate).format("MMMM D")}
+              </span>
+            ) : (
+              <span className="text-green-600 font-bold">
+                Arriving {dayjs(order.deliveredDate).format("MMMM D")}
+              </span>
+            )}{" "}
+          </div>
+          {/* <div className="flex flex-col items-start gap-3">
+            {order?.products?.map((product, index) => (
+              <div
+                className={`flex flex-col items-start text-wrap `}
+              >
+                <div
+                  key={product._id}
+                  className="flex flex-row items-start gap-2 "
+                >
+                  <div className="w-[5rem]">
+                    <Image src={product.photo ? product.photo : defaultImg} />
+                  </div>
+                  <div className="font-bold text-wrap w-[66%]">
+                    <div>{product.brand.name}</div>
+                    <div>{product.prodDesc}</div>
+                    <div>Quantity: {product.quantity}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div> */}
+          <OrderCard orders={[order]} order={order} orderIndex={0} session={session}/>
+        </div>
+        <GoogleMap
+          center={center}
+          zoom={15}
+          mapContainerStyle={{ width: "100%", height: "55vh" }}
+          mapContainerClassName="relative"
+          options={{
+            zoomControl: false,
+            streetViewControl: false,
+            mapTypeControl: false,
+            fullscreenControl: false,
+          }}
+          onLoad={(map) => setMap(map)}
+        >
+          {/* Display markes, or directions */}
+          <Marker
+            position={center}
+            className="relative"
+            onClick={() => {
+              setOpenWindow(true);
+            }}
+          >
+            {openWindow && (
+              <InfoWindow
+                position={center}
+                onCloseClick={() => {
+                  setOpenWindow(false);
+                }}
+              >
+                <div className="text-center w-fit">
+                  <div>{session?.user?.name}</div>
+                  <div>{order?.address?.streetAddress}</div>
+                  <div className="uppercase">
+                    <span>{order?.address?.city}, </span>
+                    <span>{order?.address?.state} </span>
+                    <span>{order?.address?.zipcode}</span>
+                  </div>
+                </div>
+              </InfoWindow>
+            )}
+          </Marker>
+        </GoogleMap>
+      </div>
+    </div>
+  );
 };
 
 export default TrackPackage;

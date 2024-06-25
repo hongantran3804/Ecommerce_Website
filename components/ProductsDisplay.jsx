@@ -6,7 +6,7 @@ import { useState, useEffect, useMemo } from "react";
 import { narrowCategories } from "@utils/utils";
 import { testProducts } from "@utils/utils";
 const ProductsDisplay = ({ products, narrowBy, setProducts, userId }) => {
-  if (!products || !narrowBy) return <div></div>;
+  if (!products || !narrowBy[0]) return <div className="font-bold">No product found</div>;
   const [originalProducts, setOriginalProducts] = useState([])
   const [totalProd, setTotalProd] = useState(0);
   const [numOfProd, setNumOfProd] = useState(0);

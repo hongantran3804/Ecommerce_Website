@@ -1,9 +1,6 @@
 "use client";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-import Main from "./Main";
-import { testProducts } from "@utils/utils";
-import prod6 from "@public/assets/images/prod6.png";
 import Image from "next/image";
 import OrderShow from "./OrderShow";
 import { useSession } from "next-auth/react";
@@ -11,6 +8,7 @@ import dayjs from "dayjs";
 const OrdersSummary = ({ originalOrders, session }) => {
   if (!originalOrders) return null;
   const [prodName, setProdName] = useState("");
+  
   const [orders, setOrders] = useState([]);
   const now = dayjs();
   const [filterDay, setFilterDay] = useState(now.subtract(30, "days"));
@@ -21,22 +19,10 @@ const OrdersSummary = ({ originalOrders, session }) => {
       )]
     );
   }, [filterDay, originalOrders]);
+  
   return (
     <section>
       <div className="flex flex-col gap-5">
-        <div className="flex flex-row items-center gap-3">
-          <input
-            type="text"
-            name="SearchProd"
-            placeholder="Search all orders"
-            size="45"
-            className="border-[1px] border-black rounded-[5px] p-1 text-[.9rem]"
-            spellCheck="false"
-          />
-          <div className="bg-black text-white font-bold w-fit px-5 py-1 rounded-[20px] text-[.9rem]">
-            Search Orders
-          </div>
-        </div>
         <div>
           <strong>
             {orders.length}{" "}
@@ -69,35 +55,18 @@ const Orders = () => {
   const { data: session } = useSession();
   useEffect(() => {
     const getOrders = async () => {
-      const response = await fetch("http://localhost:3000/api/orders");
+      const response = await fetch(
+        `http://localhost:3000/api/orders?userId=${session?.user?.id}`
+      );
       if (response.ok) {
         const { orders } = await response.json();
         setOrders(() => orders);
       }
     };
     getOrders();
-  }, []);
-  useEffect(() => {
-    const mainview = document.getElementById("mainview");
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react/no-deprecated
-    ReactDOM.render(
-      <React.StrictMode>
-        <OrdersSummary originalOrders={orders} session={session} />
-      </React.StrictMode>,
-      mainview
-    );
-    const mainViewHeading = document.getElementById("mainViewHeading");
-    ReactDOM.render(
-      <div>
-        <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
-          Your Orders
-        </h1>
-      </div>,
-      mainViewHeading
-    );
-  }, [orders]);
+  }, [session?.user?.id]);
 
-  return <Main />;
+  return <OrdersSummary originalOrders={orders} session={session} />;
 };
 
 export default Orders;

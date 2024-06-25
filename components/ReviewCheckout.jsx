@@ -23,14 +23,14 @@ if (process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY === undefined) {
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
-const ReviewCheckoutBoard = ({ products, subQuantity, userId }) => {
+const ReviewCheckoutBoard = ({ products, subQuantity, userId, addressId, setAddressId }) => {
   const now = dayjs();
   const [shippingAddress, setShippingAddress] = useState([]);
   const [placeOrder, setPlaceOrder] = useState(false);
+  const [totalOrder, setTotalOrder] = useState(0);
   const [quantity, setQuantity] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [shippingPrice, setShippingPrice] = useState(0);
-  const [totalOrder, setTotalOrder] = useState(0);
   const [numOfProd, setNumOfProd] = useState(quantity.length);
   const [shippingOption, setShippingOption] = useState([
     { date: now.add(5, "days"), price: 0, chosen: true },
@@ -46,23 +46,35 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId }) => {
     },
   ]);
   useEffect(() => {
-    const searchParams = new URLSearchParams(document.location.search);
-    const data = JSON.parse(decodeURIComponent(searchParams.get("data")));
-    setShippingAddress(data);
     setQuantity(subQuantity);
-    if (!shippingAddress) {
-      const getAddress = async () => {
+    
+    if (shippingAddress && shippingAddress?.length === 0) {
+      const getDefaultAddress = async () => {
         const response = await fetch(
           `http://localhost:3000/api/address?getDefaultAddress=true&userId=${userId}`
         );
         if (response.ok) {
-          const data = await response.json();
+          const { addressId, data } = await response.json();
           setShippingAddress(data);
+          setAddressId(addressId);
         }
       };
-      getAddress();
-    }
-  }, [products]);
+      getDefaultAddress();
+      const getSpecifiedAddress = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/address/${addressId}?userId=${userId}`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            setShippingAddress(data);
+            setAddressId(addressId)
+          }
+        } catch (err) {}
+      };
+      getSpecifiedAddress();
+    } 
+  }, [products, userId, shippingOption]);
   
   useEffect(() => {
     let calNum = 0;
@@ -78,14 +90,51 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId }) => {
       Math.round((totalPrice + shippingPrice) / 10) + shippingPrice + totalPrice
     );
   }, [quantity, shippingPrice, products]);
+  const handleOrder = async (e, amount) => {
+    e.preventDefault();
+    try {
+      const filtProducts = products
+        .filter(
+          (product, index) =>
+            quantity[index].included && quantity[index].value > 0
+        )
+        .map((product, index) => ({
+          ...product,
+          quantity: quantity[index].value,
+        }));
+      const totalOrder =
+        (Math.round((totalPrice + shippingPrice) / 10) +
+          shippingPrice +
+          totalPrice) /
+        100;
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
 
+        body: JSON.stringify({
+          products: filtProducts,
+          userId: userId,
+          total: totalOrder,
+          orderPlacedDate: now,
+          deliveredDate: shippingOption.find((option) => option.chosen).date,
+          addressId: addressId,
+        }),
+      });
+
+      if (response.ok) {
+        window.location.href = `http://localhost:3000/payment/success?amount=${amount}`;
+      }
+    } catch (err) {}
+  };
   return (
     <section>
       <div className="mt-[5rem] ">
         <div className="bg-LightPurple p-3 text-white">
           <div className="flex flex-row items-center w-[50%] justify-between">
             <div>Shipping Address</div>
-            {shippingAddress ? (
+            {shippingAddress?.length > 0 ? (
               <div className="flex flex-col items-start">
                 <div>
                   <div>{shippingAddress[0]}</div>
@@ -233,19 +282,20 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId }) => {
                         shippingPrice +
                         totalPrice
                       }
-                      userId={userId}
-                      shippingOption={shippingOption}
-                      shippingPrice={shippingPrice}
-                      now={now}
-                      totalPrice={totalPrice}
+                      handleOrder={handleOrder}
                     />
                   </Elements>
                 </div>
               ) : (
                 <div
                   className="text-center border-[1px] mx-10 bg-mediumPurple text-white hover:bg-Purple cursor-pointer active:bg-LightPurple rounded-[5px] mt-5"
-                  onClick={(e) => {
-                    setPlaceOrder(true);
+                    onClick={(e) => {
+                      if (shippingAddress.length > 0) {
+                      setPlaceOrder(true);
+                      } else {
+                        alert("No address found")
+                    }
+                    
                   }}
                 >
                   Place Your Order
@@ -260,9 +310,13 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId }) => {
 };
 const ReviewCheckout = () => {
   const { data: session } = useSession();
+  const [addressId, setAddressId] = useState("")
   const [products, setProducts] = useState([]);
   const [quantity, setQuantity] = useState([]);
   useEffect(() => {
+    const searchParams = new URLSearchParams(document.location.search);
+
+    setAddressId(searchParams.get("data"));
     const getData = async () => {
       const response = await fetch(
         `http://localhost:3000/api/cart?userId=${session?.user.id}`
@@ -284,6 +338,8 @@ const ReviewCheckout = () => {
         subQuantity={quantity}
         products={products}
         userId={session?.user?.id}
+        addressId={addressId}
+        setAddressId={setAddressId}
       />,
       mainview
     );

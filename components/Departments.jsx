@@ -7,18 +7,25 @@ const Departments = () => {
   const { data: session } = useSession();
   const [categories, setCategories] = useState([]);
   useEffect(() => {
-    const getBrands = async () => {
-      const response = await fetch("http://localhost:3000/api/brands", {
-        method: "GET",
-      });
-      if (response.ok) {
-        try {
-          const { container} = await response.json();
-          setCategories(() => [...container])
-        } catch (err) {}
-      }
-    };
-    getBrands();
+    try {
+      const getBrands = async () => {
+        const response = await fetch("http://localhost:3000/api/brands", {
+          method: "GET",
+        });
+        if (response.ok) {
+          try {
+            const { container } = await response.json();
+            setCategories(() => [...container]);
+          } catch (err) {
+            alert(err)
+          }
+        }
+      };
+      getBrands();
+    } catch (err) {
+      aler(err)
+    }
+    
   }, []);
   return (
     <div className="flex flex-col w-full relative z-10 border-[1px] border-black">

@@ -20,6 +20,11 @@ const orderSchema = new Schema({
     type: Number,
     required: true
   },
+  address: {
+    type: Schema.Types.ObjectId,
+    ref: "Address",
+    required: true
+  },
   userId: {
     type: String,
     required: [true, "Please provide userId"],

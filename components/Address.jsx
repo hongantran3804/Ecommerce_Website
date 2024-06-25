@@ -280,15 +280,7 @@ const Address = () => {
                             href={{
                               pathname: "/checkout/review",
                               query: {
-                                data: encodeURIComponent(
-                                  JSON.stringify([
-                                    eachAddress.country,
-                                    eachAddress.streetAddress,
-                                    eachAddress.city,
-                                    eachAddress.state,
-                                    eachAddress.zipcode,
-                                  ])
-                                ),
+                                data: eachAddress._id,
                               },
                             }}
                           >

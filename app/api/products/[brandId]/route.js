@@ -1,12 +1,15 @@
 import { connectToDB } from "@utils/database";
 import Product from "@models/Product";
 export const GET = async (request, { params }) => {
-  const { brandId} = params;
+  const { brandId } = params;
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.searchParams);
   try {
     await connectToDB();
-    let products = await Product.find({ brand: brandId }).populate("brand");
+    let products = [];
+    if (brandId) {
+      products = await Product.find({ brand: brandId }).populate("brand");
+    }
     const priceUnder100 = {
       name: "Under 100",
       quan: products.filter((product) => product.casePrice < 100).length,
@@ -38,10 +41,9 @@ export const GET = async (request, { params }) => {
       priceOver1000,
     ].filter((element) => element.quan > 0);
     products = products.filter((product) => product.numInStock > 0);
-    return new Response(JSON.stringify({prods:products,priceRanges}), {
+    return new Response(JSON.stringify({ prods: products, priceRanges }), {
       status: 200,
     });
-
   } catch (err) {
     console.log(err);
   }

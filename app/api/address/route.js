@@ -36,26 +36,36 @@ export const GET = async (request) => {
   const userId = request.nextUrl.searchParams.get("userId");
   const getDefaultAddress =
     request.nextUrl.searchParams.get("getDefaultAddress");
-  
+  const addressId =
+    request.nextUrl.searchParams.get("addressId");
+  console.log(addressId)
   if (userId) {
     try {
+      connectToDB();
       if (getDefaultAddress) {
         const defaultAddress = await Address.findOne({
           default: true,
           userId: userId,
         });
-        return new Response(
-          JSON.stringify([
-            defaultAddress.country,
-            defaultAddress.streetAddress,
-            defaultAddress.city,
-            defaultAddress.state,
-            defaultAddress.zipcode,
-          ]),
-          { status: 200 }
-        );
+        console.log(1)
+        if (defaultAddress) {
+           return new Response(
+             JSON.stringify({
+               addressId: defaultAddress._id,
+               data: [
+               defaultAddress.country,
+               defaultAddress.streetAddress,
+               defaultAddress.city,
+               defaultAddress.state,
+               defaultAddress.zipcode,
+             ]}),
+             { status: 200 }
+           );
+        }
+       
       }
-      connectToDB();
+      
+      console.log(2)
       let addresses = await Address.find({ userId: userId });
       if (addresses.length) {
         addresses = addresses.map((address) => {
