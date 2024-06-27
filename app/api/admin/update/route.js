@@ -4,7 +4,7 @@ import Product from "@models/Product";
 export const POST = async (request) => {
   let { brand, prodDesc, upc, unitPrice, unitPerCase, numInStock } =
     await request.json();
-  brand = brand.trim()
+  brand = brand.trim();
   upc = upc.replace(" ", "");
   unitPrice = unitPrice.replace(" ").replace("$", "");
   unitPerCase = unitPerCase.replace(" ", "");
@@ -13,7 +13,6 @@ export const POST = async (request) => {
     await connectToDB();
     const brandExist = await Brand.findOne({ name: brand });
     if (brandExist) {
-      console.log(1)
       const productExist = await Product.findOne({ upc: upc });
       if (!productExist) {
         const product = new Product({
@@ -29,8 +28,7 @@ export const POST = async (request) => {
           numInStock: parseInt(numInStock),
           numPurchased:0,
         });
-
-        await product.save();
+       await product.save();
       } else {
         await Product.findByIdAndUpdate(productExist._id, {
           photo: "",
@@ -47,9 +45,9 @@ export const POST = async (request) => {
         });
       }
     } else {
-      console.log(2)
       const brandProd = new Brand({ name: brand, numPurchased: 0 });
       await brandProd.save();
+      
       const product = new Product({
         photo: "",
         prodDesc: prodDesc,

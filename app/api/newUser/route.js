@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { connectToDB } from "@utils/database";
 import User from "@models/User";
+import bcrypt from "bcrypt";
 const sleep = () =>
   new Promise((resolve) => {
     setTimeout(() => {
@@ -30,6 +31,7 @@ export const POST = async (request) => {
       await sleep();
       try {
         const userExist = await User.findOne({ email });
+        
         if (userExist)
           return new Response(
             JSON.stringify({ message: "User already exist" }, { status: 409 })
@@ -42,7 +44,8 @@ export const POST = async (request) => {
           password,
           confirmed,
         });
-        await newUser.save();
+        await newUser.save()
+        
         try {
           const emailVerification = await fetch(
             "http://localhost:3000/api/emailVerification",
@@ -52,40 +55,30 @@ export const POST = async (request) => {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                email: newUser.email,
+                email: email,
               }),
             }
           );
-          return new Response(
-            JSON.stringify({ message: emailVerification.message }),
-            { status: 200 }
-          );
-        } catch (err) {
-          return new Response(
-            JSON.stringify({ message: "Cannot send email verification" }),
-            {
-              status: 422,
-            }
-          );
+          if (emailVerification.ok) {
+            return new Response(
+              JSON.stringify({ message: emailVerification.message }),
+              { status: 200 }
+            );
+          }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (err) {
-        return new Response(JSON.stringify({ message: "Cannot create User" }), {
-          status: 422,
-        });
+      } catch (error) {
+        console.log(error);
       }
     }
-    return new Response(
-      JSON.stringify({
-        message: "Unproccesable request, Invalid captcha code",
-      }),
-      { status: 422 }
-    );
   } catch (error) {
-    return new Response(
-      JSON.stringify({
-        message: "Something went wrong",
-      }),
-      { status: 422 }
-    );
+    console.log(error);
   }
+  return new Response(
+    JSON.stringify({
+      message: "Something went wrong",
+    }),
+    { status: 422 }
+  );
 };

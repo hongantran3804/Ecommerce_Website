@@ -14,7 +14,7 @@ const OrderButton = ({ order, CancelOrder }) => {
       >
         <Link
           href={{
-            pathname: "/orders/trackingorder",
+            pathname: "/trackingorder",
             query: {
               id: order._id,
               address: encodeURIComponent(JSON.stringify(order.address)),

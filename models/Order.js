@@ -25,6 +25,11 @@ const orderSchema = new Schema({
     ref: "Address",
     required: true
   },
+  progress: {
+    type: Schema.Types.ObjectId,
+    ref: "Progress",
+    required: true
+  },
   userId: {
     type: String,
     required: [true, "Please provide userId"],

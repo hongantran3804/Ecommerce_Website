@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String  @id @default(uuid())
+  name        String
+  email       String  @unique
+  role        Role    @default(BASIC)
+  compName    String
+  phoneNumber String
+  password    String  @unique
+  confirmed   Boolean @default(false)
+}
+
+model Brand {
+  id           String    @id @default(uuid())
+  name         String    @unique
+  numPurchased Int       @default(0)
+  products     Product[] 
+}
+
+model Product {
+  id           String  @id @default(uuid())
+  photo        String  @default("")
+  brand        Brand   @relation(fields: [brandId], references: [id])
+  brandId      String
+  prodDesc     String
+  upc          String  @unique
+  unitPrice    Decimal
+  casePrice    Decimal
+  unitPerCase  Int
+  numInStock   Int
+  numPurchased Int     @default(0)
+}
+
+model ShoppingCart {
+  id        String @id @default(uuid())
+  userId    String
+  product   Json
+  productId String
+}
+
+model Address {
+  id           String  @id @default(uuid())
+  userId       String
+  country      String
+  name         String
+  phone        String
+  streetAdress String
+  city         String
+  state        String
+  zipcode      String
+  default      Boolean
+  order        Order[] 
+}
+
+model Order {
+  id            String   @id @default(uuid())
+  userId        String
+  products      Json[]
+  placedDate    DateTime @default(now())
+  deliveredDate DateTime
+  delivered     Boolean
+  totalOrder    Decimal
+  address       Address  @relation(fields: [adressId], references: [id]) 
+  adressId      String   
+}
+
+enum Role {
+  BASIC
+  ADMIN
+}

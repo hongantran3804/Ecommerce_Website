@@ -47,7 +47,7 @@ export const GET = async (request) => {
           default: true,
           userId: userId,
         });
-        console.log(1)
+        console.log(defaultAddress)
         if (defaultAddress) {
            return new Response(
              JSON.stringify({
@@ -106,7 +106,7 @@ export const PUT = async (request) => {
           { value: zipcode },
         ] = data;
         const userAddress = await Address.findByIdAndUpdate(
-          { _id: addressId },
+          { _id: addressId, userId: userId },
           {
             name,
             phone,

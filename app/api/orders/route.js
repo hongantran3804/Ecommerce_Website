@@ -4,15 +4,25 @@ import dayjs from "dayjs";
 import ShoppingCart from "@models/ShoppingCart";
 import Product from "@models/Product";
 import Address from "@models/Address";
+import Progress from "@models/Progress";
 export const POST = async (request) => {
   const { products, userId, orderPlacedDate, deliveredDate, total, addressId } =
     await request.json();
   console.log(addressId);
   const now = dayjs();
+  console.log(now.diff(dayjs(orderPlacedDate)), dayjs(deliveredDate).diff(now));
+  const progress = Math.round(
+    (now.diff(dayjs(orderPlacedDate)) * 100) / dayjs(deliveredDate).diff(now)
+  );
   if (addressId && userId) {
-    console.log(addressId)
+    console.log(addressId);
     try {
       await connectToDB();
+      const newProgress = new Progress({
+        progressValue: progress,
+        userId: userId,
+      });
+      await newProgress.save();
       const newOrder = new Order({
         userId: userId,
         address: addressId,
@@ -21,6 +31,7 @@ export const POST = async (request) => {
         deliveredDate: new Date(deliveredDate),
         total,
         delivered: false,
+        progress: newProgress._id,
         address: addressId,
       });
       await newOrder.save();
@@ -44,6 +55,7 @@ export const GET = async (request) => {
     try {
       await connectToDB();
       const now = dayjs();
+
       await Order.updateMany(
         { deliveredDate: { $lt: now.toDate() } },
         {
@@ -52,7 +64,23 @@ export const GET = async (request) => {
           },
         }
       );
-      let orders = await Order.find({ userId: userId }).populate("address");
+      let orders = await Order.find({ userId: userId })
+        .populate("address")
+        .populate("progress");
+      orders.forEach(async (order) => {
+        await Progress.updateOne(
+          { _id: order.progress._id },
+          {
+            progressValue: Math.round(
+              (now.diff(dayjs(order.orderPlacedDate)) * 100) /
+                dayjs(order.deliveredDate).diff(now)
+            ),
+          }
+        );
+      });
+      orders = await Order.find({ userId: userId })
+        .populate("address")
+        .populate("progress");
       if (orders.length) {
         orders = orders.map((order) => {
           return order;
@@ -74,6 +102,8 @@ export const PUT = async (request) => {
   console.log(orderId);
   try {
     await connectToDB();
+    const order = await Order.findOne({ _id: orderId });
+    await Progress.findByIdAndDelete({ _id: order.progress._id });
     await Order.findByIdAndDelete(orderId);
     return new Response(JSON.stringify({ message: "successfully" }), {
       status: 200,

@@ -38,6 +38,9 @@ export const POST = async (request) => {
   };
   try {
     await transporter.sendMail(mailOptions);
+    return new Response(null, {
+      status: 200,
+    });
   } catch (error) {
     return new Response(
       JSON.stringify(

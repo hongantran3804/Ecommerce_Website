@@ -80,30 +80,20 @@ export const PATCH = async (request) => {
         if (user) {
           user.password = password;
           await user.save();
-          return new Response(
-            JSON.stringify({ message: "Success" }),
-            { status: 200 }
-          );
-        } else {
-          return new Response(
-            JSON.stringify({ message: "Something went wrong" }),
-            { status: 422 }
-          );
+          return new Response(JSON.stringify({ message: "Success" }), {
+            status: 200,
+          });
         }
       } catch (error) {
-        return new Response(
-          JSON.stringify({ message: "Something went wrong" }),
-          { status: 422 }
-        );
+        console.log(error);
       }
     } catch (error) {
-      return new Response(JSON.stringify({ message: "Something went wrong" }), {
-        status: 422,
-      });
+      console.log(error);
     }
   } catch (error) {
-    return new Response(JSON.stringify({ message: "Something went wrong" }), {
-      status: 422,
-    });
+    console.log(error)
   }
+  return new Response(JSON.stringify({ message: "Something went wrong" }), {
+    status: 422,
+  });
 };

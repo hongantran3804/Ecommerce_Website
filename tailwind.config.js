@@ -13,6 +13,9 @@ module.exports = {
         bodyFont: ["Source-Sans-Pro", "sans-serif"],
         headerFont: ["Julius Sans One", "sans-serif"],
       },
+      transitionProperty: {
+        width: "width",
+      },
       colors: {
         "primary-orange": "#FF5722",
         navBackGroundColor: "hsl(276, 63%, 15%)",

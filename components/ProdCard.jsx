@@ -110,18 +110,28 @@ const ProdCard = ({ products, userId }) => {
                   src={cart}
                   className="w-[1.5rem]"
                   onClick={(e) => {
-                    setTimeout(() => {
+                    if (added[index]) {
                       setAdded(() => {
                         const newAdded = [...added];
                         newAdded[index] = false;
                         return newAdded;
                       });
-                    }, 2000);
-                    setAdded(() => {
-                      const newAdded = [...added];
-                      newAdded[index] = true;
-                      return newAdded;
-                    });
+                      setTimeout(() => {
+                        setAdded(() => {
+                          const newAdded = [...added];
+                          newAdded[index] = true;
+                          return newAdded;
+                        });
+                      },500)
+                    } else {
+                      setAdded(() => {
+                        const newAdded = [...added];
+                        newAdded[index] = true;
+                        return newAdded;
+                      });
+                    }
+                  
+                    
                     AddToCart(e, product, userId, quantity[index]);
                   }}
                 />

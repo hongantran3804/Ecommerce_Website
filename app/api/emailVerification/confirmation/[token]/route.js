@@ -8,6 +8,7 @@ export const GET = async (request, { params }) => {
   const { token } = params;
   let page = "/signup";
   try {
+    await connectToDB()
     const {
       email: { email },
     } = jwt.verify(token, process.env.JWT_SECRET);
@@ -18,12 +19,14 @@ export const GET = async (request, { params }) => {
       } else if (email) {
         user.confirmed = true;
         await user.save();
+        
         page = "/login";
       } else {
-        User.findOneAndDelete({ email: email });
+        await User.findOneAndDelete({ email: email });
       }
     }
   } catch (error) {
+    console.log(error);
     return new Response(JSON.stringify({message: "Something went wrong"}), {status: 422});
   }
   redirect(page);

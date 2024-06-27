@@ -8,7 +8,7 @@ export const GET = async (request, { params }) => {
   try {
     await connectToDB();
     if (userId && orderId) {
-      const order = await Order.findOne({ userId: userId, _id: orderId }).populate('address');
+      const order = await Order.findOne({ userId: userId, _id: orderId }).populate('address').populate('progress');
       console.log(order);
       if (order) {
         return new Response(JSON.stringify({order}),{status:200});

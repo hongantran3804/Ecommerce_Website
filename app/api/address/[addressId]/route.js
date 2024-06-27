@@ -4,7 +4,6 @@ import Address from "@models/Address";
 export const GET = async (request, { params }) => {
   const { addressId } = params;
   const userId = request.nextUrl.searchParams.get("userId");
-  console.log(addressId, userId)
   try {
     connectToDB()
     if (addressId && userId) {
@@ -13,20 +12,22 @@ export const GET = async (request, { params }) => {
         _id: addressId,
       });
       if (specificAddress) {
+        const data = [
+          specificAddress.country,
+          specificAddress.streetAddress,
+          specificAddress.city,
+          specificAddress.state,
+          specificAddress.zipcode,
+        ];
+        console.log(specificAddress);
         return new Response(
-          JSON.stringify([
-            specificAddress.country,
-            specificAddress.streetAddress,
-            specificAddress.city,
-            specificAddress.state,
-            specificAddress.zipcode,
-          ]),
+          JSON.stringify({data: data}),
           { status: 200 }
         );
       }
     }
   } catch (error) {
-    
+    console.log(error)
   }
   
   return new Response(

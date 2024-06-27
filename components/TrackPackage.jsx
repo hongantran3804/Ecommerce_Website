@@ -9,8 +9,6 @@ import {
   InfoWindow,
 } from "@react-google-maps/api"; // indicate whether the map is loaded or not
 import { useSession } from "next-auth/react";
-import defaultImg from "@public/assets/images/defaultProductPhoto.png";
-import Image from "next/image";
 import dayjs from "dayjs";
 import OrderCard from "./OrderCard";
 const TrackPackage = () => {
@@ -18,6 +16,7 @@ const TrackPackage = () => {
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries: ["places"],
   });
+  const now = dayjs();
   const { data: session } = useSession();
   const [longitude, setLongitude] = useState("");
   const [latitude, setLatitude] = useState("");
@@ -39,6 +38,7 @@ const TrackPackage = () => {
         if (response.ok) {
           const { order } = await response.json();
           setOrder(order);
+          alert(order?.progress?.progressValue);
         }
       } catch (err) {
         alert(err);
@@ -97,7 +97,11 @@ const TrackPackage = () => {
         Tracking Your Order
       </h1>
       <div className="w-full relative">
-        <div className={`absolute left-0 top-0 z-10 bg-white mt-[2rem] ml-[2rem] w-[30%] p-2 overflow-y-scroll flex flex-col items-start ${order?.products?.length >= 2 ? "h-[50vh]" : "h-fit"} gap-3`}>
+        <div
+          className={`absolute left-0 top-0 z-10 bg-white mt-[2rem] ml-[2rem] w-[38%] p-5 overflow-y-scroll flex flex-col items-start ${
+            order?.products?.length >= 2 ? "h-[50vh]" : "h-fit"
+          } gap-3`}
+        >
           <div className="flex flex-col items-start">
             {order.delivered ? (
               <span className="text-black font-bold">
@@ -109,28 +113,45 @@ const TrackPackage = () => {
               </span>
             )}{" "}
           </div>
-          {/* <div className="flex flex-col items-start gap-3">
-            {order?.products?.map((product, index) => (
-              <div
-                className={`flex flex-col items-start text-wrap `}
-              >
-                <div
-                  key={product._id}
-                  className="flex flex-row items-start gap-2 "
-                >
-                  <div className="w-[5rem]">
-                    <Image src={product.photo ? product.photo : defaultImg} />
-                  </div>
-                  <div className="font-bold text-wrap w-[66%]">
-                    <div>{product.brand.name}</div>
-                    <div>{product.prodDesc}</div>
-                    <div>Quantity: {product.quantity}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div> */}
-          <OrderCard orders={[order]} order={order} orderIndex={0} session={session}/>
+          <div className="border-[1px] border-black w-full h-[0.5rem] group">
+            <div
+              className={`bg-green-500 w-[${order?.progress?.progressValue}%] h-full text-white`}
+            >
+              g
+            </div>
+          </div>
+
+          <div className="flex flex-row justify-between w-full font-bold">
+            <span
+              className={`${
+                order?.progress?.progressValue <= 25 && "text-green-500"
+              } `}
+            >
+              Preparing
+            </span>
+            <span
+              className={`${
+                order?.progress?.progressValue < 100 &&
+                order.progress.progressValue > 25 &&
+                "text-green-500"
+              } `}
+            >
+              Shipping
+            </span>
+            <span
+              className={`${
+                order?.progress?.progressValue === 100 && "text-green-500"
+              } `}
+            >
+              Delivered
+            </span>
+          </div>
+          <OrderCard
+            orders={[order]}
+            order={order}
+            orderIndex={0}
+            session={session}
+          />
         </div>
         <GoogleMap
           center={center}

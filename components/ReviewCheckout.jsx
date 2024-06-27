@@ -3,7 +3,7 @@
 /* eslint-disable react/no-deprecated */
 "use client";
 import dayjs from "dayjs";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import Main from "./Main";
 import CartShow from "./CartShow";
@@ -23,7 +23,12 @@ if (process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY === undefined) {
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
-const ReviewCheckoutBoard = ({ products, subQuantity, userId, addressId, setAddressId }) => {
+const ReviewCheckoutBoard = ({
+  products,
+  subQuantity,
+  userId,
+  originalAddressId,
+}) => {
   const now = dayjs();
   const [shippingAddress, setShippingAddress] = useState([]);
   const [placeOrder, setPlaceOrder] = useState(false);
@@ -45,37 +50,38 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId, addressId, setAddr
       chosen: false,
     },
   ]);
+  const [addressId, setAddressId] = useState();
   useEffect(() => {
     setQuantity(subQuantity);
-    
-    if (shippingAddress && shippingAddress?.length === 0) {
-      const getDefaultAddress = async () => {
+    const getDefaultAddress = async () => {
+      const response = await fetch(
+        `http://localhost:3000/api/address?getDefaultAddress=true&userId=${userId}`
+      );
+      if (response.ok) {
+        const { addressId, data } = await response.json();
+        setShippingAddress(data);
+        setAddressId(addressId);
+      }
+    };
+    getDefaultAddress();
+  }, [products, userId, shippingOption]);
+  useEffect(() => {
+    const getSpecifiedAddress = async () => {
+      try {
         const response = await fetch(
-          `http://localhost:3000/api/address?getDefaultAddress=true&userId=${userId}`
+          `http://localhost:3000/api/address/${originalAddressId}?userId=${userId}`
         );
         if (response.ok) {
-          const { addressId, data } = await response.json();
-          setShippingAddress(data);
-          setAddressId(addressId);
+          const {data} = await response.json();
+          setShippingAddress(() => {
+            if (Array.isArray(data)) return [...data];
+          });
+          setAddressId(originalAddressId);
         }
-      };
-      getDefaultAddress();
-      const getSpecifiedAddress = async () => {
-        try {
-          const response = await fetch(
-            `http://localhost:3000/api/address/${addressId}?userId=${userId}`
-          );
-          if (response.ok) {
-            const data = await response.json();
-            setShippingAddress(data);
-            setAddressId(addressId)
-          }
-        } catch (err) {}
-      };
-      getSpecifiedAddress();
-    } 
+      } catch (err) {}
+    };
+    getSpecifiedAddress();
   }, [products, userId, shippingOption]);
-  
   useEffect(() => {
     let calNum = 0;
     let calPrice = 0;
@@ -89,7 +95,7 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId, addressId, setAddr
     setTotalOrder(
       Math.round((totalPrice + shippingPrice) / 10) + shippingPrice + totalPrice
     );
-  }, [quantity, shippingPrice, products]);
+  }, [quantity, shippingPrice, products, addressId]);
   const handleOrder = async (e, amount) => {
     e.preventDefault();
     try {
@@ -107,24 +113,27 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId, addressId, setAddr
           shippingPrice +
           totalPrice) /
         100;
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/orders`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-        body: JSON.stringify({
-          products: filtProducts,
-          userId: userId,
-          total: totalOrder,
-          orderPlacedDate: now,
-          deliveredDate: shippingOption.find((option) => option.chosen).date,
-          addressId: addressId,
-        }),
-      });
+          body: JSON.stringify({
+            products: filtProducts,
+            userId: userId,
+            total: totalOrder,
+            orderPlacedDate: now,
+            deliveredDate: shippingOption.find((option) => option.chosen).date,
+            addressId: addressId,
+          }),
+        }
+      );
 
       if (response.ok) {
-        window.location.href = `http://localhost:3000/payment/success?amount=${amount}`;
+        window.location.href = `${process.env.NEXT_PUBLIC_URL}/payment/success?amount=${amount}`;
       }
     } catch (err) {}
   };
@@ -289,13 +298,12 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId, addressId, setAddr
               ) : (
                 <div
                   className="text-center border-[1px] mx-10 bg-mediumPurple text-white hover:bg-Purple cursor-pointer active:bg-LightPurple rounded-[5px] mt-5"
-                    onClick={(e) => {
-                      if (shippingAddress.length > 0) {
+                  onClick={(e) => {
+                    if (shippingAddress.length > 0) {
                       setPlaceOrder(true);
-                      } else {
-                        alert("No address found")
+                    } else {
+                      alert("No address found");
                     }
-                    
                   }}
                 >
                   Place Your Order
@@ -310,9 +318,10 @@ const ReviewCheckoutBoard = ({ products, subQuantity, userId, addressId, setAddr
 };
 const ReviewCheckout = () => {
   const { data: session } = useSession();
-  const [addressId, setAddressId] = useState("")
+  const [addressId, setAddressId] = useState("");
   const [products, setProducts] = useState([]);
   const [quantity, setQuantity] = useState([]);
+
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search);
 
@@ -330,21 +339,14 @@ const ReviewCheckout = () => {
     getData();
   }, [session?.user]);
 
-  useEffect(() => {
-    const mainview = document.getElementById("mainview");
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react/no-deprecated
-    ReactDOM.render(
-      <ReviewCheckoutBoard
-        subQuantity={quantity}
-        products={products}
-        userId={session?.user?.id}
-        addressId={addressId}
-        setAddressId={setAddressId}
-      />,
-      mainview
-    );
-  }, [quantity, products, session?.user?.id]);
-  return <Main />;
+  return (
+    <ReviewCheckoutBoard
+      subQuantity={quantity}
+      products={products}
+      userId={session?.user?.id}
+      originalAddressId={addressId}
+    />
+  );
 };
 
 export default ReviewCheckout;
