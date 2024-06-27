@@ -1,7 +1,12 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import { connectToDB } from "@utils/database";
 import { PrismaClient } from "@prisma/client";
+import User from "@models/User";
+import { NextResponse } from "next/server";
+import bcrypt from "bcrypt";
+require('dotenv').config()
 const prisma = new PrismaClient();
 const handler = NextAuth({
   // Configure one or more authentication providers
@@ -22,30 +27,23 @@ const handler = NextAuth({
       async authorize(credentials) {
         // Add logic here to look up the user from the credentials supplied
         const { email, password } = credentials;
-        const response = await fetch(
-          "http://localhost:3000/api/loginVerification",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email,
-              password,
-            }),
-          }
-        );
-        const user = await response.json();
-        if (response.ok && user) {
+        const user = await User.findOne({ email: email });
+        if (!user) return null;
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (isMatch && user) {
           return user;
         }
         return null;
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_SECRET,
+    }),
   ],
   session: {
     strategy: "jwt",
-    maxAge:  24 * 60 * 60,
+    maxAge: 24 * 60 * 60,
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -58,15 +56,47 @@ const handler = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      return {
-        ...session,
-        user: {
-          name: token.name,
-          id: token.id,
-          ...session.user,
-        },
-      };
+      const sessionUser = await User.findOne({ email: session.user.email });
+      if (token) {
+        return {
+          ...session,
+          user: {
+            name: token.name,
+            id: token.id ? token.id.toString() : sessionUser._id.toString(),
+            ...session.user,
+          },
+        };
+      }
     },
+    async signIn({ account, profile, user, credentials }) {
+      
+      if (account.provider === "google") {
+        try {
+          await connectToDB();
+          const userExist = await User.findOne({ email: profile.email });
+          if (!userExist) {
+            const newUser = await User.create({
+              email: profile.email,
+              name: profile.name,
+              image: profile.image,
+              confirmed: true,
+            });
+            const res = await newUser.save();
+            if (res.ok) {
+              return newUser;
+            }
+          }
+          return userExist;
+        } catch (err) {
+          console.log(err);
+        }
+      }
+      return user;
+    },
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    signIn: "/login",
   },
 });
 

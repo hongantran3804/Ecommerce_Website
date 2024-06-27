@@ -1,33 +1,30 @@
 "use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
-import Main from "./Main";
-import { signIn } from "next-auth/react";
+import { signIn,getProviders } from "next-auth/react";
+import Image from "next/image";
+import googleIcon from "@public/assets/icons/googleIcon.png";
 const LoginForm = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const result = await signIn("credentials", {
-      email, 
-      password,
-      redirect: true,
-      callbackUrl: "/"
-    })
+        email,
+        password,
+        redirect: true,
+        callbackUrl: `${process.env.NEXT_PUBLIC_URL}`,
+      });
     } catch (error) {
-      alert("Something went wrong with the server")
+      alert("Something went wrong with the server");
     }
-    
   };
   return (
     <section>
       <div>
-        <div className="flex flex-row w-[85%] h-auto  items-center pt-[1rem] gap-[0.5rem]">
-          <fieldset
-            className="flex flex-row border-[1px] border-black  relative px-[1rem] pt-[1.5rem] rounded-[5px] h-[10rem] w-[60%]"
-          >
+        <div className="flex flex-row w-[85%] h-auto  items-center pt-[1rem] gap-[0.5rem] rounded-[5px]">
+          <fieldset className="flex flex-row border-[1px] border-black  relative px-[1rem] pt-[1.5rem] rounded-[5px] h-[10rem] w-[60%]">
             <legend className='absolute top-[-15px] bg-white left-[10px] text-[1.2rem] font-["Arial"]'>
               Login Please
             </legend>
@@ -70,16 +67,11 @@ const LoginForm = () => {
                   }}
                 />
               </div>
-
-              <div className="flex flex-row items-center gap-[0.4rem] ml-[5rem]">
-                <input type="checkbox" />
-                <div className="italic">Stay Connected</div>
-              </div>
               <input
                 type="submit"
                 id="loginBtn"
                 value="Connect"
-                className="ml-[5rem] border-[1px] border-black w-fit bg-gray-300 px-[0.2rem] cursor-pointer"
+                className="ml-[5rem] border-[1px] border-black w-fit bg-gray-100 active:bg-gray-300  px-[0.2rem] cursor-pointer mt-3"
                 onClick={handleLogin}
               />
               <div className="ml-[5rem]">
@@ -97,12 +89,26 @@ const LoginForm = () => {
               If you don&apos;t have an account for lacacoshop please click
               &quot;Create&quot; to request one
             </div>
-            <Link
-              href="/signup"
-              className=" border-[1px] border-black w-fit bg-gray-300 px-[0.2rem]"
-            >
-              Create
-            </Link>
+            <div className="flex flex-row items-center gap-2">
+              <Link
+                href="/signup"
+                className=" border-[1px] border-black w-fit bg-gray-100 active:bg-gray-300  px-[0.2rem] p-1 rounded-[5px]"
+              >
+                Create
+              </Link>
+              <span>or</span>
+              <div
+                className="border-[1px] border-black flex flex-row items-center p-1 gap-1  bg-gray-100 active:bg-gray-300 cursor-pointer rounded-[5px]"
+                onClick={() => {
+                  signIn("google", {
+                    callbackUrl: `${process.env.NEXT_PUBLIC_URL}/`,
+                  });
+                }}
+              >
+                <Image src={googleIcon} className="w-[1.5rem]" />
+                <span>Sign In</span>
+              </div>
+            </div>
           </fieldset>
         </div>
       </div>
@@ -110,16 +116,8 @@ const LoginForm = () => {
   );
 };
 const Login = () => {
-   useEffect(() => {
-     const mainview = document.getElementById("mainview");
-     // eslint-disable-next-line react-hooks/exhaustive-deps, react/no-deprecated
-     ReactDOM.render(
-         <LoginForm />,
-       mainview
-     );
-   }, []);
 
-   return <Main />;
+  return <LoginForm/>;
 };
 
 export default Login;

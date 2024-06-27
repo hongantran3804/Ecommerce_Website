@@ -24,22 +24,20 @@ const Cart = () => {
     };
     getProducts();
   }, [session?.user?.id]);
-  useEffect(() => {
-    const mainview = document.getElementById("mainview");
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react/no-deprecated
-    ReactDOM.render(<CartSummary products={products} oldQuantity={quantity} userId={session?.user?.id}/>, mainview);
-    const mainViewHeading = document.getElementById("mainViewHeading");
-    ReactDOM.render(
-      <div>
-        <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
-          Shopping Cart
-        </h1>
-      </div>,
-      mainViewHeading
-    );
-  }, [products, quantity, session?.user?.id]);
 
-  return <Main />;
+
+  return (
+    <div>
+      <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
+        Shopping Cart
+      </h1>
+      <CartSummary
+        products={products}
+        oldQuantity={quantity}
+        userId={session?.user?.id}
+      />
+    </div>
+  );
 };
 
 export default Cart;

@@ -65,7 +65,6 @@ const Orders = () => {
     };
     getOrders();
   }, [session?.user?.id]);
-
   return <OrdersSummary originalOrders={orders} session={session} />;
 };
 

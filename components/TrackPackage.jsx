@@ -38,7 +38,6 @@ const TrackPackage = () => {
         if (response.ok) {
           const { order } = await response.json();
           setOrder(order);
-          alert(order?.progress?.progressValue);
         }
       } catch (err) {
         alert(err);
@@ -115,7 +114,7 @@ const TrackPackage = () => {
           </div>
           <div className="border-[1px] border-black w-full h-[0.5rem] group">
             <div
-              className={`bg-green-500 w-[${order?.progress?.progressValue}%] h-full text-white`}
+              className={`bg-green-500 w-[${order?.progress?.progressValue ? order?.progress?.progressValue : 0}%] h-full text-white`}
             >
               g
             </div>

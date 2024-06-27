@@ -158,7 +158,8 @@ const SendRequest = () => {
   );
 };
 
-const ChangePasswordForm = () => {
+const ChangePassword = () => {
+
   const params = new URLSearchParams(document.location.search);
   const token = params.get("token");
   return (
@@ -173,19 +174,6 @@ const ChangePasswordForm = () => {
       </div>
     </section>
   );
-};
-const ChangePassword = () => {
-  useEffect(() => {
-    const mainview = document.getElementById("mainview");
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react/no-deprecated
-    ReactDOM.render(
-        <ChangePasswordForm />
-,
-      mainview
-    );
-  }, []);
-
-  return <Main />;
 };
 
 export default ChangePassword;

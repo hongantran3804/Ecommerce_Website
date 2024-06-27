@@ -34,13 +34,28 @@ const Nav = () => {
                 </div>
                 <GoogleTranslate />
                 {session?.user && (
-                  <div className="flex flex-row justify-between w-full">
-                    <div>{session?.user.name}</div>
-                    <div
-                      className="border-[1px] bg-[#fafafa] px-[0.5rem] cursor-pointer hover:bg-gray-200"
-                      onClick={signOut}
-                    >
-                      Sign Out
+                  <div className="flex flex-col justify-between w-full relative self-end group">
+                    {session?.user?.image ? (
+                      <Image
+                        src={session?.user?.image}
+                        width={37}
+                        height={37}
+                        className="rounded-full self-end"
+                      />
+                    ) : (
+                      <div className="relative after:showAddress self-end underline cursor-pointer">
+                        {session?.user.name}
+                      </div>
+                    )}
+                    <div className="absolute top-full bg-white group-hover:flex hidden flex-col items-start p-5 self-end gap-1 z-10">
+                      <div>{session?.user.name}</div>
+                      <div className="underline cursor-pointer">Profile</div>
+                      <div
+                        className="border-[1px] bg-[#fafafa] px-[0.5rem] cursor-pointer hover:bg-gray-200"
+                        onClick={signOut}
+                      >
+                        Sign Out
+                      </div>
                     </div>
                   </div>
                 )}
@@ -97,7 +112,6 @@ const Nav = () => {
                   </ul>
                 </div>
               </div>
-              
             </div>
           </div>
         </div>

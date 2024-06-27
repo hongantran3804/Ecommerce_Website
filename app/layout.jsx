@@ -14,7 +14,7 @@ const RootLayout = ({ children }) => {
     <html lang="en">
       <Provider>
         <body className="flex flex-col items-center pt-[1vh] ">
-          <div className="w-[65%] gap-[0.4rem] flex flex-col">
+          <div className="gap-[0.4rem] flex flex-col w-full">
             <Nav />
             <div className="flex flex-row items-start gap-5">
               <div className="w-[max(9.8vw,10rem)] shadow-navBoxShadow ">

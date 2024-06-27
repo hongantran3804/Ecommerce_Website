@@ -36,6 +36,7 @@ const CartSummary = ({ products, oldQuantity, userId }) => {
     setTotalPrice(calTotal);
     setNumOfProd(calNum);
   }, [quantity, products]);
+  if(products?.length === 0) return <div className="font-bold">No product found</div>
   return (
     <section>
       <div>

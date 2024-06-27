@@ -12,7 +12,7 @@ import { useSession } from "next-auth/react";
 const UpdateDataBaseForm = () => {
   const updateDataBase = async (e) => {
     e.preventDefault();
-    const [brand, prodDesc, upc, unitPrice, unitPerCase, numInStock] = inputs
+    const [brand, prodDesc, upc, unitPrice, unitPerCase, numInStock] = inputs;
     try {
       const response = await fetch("http://localhost:3000/api/admin/update", {
         method: "POST",
@@ -26,7 +26,7 @@ const UpdateDataBaseForm = () => {
           unitPrice: unitPrice.value,
           unitPerCase: unitPerCase.value,
           numInStock: numInStock.value,
-        })
+        }),
       });
       if (response.ok) {
         setSuccess(true);
@@ -40,9 +40,9 @@ const UpdateDataBaseForm = () => {
         }, 1000);
       }
     } catch (error) {
-      alert("Something went wrong")
+      alert("Something went wrong");
     }
-  }
+  };
   const [success, setSuccess] = useState(false);
   const [inputs, setInputs] = useState(
     Array.from({ length: dbInfo.length }, () => ({ value: "" }))
@@ -51,7 +51,6 @@ const UpdateDataBaseForm = () => {
   useEffect(() => {
     const found = inputs.find(({ value }) => value === "");
     if (!found) setCanUpdate(true);
-    
   }, [inputs]);
 
   return (
@@ -107,29 +106,16 @@ const UpdateDataBaseForm = () => {
   );
 };
 const UpdateDataBase = ({ heading }) => {
-  useEffect(() => {
-    const mainview = document.getElementById("mainview");
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react/no-deprecated
-    ReactDOM.render(
-        <div>
-          <div className="flex flex-col gap-[2rem]">
-            <UpdateDataBaseForm />
-          </div>
-        </div>
-      ,
-      mainview
-    );
-    const mainViewHeading = document.getElementById("mainViewHeading");
-    ReactDOM.render(
-        <div>
-          <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
-            {heading}
-          </h1>
-        </div>,
-      mainViewHeading
-    );
-  }, []);
-  return <Main />;
+  return (
+    <div>
+      <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
+        {heading}
+      </h1>
+      <div className="flex flex-col gap-[2rem]">
+        <UpdateDataBaseForm />
+      </div>
+    </div>
+  );
 };
 
 export default UpdateDataBase;

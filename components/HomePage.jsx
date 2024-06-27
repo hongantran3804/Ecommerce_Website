@@ -21,33 +21,22 @@ const HomePage = () => {
      };
      getBrands();
    }, []);
-  useEffect(() => {
-    const mainview = document.getElementById("mainview");
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react/no-deprecated
-    ReactDOM.render(
-      <React.StrictMode>
-        <ProductsDisplay
-          products={products}
-          narrowBy={narrowBy}
-          setProducts={setProducts}
-          userId ={session?.user?.id}
-        />
-      </React.StrictMode>,
-      mainview
-    );
-    const mainViewHeading = document.getElementById("mainViewHeading");
-    ReactDOM.render(
-      <div>
+
+
+return (
+    <div>
         <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
           All Products
-        </h1>
-      </div>,
-      mainViewHeading
-    );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [products, narrowBy]);
-
-  return <Main />;
+    </h1>
+    <ProductsDisplay
+      products={products}
+      narrowBy={narrowBy}
+      setProducts={setProducts}
+      userId={session?.user?.id}
+    />
+      </div>
+    
+  );
 }
 
 export default HomePage

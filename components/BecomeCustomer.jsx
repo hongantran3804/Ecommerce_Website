@@ -1,7 +1,5 @@
 "use client";
 import React, { useEffect, useState,useRef } from "react";
-import ReactDOM from "react-dom";
-import Main from "./Main";
 import { becomeCustomerInfo } from "@utils/utils";
 import ReCAPTCHA from "react-google-recaptcha";
 const SignUpForm = () => {
@@ -21,20 +19,18 @@ const SignUpForm = () => {
     const isNotValid =
       name === "" ||
       email === "" ||
-      compName === "" ||
-      phoneNumber === "" ||
       passwordAgain === "" ||
       password === "" ||
       captchaValue === "" ||
       password.length < 4 ||
       password.length > 15 ||
       passwordAgain !== password ||
-      !email.includes("@") ||
-      !phonePattern.test(phoneNumber) ||
-      digitsOnly.length < 10;
+      !email.includes("@") 
     if (isNotValid) {
       setFail(true);
     } else setFail(false);
+    if(phoneNumber !== "" && (!phonePattern.test(phoneNumber) ||
+      digitsOnly.length < 10)) setFail(true)
   }, [
     name,
     email,
@@ -176,20 +172,8 @@ const SignUpForm = () => {
 };
 
 const BecomeCustomer = () => {
-  
 
-  useEffect(() => {
-    const mainview = document.getElementById("mainview");
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react/no-deprecated
-    ReactDOM.render(
-      <React.StrictMode>
-        <SignUpForm />
-      </React.StrictMode>,
-      mainview
-    );
-  }, []);
-
-  return <Main />;
+  return <SignUpForm />;
 };
 
 export default BecomeCustomer;

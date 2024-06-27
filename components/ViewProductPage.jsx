@@ -33,32 +33,20 @@ const ViewProductPage = () => {
 
     getProducts();
   }, [brandId]);
-  useEffect(() => {
-    const mainview = document.getElementById("mainview");
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react/no-deprecated
-    ReactDOM.render(
-      <React.StrictMode>
-        <ProductsDisplay
-          products={products}
-          narrowBy={narrowBy}
-          setProducts={setProducts}
-          userId = {session?.user?.id}
-        />
-      </React.StrictMode>,
-      mainview
-    );
-    const mainViewHeading = document.getElementById("mainViewHeading");
-    ReactDOM.render(
-      <div>
-        <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
-          {heading}
-        </h1>
-      </div>,
-      mainViewHeading
-    );
-  }, [brandId, products, narrowBy]);
 
-  return <Main />;
+  return (
+    <div>
+      <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
+        {heading}
+      </h1>
+      <ProductsDisplay
+        products={products}
+        narrowBy={narrowBy}
+        setProducts={setProducts}
+        userId={session?.user?.id}
+      />
+    </div>
+  );
 };
 
 export default ViewProductPage;

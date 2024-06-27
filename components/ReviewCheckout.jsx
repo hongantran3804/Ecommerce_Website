@@ -338,7 +338,7 @@ const ReviewCheckout = () => {
     };
     getData();
   }, [session?.user]);
-
+  if(products?.length === 0) return <div className="font-bold">No order found</div>
   return (
     <ReviewCheckoutBoard
       subQuantity={quantity}
