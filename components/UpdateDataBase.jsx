@@ -1,46 +1,42 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-deprecated */
 "use client";
-import Main from "./Main";
 import React, { useEffect, useState } from "react";
-import { useParams, useSearchParams, useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
-import ReactDOM from "react-dom";
-import Image from "next/image";
 import { dbInfo } from "@utils/utils";
-import { useSession } from "next-auth/react";
 const UpdateDataBaseForm = () => {
   const updateDataBase = async (e) => {
     e.preventDefault();
-    const [brand, prodDesc, upc, unitPrice, unitPerCase, numInStock] = inputs;
+    const [photoName,brand, prodDesc, upc, unitPrice, unitPerCase, numInStock] = inputs;
     try {
-      const response = await fetch("http://localhost:3000/api/admin/update", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          brand: brand.value,
-          prodDesc: prodDesc.value,
-          upc: upc.value,
-          unitPrice: unitPrice.value,
-          unitPerCase: unitPerCase.value,
-          numInStock: numInStock.value,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/admin/update`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            photo: photoName.value,
+            brand: brand.value,
+            prodDesc: prodDesc.value,
+            upc: upc.value,
+            unitPrice: unitPrice.value,
+            unitPerCase: unitPerCase.value,
+            numInStock: numInStock.value,
+          }),
+        }
+      );
       if (response.ok) {
         setSuccess(true);
         setTimeout(() => {
-          // setInputs(() =>
-          //   Array.from({ length: dbInfo.length }, () => ({ value: "" }))
-          // );
-          // setCanUpdate(false);
-          // setSuccess(false);
-          location.reload();
+        setInputs(() =>
+          Array.from({ length: dbInfo.length }, () => ({ value: "" }))
+        );
+          setCanUpdate(false);
+          setSuccess(false);
         }, 1000);
       }
     } catch (error) {
-      alert("Something went wrong");
     }
   };
   const [success, setSuccess] = useState(false);
@@ -54,7 +50,7 @@ const UpdateDataBaseForm = () => {
   }, [inputs]);
 
   return (
-    <div>
+    <div className="">
       <form className="flex flex-col gap-[5px]" onSubmit={updateDataBase}>
         {dbInfo.map((eachInput, index) => (
           <div
@@ -107,7 +103,7 @@ const UpdateDataBaseForm = () => {
 };
 const UpdateDataBase = ({ heading }) => {
   return (
-    <div>
+    <div className="w-full flex flex-col items-center">
       <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
         {heading}
       </h1>

@@ -1,11 +1,9 @@
 "use client";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   useJsApiLoader,
   GoogleMap,
   Marker,
-  Autocomplete,
-  DirectionsRenderer,
   InfoWindow,
 } from "@react-google-maps/api"; // indicate whether the map is loaded or not
 import { useSession } from "next-auth/react";
@@ -16,31 +14,43 @@ const TrackPackage = () => {
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries: ["places"],
   });
-  const now = dayjs();
   const { data: session } = useSession();
   const [longitude, setLongitude] = useState("");
   const [latitude, setLatitude] = useState("");
   const [address, setAddress] = useState();
   const [order, setOrder] = useState("");
   const [openWindow, setOpenWindow] = useState(true);
+  const [progress, setProgress] = useState(0);
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search);
     const addressObj = JSON.parse(
       decodeURIComponent(searchParams.get("address"))
     );
-    const orderId = searchParams.get("id");
     setAddress(addressObj);
+    const orderId = searchParams.get("id");
+    if (!address) {
+      const getDefaultAddress = async () => {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/address/getDefault?userId=${session?.user.id}`)
+        if (response.ok) {
+          const { defaultAddress } = await response.json();
+          setAddress(defaultAddress);
+  
+        }
+      }
+      getDefaultAddress();
+    }
+    
     const getOrder = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/orders/${orderId}?userId=${session?.user?.id}`
+          `${process.env.NEXT_PUBLIC_URL}/api/orders/${orderId}?userId=${session?.user?.id}`
         );
         if (response.ok) {
           const { order } = await response.json();
           setOrder(order);
+          setProgress(order?.progress?.progressValue)
         }
       } catch (err) {
-        alert(err);
       }
     };
     getOrder();
@@ -78,17 +88,8 @@ const TrackPackage = () => {
   const [map, setMap] = useState(/**@type google.maps.Map */ (null));
   if (!isLoaded) {
     return (
-      <div className="flex items-center justify-center">
-        <div
-          className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-black"
-          role="status"
-        >
-          <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-            Loading...
-          </span>
-        </div>
-      </div>
-    );
+    <div></div>
+      )
   }
   return (
     <div>
@@ -97,8 +98,10 @@ const TrackPackage = () => {
       </h1>
       <div className="w-full relative">
         <div
-          className={`absolute left-0 top-0 z-10 bg-white mt-[2rem] ml-[2rem] w-[38%] p-5 overflow-y-scroll flex flex-col items-start ${
-            order?.products?.length >= 2 ? "h-[50vh]" : "h-fit"
+          className={`absolute left-0 top-0 z-10 bg-white mt-[2rem] ml-[2rem] w-[38%] p-5  flex flex-col items-start ${
+            order?.products?.length >= 4
+              ? "h-[75vh] overflow-y-scroll"
+              : "h-fit"
           } gap-3`}
         >
           <div className="flex flex-col items-start">
@@ -114,8 +117,7 @@ const TrackPackage = () => {
           </div>
           <div className="border-[1px] border-black w-full h-[0.5rem] group">
             <div
-              className={`bg-green-500 w-[${order?.progress?.progressValue ? order?.progress?.progressValue : 0}%] h-full text-white`}
-            >
+              className={`bg-green-500 w-[${progress}%] h-full text-white`}>
               g
             </div>
           </div>
@@ -155,7 +157,7 @@ const TrackPackage = () => {
         <GoogleMap
           center={center}
           zoom={15}
-          mapContainerStyle={{ width: "100%", height: "55vh" }}
+          mapContainerStyle={{ width: "100%", height: "80vh" }}
           mapContainerClassName="relative"
           options={{
             zoomControl: false,
@@ -168,7 +170,6 @@ const TrackPackage = () => {
           {/* Display markes, or directions */}
           <Marker
             position={center}
-            className="relative"
             onClick={() => {
               setOpenWindow(true);
             }}
@@ -182,11 +183,11 @@ const TrackPackage = () => {
               >
                 <div className="text-center w-fit">
                   <div>{session?.user?.name}</div>
-                  <div>{order?.address?.streetAddress}</div>
+                  <div>{address?.streetAddress}</div>
                   <div className="uppercase">
-                    <span>{order?.address?.city}, </span>
-                    <span>{order?.address?.state} </span>
-                    <span>{order?.address?.zipcode}</span>
+                    <span>{address?.city}, </span>
+                    <span>{address?.state} </span>
+                    <span>{address?.zipcode}</span>
                   </div>
                 </div>
               </InfoWindow>

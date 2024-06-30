@@ -19,7 +19,6 @@ export const GET = async (request, { params }) => {
           specificAddress.state,
           specificAddress.zipcode,
         ];
-        console.log(specificAddress);
         return new Response(
           JSON.stringify({data: data}),
           { status: 200 }

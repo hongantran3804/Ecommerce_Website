@@ -100,12 +100,10 @@ export const PUT = async (request) => {
 
 export const DELETE = async (request) => {
   const { product, userId } = await request.json();
-  console.log(userId)
   try {
     await connectToDB();
     let productDocuments = await ShoppingCart.find({ userId: userId });
     const targetIdx = productDocuments.findIndex((prod) => prod.product._id === product._id);
-    console.log(targetIdx)
     await ShoppingCart.findByIdAndDelete(productDocuments[targetIdx]._id)
     return new Response(JSON.stringify({ message: "Success" }), {
       status: 200,

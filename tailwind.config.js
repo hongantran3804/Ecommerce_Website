@@ -52,7 +52,7 @@ module.exports = {
     },
     gridTemplateColumns: {
       OptionCol: "repeat(2,600px)",
-      prodCol: "repeat(4,1fr)",
+      prodCol: "repeat(5,1fr)",
     },
     dropShadow: {
       becomeCustomerHeading: "3px 3px 5px silver",

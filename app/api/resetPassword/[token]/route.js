@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import { env } from "@utils/utils";
 export const POST = async (request, { params }) => {
   const { token } = params;
-  console.log(token);
   try {
     const {
       email

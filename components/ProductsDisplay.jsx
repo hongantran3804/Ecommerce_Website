@@ -2,12 +2,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import ProdCard from "./ProdCard";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { narrowCategories } from "@utils/utils";
-import { testProducts } from "@utils/utils";
-const ProductsDisplay = ({ products, narrowBy, setProducts, userId }) => {
-  if (!products || !narrowBy[0]) return <div className="font-bold">No product found</div>;
-  const [originalProducts, setOriginalProducts] = useState([])
+const ProductsDisplay = ({
+  products,
+  narrowBy,
+  setProducts,
+  userId,
+  session,
+}) => {
+  if (!products || !narrowBy[0])
+    return <div className="font-bold">No product found</div>;
+  const [originalProducts, setOriginalProducts] = useState([]);
   const [totalProd, setTotalProd] = useState(0);
   const [numOfProd, setNumOfProd] = useState(0);
   const [sortOption, setSortOption] = useState(0);
@@ -15,7 +21,7 @@ const ProductsDisplay = ({ products, narrowBy, setProducts, userId }) => {
   const [page, setPage] = useState(1);
   const [pos, setPos] = useState(0);
   useEffect(() => {
-    setOriginalProducts(() => [...products])
+    setOriginalProducts(() => [...products]);
     setTotalProd(products.length);
     setNumOfProd(products.length);
     setRangeValue(Array.from({ length: narrowBy[0].length }, () => null));
@@ -25,23 +31,25 @@ const ProductsDisplay = ({ products, narrowBy, setProducts, userId }) => {
     setProducts((currentProducts) => [
       ...currentProducts.slice(pos, numOfProd + pos),
     ]);
-   
+
     let filtValueProds = [];
     rangeValue.forEach((range) => {
       if (range) {
-        filtValueProds.push(...[...originalProducts].filter(product => {
-          if (product.casePrice > range[0]) {
-            if (range[1]) {
-              if (product.casePrice > range[1]) {
-                return false;
+        filtValueProds.push(
+          ...[...originalProducts].filter((product) => {
+            if (product.casePrice > range[0]) {
+              if (range[1]) {
+                if (product.casePrice > range[1]) {
+                  return false;
+                }
               }
+              return true;
             }
-            return true
-          } 
-          return false;
-        }))
+            return false;
+          })
+        );
       }
-    })
+    });
     if (filtValueProds.length) {
       setProducts(() => [...filtValueProds]);
     }
@@ -131,7 +139,7 @@ const ProductsDisplay = ({ products, narrowBy, setProducts, userId }) => {
               </div>
             </div>
           </div>
-          <div className="flex flex-row gap-[5px]">
+          <div className="flex flex-row gap-2">
             <div className="from-LightPurple to-Purple  h-fit min-w-[12rem] bg-gradient-to-br text-white flex flex-col p-[10px]">
               <div className="text-white uppercase font-bold">Narrow By</div>
               <div className="w-full flex flex-col gap-1 text-[.8rem] items-center ">
@@ -177,7 +185,7 @@ const ProductsDisplay = ({ products, narrowBy, setProducts, userId }) => {
                 ))}
               </div>
             </div>
-            <ProdCard products={products} userId={userId} />
+            <ProdCard products={products} userId={userId} session={session} />
           </div>
         </div>
       </div>

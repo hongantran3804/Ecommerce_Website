@@ -1,14 +1,15 @@
 import jwt from "jsonwebtoken";
 import { connectToDB } from "@utils/database";
 export const POST = async (request) => {
-  const env = require("@env/env"),
-    userEmail = await request.json(),
-    nodemailer = require("nodemailer"),
-    token = jwt.sign({ email: userEmail }, process.env.JWT_SECRET, {
+  const { email } = await request.json()
+  
+    const nodemailer = require("nodemailer")
+    const token = jwt.sign({ email: email }, process.env.JWT_SECRET, {
       expiresIn: "1h",
-    }),
-    url = `http://localhost:3000/api/emailVerification/confirmation/${token}`,
-    transporter = nodemailer.createTransport({
+    })
+  
+    const url = `http://localhost:3000/api/emailVerification/confirmation/${token}`
+    const transporter = nodemailer.createTransport({
       service: "gmail",
       host: "smtp.gmail.com",
       port: 587,
@@ -32,7 +33,7 @@ export const POST = async (request) => {
       name: "Lacaco Account",
       address: process.env.GMAIL_ADDRESS,
     },
-    to: "hongantran3804@gmail.com",
+    to: email,
     subject: "Your Lacaco Account Email Confirmation Link",
     html: verificationMessage,
   };
@@ -42,14 +43,7 @@ export const POST = async (request) => {
       status: 200,
     });
   } catch (error) {
-    return new Response(
-      JSON.stringify(
-        {
-          message: "Cannot send email verification",
-        },
-        
-      ),{ status: 422 }
-    );
+    console.log(error)
   }
   return new Response(JSON.stringify({ message: "Something went wrong" }), {
     status: 422,

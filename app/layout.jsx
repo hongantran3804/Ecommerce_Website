@@ -13,23 +13,14 @@ const RootLayout = ({ children }) => {
   return (
     <html lang="en">
       <Provider>
-        <body className="flex flex-col items-center pt-[1vh] ">
-          <div className="gap-[0.4rem] flex flex-col w-full">
+        <body className="flex flex-col items-center">
+          <div className="w-full bg-Purple text-white sticky z-50 top-0">
             <Nav />
+          </div>
+
+          <div className="w-[100%] gap-[0.4rem] flex flex-col px-[10rem]">
             <div className="flex flex-row items-start gap-5">
-              <div className="w-[max(9.8vw,10rem)] shadow-navBoxShadow ">
-                <div id="departmentView">
-                  <div
-                    className="bg-gradient-to-br from-LightPurple from-1% via-Purple to-Purple  w-full text-white border-[1px] 
-                border-black pt-[0.1rem] pb-[0.5rem] px-[5px] rounded-t-[5px]"
-                  >
-                    All Brands
-                  </div>
-                  <Departments />
-                </div>
-              </div>
               <div className="flex-1 flex flex-col">
-                <SearchInput />
                 <div className="flex-1">{children}</div>
               </div>
             </div>

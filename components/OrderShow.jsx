@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import Link from "next/link";
 import OrderCard from "./OrderCard";
@@ -60,7 +60,7 @@ const OrderShow = ({ originalOrders, session }) => {
   const CancelOrder = async (e, order) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/orders?orderId=${order._id}`,
+        `${process.env.NEXT_PUBLIC_URL}/api/orders?orderId=${order._id}`,
         {
           method: "PUT",
         }
@@ -69,7 +69,6 @@ const OrderShow = ({ originalOrders, session }) => {
         location.reload();
       }
     } catch (err) {
-      alert(err);
     }
   };
   return (
@@ -96,16 +95,16 @@ const OrderShow = ({ originalOrders, session }) => {
                 <div className="bg-white absolute p-3 w-[15rem] top-full hidden peer-hover:block">
                   <div>{session?.user?.name}</div>
                   <div className="uppercase">
-                    <div>{order.address.streetAddress}</div>
+                    <div>{order?.address?.streetAddress}</div>
                     <div>
-                      <span>{order.address.city}, </span>
+                      <span>{order?.address?.city}, </span>
                       <span>
-                        {order.address.state} {order.address.zipcode}
+                        {order?.address?.state} {order.address?.zipcode}
                       </span>
                     </div>
                   </div>
 
-                  <div>{order.address.country}</div>
+                  <div>{order?.address?.country}</div>
                 </div>
               </div>
             </div>

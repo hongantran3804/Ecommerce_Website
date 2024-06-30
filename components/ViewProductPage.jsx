@@ -2,16 +2,13 @@
 /* eslint-disable react/no-deprecated */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useReducer, useRef, useState } from "react";
-import ReactDOM from "react-dom";
-import Main from "./Main";
+import React, { useEffect,  useState } from "react";
 import ProductsDisplay from "./ProductsDisplay";
-import { testProducts } from "@utils/utils";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 const ViewProductPage = () => {
   const { data: session } = useSession();
-  
+
   const searchParams = useSearchParams();
   const heading = searchParams.get("name");
   const brandId = searchParams.get("brandId");
@@ -19,7 +16,9 @@ const ViewProductPage = () => {
   const [narrowBy, setNarrowBy] = useState([[]]);
   useEffect(() => {
     const getProducts = async () => {
-      const response = await fetch(`http://localhost:3000/api/products/${brandId}`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/products/${brandId}`
+      );
       if (response.ok) {
         const { prods, priceRanges } = await response.json();
         console.log(response.status);
@@ -27,7 +26,6 @@ const ViewProductPage = () => {
           setProducts((curr) => prods);
           setNarrowBy([priceRanges]);
         }
-        
       }
     };
 
@@ -44,6 +42,7 @@ const ViewProductPage = () => {
         narrowBy={narrowBy}
         setProducts={setProducts}
         userId={session?.user?.id}
+        session={session}
       />
     </div>
   );

@@ -1,11 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable jsx-a11y/alt-text */
-import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import { testProducts } from "@utils/utils";
-import defaultImg from "@public/assets/images/defaultProductPhoto.png";
-import { redirect } from "next/navigation";
 import CartShow from "./CartShow";
 import Link from "next/link";
 const CartSummary = ({ products, oldQuantity, userId }) => {
@@ -36,7 +32,8 @@ const CartSummary = ({ products, oldQuantity, userId }) => {
     setTotalPrice(calTotal);
     setNumOfProd(calNum);
   }, [quantity, products]);
-  if(products?.length === 0) return <div className="font-bold">No product found</div>
+  if (products?.length === 0)
+    return <div className="font-bold">No product found</div>;
   return (
     <section>
       <div>

@@ -2,8 +2,6 @@
 /* eslint-disable react/no-deprecated */
 "use client";
 import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
-import Main from "./Main";
 import CartSummary from "./CartSummary";
 import { useSession } from "next-auth/react";
 const Cart = () => {
@@ -13,7 +11,9 @@ const Cart = () => {
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/cart?userId=${session?.user?.id}`);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_URL}/api/cart?userId=${session?.user?.id}`
+        );
         if (response.ok) {
           const { products, quantity } = await response.json();
           setProducts(products);

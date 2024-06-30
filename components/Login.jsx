@@ -1,12 +1,13 @@
 "use client";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { signIn,getProviders } from "next-auth/react";
+import React, { useState } from "react";
+import { signIn} from "next-auth/react";
 import Image from "next/image";
 import googleIcon from "@public/assets/icons/googleIcon.png";
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fail, setFail] = useState(false);
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -17,7 +18,6 @@ const LoginForm = () => {
         callbackUrl: `${process.env.NEXT_PUBLIC_URL}`,
       });
     } catch (error) {
-      alert("Something went wrong with the server");
     }
   };
   return (
@@ -67,6 +67,11 @@ const LoginForm = () => {
                   }}
                 />
               </div>
+              {fail && (
+                <div className="text-red-700">
+                  Please check your email or password
+                </div>
+              )}
               <input
                 type="submit"
                 id="loginBtn"
@@ -74,20 +79,18 @@ const LoginForm = () => {
                 className="ml-[5rem] border-[1px] border-black w-fit bg-gray-100 active:bg-gray-300  px-[0.2rem] cursor-pointer mt-3"
                 onClick={handleLogin}
               />
-              <div className="ml-[5rem]">
-                <Link
-                  href="/pwChange"
-                  className="text-Purple font-bold underline hover:text-red-700"
-                >
-                  Forgot Password?
-                </Link>
-              </div>
+              <Link
+                href="/pwChange"
+                className="text-Purple font-bold underline hover:text-red-700"
+              >
+                <div className="ml-[5rem]">Forgot Password?</div>
+              </Link>
             </div>
           </fieldset>
           <fieldset className="flex flex-col border-[1px] border-black relative px-[1rem] pt-[1.5rem] rounded-[5px] text-[.9rem] h-[12rem] items-start gap-[2rem]">
             <div>
               If you don&apos;t have an account for lacacoshop please click
-              &quot;Create&quot; to request one
+              &quot;Create&quot; to request one or use Google sign in
             </div>
             <div className="flex flex-row items-center gap-2">
               <Link

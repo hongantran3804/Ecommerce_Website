@@ -2,12 +2,9 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { connectToDB } from "@utils/database";
-import { PrismaClient } from "@prisma/client";
 import User from "@models/User";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-require('dotenv').config()
-const prisma = new PrismaClient();
 const handler = NextAuth({
   // Configure one or more authentication providers
   providers: [
@@ -31,7 +28,12 @@ const handler = NextAuth({
         if (!user) return null;
         const isMatch = await bcrypt.compare(password, user.password);
         if (isMatch && user) {
-          return user;
+          if (user.confirmed) {
+            return user;
+          } else {
+            await User.findByIdAndDelete({_id: user._id})
+          }
+          
         }
         return null;
       },
@@ -51,18 +53,21 @@ const handler = NextAuth({
         return {
           ...token,
           id: user._id,
+          isAdmin: user.isAdmin
         };
       }
       return token;
     },
     async session({ session, token }) {
       const sessionUser = await User.findOne({ email: session.user.email });
+      token.isAdmin = sessionUser.isAdmin;
       if (token) {
         return {
           ...session,
           user: {
             name: token.name,
             id: token.id ? token.id.toString() : sessionUser._id.toString(),
+            isAdmin: token.isAdmin ? token.isAdmin : session.user.isAdmin,
             ...session.user,
           },
         };

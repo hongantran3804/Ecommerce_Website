@@ -1,94 +1,7 @@
-import prod1 from "@public/assets/images/prod1.png";
-import prod2 from "@public/assets/images/prod2.png";
-import prod3 from "@public/assets/images/prod3.png";
-import prod4 from "@public/assets/images/prod4.png";
-import prod5 from "@public/assets/images/prod5.png";
-import prod6 from "@public/assets/images/prod6.png";
-export const categories = [
-  {
-    name: "Cosmetics",
-    options: [
-      {
-        name: "* Shop By Manufacturer *",
-      },
-      { name: "*eye - Eye Lashes" },
-      { name: "*nail" },
-      { name: "Blush/powder" },
-      { name: "Bronzer" },
-      { name: "Cases And Bags" },
-      {
-        name: "Cos Beauty Tools",
-      },
-      {
-        name: "Dcos20-unassigned",
-      },
-      {
-        name: "Eye",
-      },
-      {
-        name: "Fashion Accessories",
-      },
-      {
-        name: "Foundation/concealer/liquid Makeup",
-      },
-      {
-        name: "Fragance",
-      },
-      {
-        name: "Glitter/shimmer",
-      },
-      {
-        name: "Highlighter",
-      },
-      {
-        name: "Lip",
-      },
-      { name: "Makeup Removers" },
-      { name: "Nail" },
-      { name: "Primer/setting Spray" },
-      { name: "Tint" },
-    ],
-  },
-  {
-    name: "Beauty Care",
-    options: [{ name: "Aromatherapy" }],
-  },
-  {
-    name: "Home/school/office",
-  },
-  { name: "General Merchandise" },
-  {
-    name: "Kitchen",
-  },
-  {
-    name: "Home Essentials",
-  },
-  { name: "Hardware" },
-  { name: "Toys" },
-  { name: "Clothing" },
-  { name: "Health & Wellness" },
-];
-export const pageCategories = [
-  {
-    name: "A.i.i. Clubman",
-    options: [
-      {
-        name: "Eye",
-      },
-      { name: "Fashion Accessories" },
-      {
-        name: "Makeup Removers",
-      },
-      {
-        name: "Nail",
-      },
-    ],
-  },
-];
-export const shoppingTools = [
-  { name: "Search Products" },
-  { name: "Cosmetic Parts Order Forms" },
-];
+
+import addressIcon from "@public/assets/icons/addressIcon.png"
+import loginSecurity from "@public/assets/icons/login&security.png";
+import orderIcon from "@public/assets/icons/orderIcon.png";
 
 export const becomeCustomerInfo = [
   {
@@ -140,9 +53,6 @@ export const becomeCustomerInfo = [
     title: "Required",
   },
 ];
-const env = require("@env/env");
-
-export { env };
 
 
 export const prodReqInfo = [
@@ -187,6 +97,13 @@ export const narrowCategories = [
    {name:"Retail Price"}, 
 ]
 export const dbInfo = [
+  {
+    label: "Photo Name",
+    id: "photoName",
+    type: "text",
+    size: 60,
+    title: "Required",
+  },
   {
     label: "Brand",
     id: "brand",
@@ -236,109 +153,6 @@ export const dbInfo = [
   },
 ];
 
-export const testProducts = [
-  {
-    photo: prod1,
-    brand: {
-      name: "NYX",
-    },
-    caseVal: 72,
-    upc: "11111",
-    prodDesc: "hello",
-    price: 14.99,
-  },
-  {
-    photo: prod2,
-    brand: {
-      name: "NYX",
-    },
-    caseVal: 72,
-    upc: "11111",
-    prodDesc: "hello",
-    price: 14.99,
-  },
-  {
-    photo: prod3,
-    brand: {
-      name: "NYX",
-    },
-    caseVal: 72,
-    upc: "11111",
-    prodDesc: "hello",
-    price: 14.99,
-  },
-  {
-    photo: prod4,
-    brand: {
-      name: "NYX",
-    },
-    caseVal: 72,
-    upc: "11111",
-    prodDesc: "hello",
-    price: 14.99,
-  },
-  {
-    photo: prod5,
-    brand: {
-      name: "NYX",
-    },
-    caseVal: 72,
-    upc: "11111",
-    prodDesc: "hello",
-    price: 14.99,
-  },
-  {
-    photo: prod6,
-    brand: {
-      name: "NYX",
-    },
-    caseVal: 72,
-    upc: "11111",
-    prodDesc: "hello",
-    price: 14.99,
-  },
-  {
-    photo: prod6,
-    brand: {
-      name: "NYX",
-    },
-    caseVal: 72,
-    upc: "11111",
-    prodDesc: "hello",
-    price: 14.99,
-  },
-  {
-    photo: prod6,
-    brand: {
-      name: "NYX",
-    },
-    caseVal: 72,
-    upc: "11111",
-    prodDesc: "hello",
-    price: 14.99,
-  },
-  {
-    photo: prod6,
-    brand: {
-      name: "NYX",
-    },
-    caseVal: 72,
-    upc: "11111",
-    prodDesc: "hello",
-    price: 14.99,
-  },
-  {
-    photo: prod6,
-    brand: {
-      name: "NYX",
-    },
-    caseVal: 72,
-    upc: "11111",
-    prodDesc: "hello",
-    price: 15.99,
-  },
-  
-];
 
 export const checkoutNav = [
   {
@@ -399,5 +213,50 @@ export const addressInfo = [
     id: "zipcode",
     title: "Required",
     size: 20,
+  },
+];
+
+export const accountPages = [
+  {
+    img: orderIcon,
+    name: "Your Orders",
+    desc: "Track, return, cancel an order, download invoice or buy again",
+    url: `/orders`
+  },
+  {
+    img: loginSecurity,
+    name: "Login & security",
+    desc: "Edit login, name, and mobile number",
+    url: `/account/profile/checkUser`
+  },
+  {
+    img: addressIcon,
+    name: "Your Addresses",
+    desc: "Edit, remove or set default address",
+    url:`/account/address`
+  },
+];
+
+export const securityFields = [
+  {
+    label: "Name",
+    type: "text",
+    id: "name",
+    name: "name",
+    size:15,
+  },
+  {
+    label: "Mobile number",
+    type: "text",
+    id: "phoneNumber",
+    name: "phone",
+    size:20,
+  },
+  {
+    label: "Company",
+    type: "text",
+    id: "company",
+    name: "company",
+    size:20,
   },
 ];

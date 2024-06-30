@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import checkmark from "@public/assets/icons/checkmark.png";
 import Image from "next/image";
 import defaultImg from "@public/assets/images/defaultProductPhoto.png";
@@ -16,7 +16,7 @@ const OrderCard = ({ orders, order, orderIndex,session }) => {
   const buyAgain = async (e, product) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:3000/api/cart`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -27,7 +27,6 @@ const OrderCard = ({ orders, order, orderIndex,session }) => {
         }),
       });
     } catch (err) {
-      alert(err);
     }
   };
   return (
@@ -40,8 +39,13 @@ const OrderCard = ({ orders, order, orderIndex,session }) => {
           <div className="flex flex-row items-start gap-5 h-full">
             <div>
               <Image
-                src={product.photo ? product.photo : defaultImg}
-                className="w-full"
+                src={
+                  product?.photo
+                    ? process.env.NEXT_PUBLIC_DOMAIN_PHOTO + product?.photo
+                    : defaultImg
+                }
+                width={100}
+                height={100}
               />
             </div>
             <div className="flex flex-col items-start justify-between gap-3 ">

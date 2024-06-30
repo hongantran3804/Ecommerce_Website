@@ -5,7 +5,6 @@ import OrderCard from "@components/OrderCard";
 export const GET = async (request) => {
   const queryString = request.nextUrl.searchParams.get("queryString").toLowerCase();
   const userId = request.nextUrl.searchParams.get("userId");
-  console.log(queryString, userId)
   try {
     await connectToDB();
     if (userId) {

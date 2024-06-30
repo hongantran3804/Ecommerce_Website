@@ -1,9 +1,5 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
-import ReactDOM from "react-dom";
-import Main from "./Main";
-import trashCan from "@public/assets/icons/trashCan.png"
-import Image from "next/image";
+import React, { useEffect, useState} from "react";
 import { useSession } from "next-auth/react";
 import ProductsDisplay from "./ProductsDisplay";
 

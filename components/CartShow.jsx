@@ -1,7 +1,6 @@
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import defaultImg from "@public/assets/images/defaultProductPhoto.png";
-import { checkoutNav } from "@utils/utils";
 const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => {
   if (!products || !quantity) return;
   const [update, setUpdate] = useState(
@@ -13,18 +12,17 @@ const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => 
   const handleDelete = async (e, product, quantityValue) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/api/cart", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           product: { ...product, quantityValue },
-          userId
-        })
-      })
+          userId,
+        }),
+      });
     } catch (err) {
-      alert(err);
     }
   }
   const handleSave = async (e) => {
@@ -43,21 +41,17 @@ const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => 
         quantity: filtQuantity[index].value,
       }));
 
-      const response = await fetch(
-        `http://localhost:3000/api/cart`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type":"application/json"
-          },
-          body: JSON.stringify({
-            products: checkoutProducts,
-            userId
-          })
-        }
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          products: checkoutProducts,
+          userId,
+        }),
+      });
     } catch (err) {
-      alert(err);
     }
   };
   return (
@@ -89,7 +83,15 @@ const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => 
           )} */}
           <div className="flex flex-row items-start flex-1 gap-4 h-fit">
             <div className="h-full">
-              <Image src={product.photo ? product.photo : defaultImg} />
+              <Image
+                src={
+                  product?.photo
+                    ? process.env.NEXT_PUBLIC_DOMAIN_PHOTO + product?.photo
+                    : defaultImg
+                }
+                width={100}
+                height={100}
+              />
             </div>
             <div className="flex flex-col justify-between items-start w-[80%]">
               <div>{product?.prodDesc}</div>
@@ -154,7 +156,7 @@ const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => 
                           newUpdate[index] = true;
                           return newUpdate;
                         });
-                        handleSave(e)
+                        handleSave(e);
                       }}
                     >
                       Save
@@ -170,9 +172,8 @@ const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => 
                       newQuantity.splice(index, 1);
                       return newQuantity;
                     });
-                    handleDelete(e, product, quantity[index].value)
+                    handleDelete(e, product, quantity[index].value);
                     products.splice(index, 1);
-
                   }}
                 >
                   Delete

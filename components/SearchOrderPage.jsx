@@ -1,7 +1,6 @@
 "use client"
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react'
-import ProductsDisplay from './ProductsDisplay';
 import OrderCard from './OrderCard';
 
 const SearchOrderPage = () => {
@@ -9,7 +8,6 @@ const SearchOrderPage = () => {
   const { data: session } = useSession();
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search);
-    alert(searchParams.get("queryString"));
     const getData = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/orders/products?queryString=${searchParams.get("queryString")}&userId=${session?.user?.id}`);

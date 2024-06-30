@@ -1,7 +1,5 @@
 "use client";
-import React, { useEffect, useReducer, useRef, useState } from "react";
-import ReactDOM from "react-dom";
-import Image from "next/image";
+import React, { useEffect, useState } from "react";
 import OrderShow from "./OrderShow";
 import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
@@ -56,7 +54,7 @@ const Orders = () => {
   useEffect(() => {
     const getOrders = async () => {
       const response = await fetch(
-        `http://localhost:3000/api/orders?userId=${session?.user?.id}`
+        `${process.env.NEXT_PUBLIC_URL}/api/orders?userId=${session?.user?.id}`
       );
       if (response.ok) {
         const { orders } = await response.json();

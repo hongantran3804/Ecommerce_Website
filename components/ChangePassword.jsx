@@ -1,9 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useParams, useSearchParams, useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
-import ReactDOM from "react-dom";
-import Main from "./Main";
 const UpdatePassword = ({ token }) => {
   const [validToken, setValidToken] = useState(false)
   const [password, setPassword] = useState("");
@@ -14,17 +10,19 @@ const UpdatePassword = ({ token }) => {
     }
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/api/resetPassword", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token,
-        password,
-      }),
-        
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/resetPassword`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            token,
+            password,
+          }),
+        }
+      );
       if (response.ok) {
         document.location.href = '/login'
       } else {
@@ -32,15 +30,16 @@ const UpdatePassword = ({ token }) => {
       }
       
     } catch (error) {
-      alert(error)
-      alert("Something went wrong in server")
     }
     
   };
   useEffect(() => {
     const checkToken = async () => {
     
-      const response = await fetch(`http://localhost:3000/api/resetPassword/${token}`,{method:"POST"});
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/resetPassword/${token}`,
+        { method: "POST" }
+      );
       if (response.ok) {
         setValidToken(true);
       }
@@ -49,7 +48,7 @@ const UpdatePassword = ({ token }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
   return validToken &&
-    <div className="flex flex-col gap-[5px]">
+    <div className="flex flex-col  gap-[5px]">
       <div className="flex flex-row gap-[1rem] text-[1rem] items-center">
         <label
           htmlFor="password"
@@ -104,21 +103,22 @@ const UpdatePassword = ({ token }) => {
 };
 const SendRequest = () => {
   const [email, setEmail] = useState("");
-
   const requestNewPassword = async (e) => {
     if (!email.includes("@") || !email.includes(".com")) return;
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/api/resetPassword", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/resetPassword`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({  email }),
+        }
+      );
       setEmail("")
     } catch (error) {
-      alert(error);
     }
   };
   return (
@@ -159,12 +159,15 @@ const SendRequest = () => {
 };
 
 const ChangePassword = () => {
-
-  const params = new URLSearchParams(document.location.search);
-  const token = params.get("token");
+  const [token, setToken] = useState("")
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setToken(params.get("token"));
+  })
+  
   return (
     <section>
-      <div>
+      <div className="w-full flex flex-col items-center">
         <div>
           <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading'>
             Change Password

@@ -18,7 +18,7 @@ const Payment = ({ products, quantity, amount, handleOrder }) => {
     const getStripeElement = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/orders/payment`,
+          `${process.env.NEXT_PUBLIC_URL}/api/orders/payment`,
           {
             method: "POST",
             headers: {
@@ -56,17 +56,16 @@ const Payment = ({ products, quantity, amount, handleOrder }) => {
       elements,
       clientSecret,
       confirmParams: {
-        return_url: 
-           `http://localhost:3000/payment/success?amount=${amount}`
+        return_url: `${process.env.NEXT_PUBLIC_URL}/payment/success?amount=${amount}`,
       },
-      redirect: 'if_required'
+      redirect: "if_required",
     });
 
     if (error) {
       setErrorMessage(error.message);
     } else {
       handleOrder(e, amount);
-      window.location.href = `http://localhost:3000/payment/success?amount=${amount}`;
+      window.location.href = `${process.env.NEXT_PUBLIC_URL}/payment/success?amount=${amount}`;
     }
     setLoading(false);
   };

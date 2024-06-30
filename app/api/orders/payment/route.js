@@ -11,7 +11,6 @@ export const POST = async (request) => {
       currency: "usd",
       automatic_payment_methods: { enabled: true },
     });
-    console.log(1)
     return new Response(JSON.stringify({clientSecret: paymentIntent.client_secret}),{status:200})
   } catch (err) {
     console.log(err);

@@ -2,7 +2,7 @@ import Brand from "@models/Brand";
 import { connectToDB } from "@utils/database";
 import Product from "@models/Product";
 export const POST = async (request) => {
-  let { brand, prodDesc, upc, unitPrice, unitPerCase, numInStock } =
+  let { photo,brand, prodDesc, upc, unitPrice, unitPerCase, numInStock } =
     await request.json();
   brand = brand.trim();
   upc = upc.replace(" ", "");
@@ -16,7 +16,7 @@ export const POST = async (request) => {
       const productExist = await Product.findOne({ upc: upc });
       if (!productExist) {
         const product = new Product({
-          photo: "",
+          photo: photo,
           prodDesc: prodDesc,
           upc: upc,
           unitPrice: parseFloat(unitPrice),
@@ -31,7 +31,7 @@ export const POST = async (request) => {
        await product.save();
       } else {
         await Product.findByIdAndUpdate(productExist._id, {
-          photo: "",
+          photo: photo,
           prodDesc: prodDesc,
           upc: upc,
           unitPrice: parseFloat(unitPrice),
@@ -49,7 +49,7 @@ export const POST = async (request) => {
       await brandProd.save();
       
       const product = new Product({
-        photo: "",
+        photo: photo,
         prodDesc: prodDesc,
         upc: upc,
         unitPrice: parseFloat(unitPrice),
@@ -68,8 +68,9 @@ export const POST = async (request) => {
     );
   } catch (error) {
     console.log(error);
-    return new Response(
-      JSON.stringify({ message: "Something went wrong" }, { status: 422 })
-    );
+    
   }
+  return new Response(
+    JSON.stringify({ message: "Something went wrong" }, { status: 422 })
+  );
 };

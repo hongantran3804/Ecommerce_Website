@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-const env = require("@env/env.json");
 let isConnected = false; //track the connection
 
 export const connectToDB = async () => {

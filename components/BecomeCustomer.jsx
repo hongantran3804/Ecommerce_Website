@@ -10,7 +10,7 @@ const SignUpForm = () => {
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
   const [captchaValue, setCaptchaValue] = useState("");
-  const [fail, setFail] = useState(true);
+  const [fail, setFail] = useState(null);
   const recaptchaRef = useRef(null);
   useEffect(() => {
     const phonePattern =
@@ -47,7 +47,7 @@ const SignUpForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("/api/newUser", {
+      const response = await fetch("/api/user/newUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,9 +62,8 @@ const SignUpForm = () => {
         }),
       });
       const noti = await response.json();
-      alert("Success");
+      
     } catch (error) {
-      alert("Something went wrong. Please try again later.");
     } finally {
       setName("");
       setEmail("");
@@ -94,7 +93,7 @@ const SignUpForm = () => {
     passwordAgain,
   ];
   return (
-    <div className="flex flex-row items-center w-full h-full py-[8vh]">
+    <div className="flex flex-col items-center w-full h-full">
       <form
         class="relative flex flex-col z-0 items-start"
         id="signupForm"

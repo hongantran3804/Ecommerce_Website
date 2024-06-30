@@ -1,7 +1,5 @@
-import { redirect } from "next/navigation";
 import { connectToDB } from "@utils/database";
 import User from "@models/User";
-import bcrypt from "bcrypt";
 const sleep = () =>
   new Promise((resolve) => {
     setTimeout(() => {
@@ -10,7 +8,6 @@ const sleep = () =>
   });
 
 export const POST = async (request) => {
-  const env = require("@env/env");
   const { name, email, compName, phoneNumber, password, captcha } =
     await request.json();
   const confirmed = false;
@@ -30,12 +27,18 @@ export const POST = async (request) => {
     if (success) {
       await sleep();
       try {
-        const userExist = await User.findOne({ email });
-        
-        if (userExist)
-          return new Response(
-            JSON.stringify({ message: "User already exist" }, { status: 409 })
-          );
+        const userExist = await User.findOne({ email: email });
+
+        if (userExist) {
+          if (userExist.confirmed) {
+            return new Response(
+              JSON.stringify({ message: "User already exist" }, { status: 409 })
+            );
+          } else {
+            await User.findByIdAndDelete({_id: userExist._id });
+          }
+        }
+
         const newUser = new User({
           email,
           name,
@@ -44,8 +47,7 @@ export const POST = async (request) => {
           password,
           confirmed,
         });
-        await newUser.save()
-        
+        await newUser.save();
         try {
           const emailVerification = await fetch(
             "http://localhost:3000/api/emailVerification",

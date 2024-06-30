@@ -3,19 +3,14 @@
 /* eslint-disable react/no-deprecated */
 "use client";
 import dayjs from "dayjs";
-import React, { useEffect, useReducer, useRef, useState } from "react";
-import ReactDOM from "react-dom";
-import Main from "./Main";
+import React, { useEffect, useState } from "react";
 import CartShow from "./CartShow";
 import { useSession } from "next-auth/react";
-import { checkoutNav } from "@utils/utils";
-import Link from "next/link";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import Payment from "./Payment";
 import close from "@public/assets/icons/close.png";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 if (process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY === undefined) {
   throw new Error("NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined");
 }
@@ -50,35 +45,43 @@ const ReviewCheckoutBoard = ({
       chosen: false,
     },
   ]);
-  const [addressId, setAddressId] = useState();
+  const [addressId, setAddressId] = useState("");
   useEffect(() => {
     setQuantity(subQuantity);
     const getDefaultAddress = async () => {
       const response = await fetch(
-        `http://localhost:3000/api/address?getDefaultAddress=true&userId=${userId}`
+        `${process.env.NEXT_PUBLIC_URL}/api/address/getDefault?userId=${userId}`
       );
       if (response.ok) {
-        const { addressId, data } = await response.json();
-        setShippingAddress(data);
-        setAddressId(addressId);
+        const { defaultAddress } = await response.json();
+        setShippingAddress(() => [
+          defaultAddress.country,
+          defaultAddress.streetAddress,
+          defaultAddress.city,
+          defaultAddress.state,
+          defaultAddress.zipcode,
+        ]);
+        setAddressId(defaultAddress?._id);
       }
     };
     getDefaultAddress();
   }, [products, userId, shippingOption]);
   useEffect(() => {
     const getSpecifiedAddress = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:3000/api/address/${originalAddressId}?userId=${userId}`
-        );
-        if (response.ok) {
-          const {data} = await response.json();
-          setShippingAddress(() => {
-            if (Array.isArray(data)) return [...data];
-          });
-          setAddressId(originalAddressId);
-        }
-      } catch (err) {}
+      if (originalAddressId) {
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_URL}/api/address/${originalAddressId}?userId=${userId}`
+          );
+          if (response.ok) {
+            const { data } = await response.json();
+            setShippingAddress(() => {
+              if (Array.isArray(data)) return [...data];
+            });
+            setAddressId(originalAddressId);
+          }
+        } catch (err) {}
+      }
     };
     getSpecifiedAddress();
   }, [products, userId, shippingOption]);
@@ -328,7 +331,7 @@ const ReviewCheckout = () => {
     setAddressId(searchParams.get("data"));
     const getData = async () => {
       const response = await fetch(
-        `http://localhost:3000/api/cart?userId=${session?.user.id}`
+        `${process.env.NEXT_PUBLIC_URL}/api/cart?userId=${session?.user.id}`
       );
       if (response.ok) {
         const { products, quantity } = await response.json();
@@ -338,7 +341,8 @@ const ReviewCheckout = () => {
     };
     getData();
   }, [session?.user]);
-  if(products?.length === 0) return <div className="font-bold">No order found</div>
+  if (products?.length === 0)
+    return <div className="font-bold">No order found</div>;
   return (
     <ReviewCheckoutBoard
       subQuantity={quantity}

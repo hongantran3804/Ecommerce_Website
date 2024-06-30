@@ -14,6 +14,12 @@ const userSchema = new Schema({
   compName: {
     type: String,
   },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+    required: true
+    
+  },
   phoneNumber: {
     type: String,
   },

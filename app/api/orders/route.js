@@ -8,14 +8,11 @@ import Progress from "@models/Progress";
 export const POST = async (request) => {
   const { products, userId, orderPlacedDate, deliveredDate, total, addressId } =
     await request.json();
-  console.log(addressId);
   const now = dayjs();
-  console.log(now.diff(dayjs(orderPlacedDate)), dayjs(deliveredDate).diff(now));
   const progress = Math.round(
     (now.diff(dayjs(orderPlacedDate)) * 100) / dayjs(deliveredDate).diff(now)
   );
   if (addressId && userId) {
-    console.log(addressId);
     try {
       await connectToDB();
       const newProgress = new Progress({
@@ -82,9 +79,6 @@ export const GET = async (request) => {
         .populate("address")
         .populate("progress");
       if (orders.length) {
-        orders = orders.map((order) => {
-          return order;
-        });
         return new Response(JSON.stringify({ orders }), { status: 200 });
       } else return new Response(null, { status: 404 });
     } catch (err) {
@@ -99,7 +93,6 @@ export const GET = async (request) => {
 
 export const PUT = async (request) => {
   const orderId = request.nextUrl.searchParams.get("orderId");
-  console.log(orderId);
   try {
     await connectToDB();
     const order = await Order.findOne({ _id: orderId });

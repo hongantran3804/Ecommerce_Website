@@ -3,6 +3,7 @@ import User from "@models/User";
 import { env } from "@utils/utils";
 import jwt from "jsonwebtoken";
 import { redirect } from "next/navigation";
+import bcrypt from "bcrypt";
 export const POST = async (request) => {
   const { email } = await request.json();
   const nodemailer = require("nodemailer");
@@ -36,7 +37,7 @@ export const POST = async (request) => {
         name: "Lacaco Reset Password",
         address: process.env.GMAIL_ADDRESS,
       },
-      to: "hongantran3804@gmail.com",
+      to: email,
       subject: "Verification Email For New Password",
       html: verificationMessage,
     };
@@ -78,7 +79,9 @@ export const PATCH = async (request) => {
       try {
         const user = await User.findOne({ email });
         if (user) {
-          user.password = password;
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash(password, salt);
+          user.password = hashedPassword;
           await user.save();
           return new Response(JSON.stringify({ message: "Success" }), {
             status: 200,

@@ -7,10 +7,13 @@ const CheckoutNav = ({ page }) => {
       <ul className="flex flex-row items-center  text-blue-600  active:text-blue-900 w-[30%] justify-between px-2 py-1 ">
         {checkoutNav.map((each, index) => (
           <div
-            className={`${index === page && "after:checkoutChosen "} relative hover:after:checkoutChosen `}
+            key={each.url}
+            className={`${
+              index === page && "after:checkoutChosen "
+            } relative hover:after:checkoutChosen `}
           >
             <Link href={each.url}>
-              <li key={each.url}>{each.label}</li>
+              <li>{each.label}</li>
             </Link>
           </div>
         ))}

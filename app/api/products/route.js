@@ -3,7 +3,6 @@ import Product from "@models/Product"
 import Brand from "@models/Brand"
 export const GET = async (request) => {
   const queryString = request.nextUrl.searchParams.get("queryString").toLowerCase();
-  console.log(queryString)
   try {
     await connectToDB();
     let products = await Product.find({}).populate("brand");
@@ -39,7 +38,6 @@ export const GET = async (request) => {
        priceOver1000,
      ].filter((element) => element.quan > 0);
     products = products.filter((product) => product.numInStock > 0);
-    console.log(products);
      return new Response(JSON.stringify({ prods: products, priceRanges }), {
        status: 200,
      });
