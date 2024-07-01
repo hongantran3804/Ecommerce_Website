@@ -6,8 +6,6 @@ import {
   PaymentElement,
 } from "@stripe/react-stripe-js";
 const Payment = ({ products, quantity, amount, handleOrder }) => {
-  
-  if (!products || !quantity || amount < 0) return null;
   const stripe = useStripe();
   const elements = useElements();
   const [clientSecret, setclientSecret] = useState("");

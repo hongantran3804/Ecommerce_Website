@@ -49,7 +49,6 @@ const OrderButton = ({ order, CancelOrder }) => {
   );
 }
 const OrderShow = ({ originalOrders, session }) => {
-  if (!originalOrders) return;
   const [orders, setOrders] = useState(() => [...originalOrders]);
   
   useEffect(() => {

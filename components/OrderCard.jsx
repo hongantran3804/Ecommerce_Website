@@ -46,6 +46,7 @@ const OrderCard = ({ orders, order, orderIndex,session }) => {
                 }
                 width={100}
                 height={100}
+                alt=""
               />
             </div>
             <div className="flex flex-col items-start justify-between gap-3 ">
@@ -66,7 +67,7 @@ const OrderCard = ({ orders, order, orderIndex,session }) => {
               >
                 {buyAgainStatus[orderIndex] &&
                 buyAgainStatus[orderIndex][productIndex] ? (
-                  <Image src={checkmark} className="w-[1rem]" />
+                  <Image src={checkmark} className="w-[1rem]" alt="" />
                 ) : (
                   "Buy it again"
                 )}

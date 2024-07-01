@@ -76,24 +76,26 @@ const AccountAddress = () => {
           <div
             className="border-2 border-dashed flex flex-col items-center justify-center w-[20rem] h-[20rem] rounded-[10px] cursor-pointer"
             onClick={() => {
-               setToggleAddressBoard(true);
-               setStatus(true);
+              setToggleAddressBoard(true);
+              setStatus(true);
             }}
           >
-            <Image src={addAddressIcon} />
+            <Image src={addAddressIcon} alt="" />
             <span className="text-[1.5rem] font-bold">Add Address</span>
           </div>
         </div>
         {userAddress &&
           userAddress.map((eachAddress) => (
-            <AddressCard
-              address={eachAddress}
-              session={session}
-              setStatus={setStatus}
-              setToggleAddressBoard={setToggleAddressBoard}
-              setAddressId={setAddressId}
-              setInputValue={setInputValue}
-            />
+            <div key={eachAddress.streetName}>
+              <AddressCard
+                address={eachAddress}
+                session={session}
+                setStatus={setStatus}
+                setToggleAddressBoard={setToggleAddressBoard}
+                setAddressId={setAddressId}
+                setInputValue={setInputValue}
+              />
+            </div>
           ))}
       </div>
     </section>

@@ -108,7 +108,7 @@ const LoginForm = () => {
                   });
                 }}
               >
-                <Image src={googleIcon} className="w-[1.5rem]" />
+                <Image src={googleIcon} className="w-[1.5rem]" alt="" />
                 <span>Sign In</span>
               </div>
             </div>

@@ -32,6 +32,7 @@ const Account = () => {
                   <Image
                     src={accountPage.img}
                     className="object-contain w-[3rem]"
+                    alt=""
                   />
                 </div>
                 <div className="flex flex-col w-[12rem]">
@@ -41,26 +42,29 @@ const Account = () => {
               </div>
             </Link>
           ))}
-          {session?.user.isAdmin && <Link
-            href={{
-              pathname: '/admin'
-            }}
-            key='admin'
-            className="hover:bg-gray-200"
-          >
-            <div className="flex flex-row border-[1px] border-gray-200 w-fit p-5 gap-2 items-start rounded-[10px]">
-              <div className="">
-                <Image
-                  src={adminIcon}
-                  className="object-contain w-[3rem]"
-                />
+          {session?.user.isAdmin && (
+            <Link
+              href={{
+                pathname: "/admin",
+              }}
+              key="admin"
+              className="hover:bg-gray-200"
+            >
+              <div className="flex flex-row border-[1px] border-gray-200 w-fit p-5 gap-2 items-start rounded-[10px]">
+                <div className="">
+                  <Image
+                    src={adminIcon}
+                    className="object-contain w-[3rem]"
+                    alt=""
+                  />
+                </div>
+                <div className="flex flex-col w-[12rem]">
+                  <span className="text-[1.2rem]">Admin</span>
+                  <span className="text-[.9rem]">This page is private</span>
+                </div>
               </div>
-              <div className="flex flex-col w-[12rem]">
-                <span className="text-[1.2rem]">Admin</span>
-                <span className="text-[.9rem]">This page is private</span>
-              </div>
-            </div>
-          </Link>}
+            </Link>
+          )}
         </div>
       </div>
     </section>

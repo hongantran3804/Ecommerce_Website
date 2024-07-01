@@ -124,7 +124,7 @@ const Address = () => {
               setStatus(true);
             }}
           >
-            <Image src={plus} className="w-[1.5rem]" />
+            <Image src={plus} className="w-[1.5rem]" alt="" />
             <span>Add Address</span>
           </div>
           <div className="">
@@ -135,14 +135,17 @@ const Address = () => {
               <div key={userAddress.zipcode} className="">
                 <div>
                   {userAddress.map((eachAddress) => (
-                    <div className="bg-gray-100 border-[1px] border-gray-200 flex flex-col p-3">
+                    <div
+                      className="bg-gray-100 border-[1px] border-gray-200 flex flex-col p-3"
+                      key={eachAddress._id}
+                    >
                       <div
                         className="self-end cursor-pointer"
                         onClick={(e) => {
                           deleteAddress(e, eachAddress._id);
                         }}
                       >
-                        <Image src={close} className="w-[2rem]" />
+                        <Image src={close} className="w-[2rem]" alt="" />
                       </div>
                       <div
                         key={eachAddress}
@@ -181,7 +184,11 @@ const Address = () => {
                               type="checkbox"
                               id="setDefault"
                               onChange={(e) => {
-                                setDefault(e, eachAddress._id, e.target.checked);
+                                setDefault(
+                                  e,
+                                  eachAddress._id,
+                                  e.target.checked
+                                );
                               }}
                               checked={eachAddress.default}
                               className={`cursor-pointer`}

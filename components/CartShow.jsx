@@ -1,14 +1,17 @@
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import defaultImg from "@public/assets/images/defaultProductPhoto.png";
-const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => {
-  if (!products || !quantity) return;
-  const [update, setUpdate] = useState(
-    Array.from({ length: products.length }, () => true)
-  );
+const CartShow = ({
+  products,
+  quantity,
+  setQuantity,
+  userId,
+  checkoutPage,
+}) => {
+  const [update, setUpdate] = useState([]);
   useEffect(() => {
     setUpdate(Array.from({ length: products.length }, () => true));
-  }, [products])
+  }, [products]);
   const handleDelete = async (e, product, quantityValue) => {
     e.preventDefault();
     try {
@@ -22,9 +25,8 @@ const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => 
           userId,
         }),
       });
-    } catch (err) {
-    }
-  }
+    } catch (err) {}
+  };
   const handleSave = async (e) => {
     e.preventDefault();
     try {
@@ -51,20 +53,19 @@ const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => 
           userId,
         }),
       });
-    } catch (err) {
-    }
+    } catch (err) {}
   };
   return (
     <div>
       {products.map((product, index) => (
         <div
+          key={product.upc}
           className={`w-full flex flex-row items-start font-bold ${
             !checkoutPage &&
             "border-t-[1px] border-b-[1px] border-t-gray-300 border-b-gray-300"
           } py-[1rem] text-[.9rem] ${
             quantity[index]?.included ? "opacity-100" : "opacity-50"
           }`}
-          key={product.upc}
         >
           {/* {!checkoutPage && (
             <input
@@ -91,6 +92,7 @@ const CartShow = ({ products, quantity, setQuantity, userId, checkoutPage }) => 
                 }
                 width={100}
                 height={100}
+                alt=""
               />
             </div>
             <div className="flex flex-col justify-between items-start w-[80%]">

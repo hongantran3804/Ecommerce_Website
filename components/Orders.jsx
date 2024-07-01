@@ -4,7 +4,6 @@ import OrderShow from "./OrderShow";
 import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
 const OrdersSummary = ({ originalOrders, session }) => {
-  if (!originalOrders) return null;
   const [prodName, setProdName] = useState("");
   
   const [orders, setOrders] = useState([]);
