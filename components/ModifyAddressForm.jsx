@@ -1,9 +1,17 @@
-
-import React from 'react'
+import React from "react";
 import close from "@public/assets/icons/close.png";
 import { addressInfo } from "@utils/utils";
-import Image from 'next/image';
-const ModifyAddressForm = ({ status, session, inputValue, setInputValue, setToggleAddressBoard, EditAddress, setDefaultStatus,defaultStatus }) => {
+import Image from "next/image";
+const ModifyAddressForm = ({
+  status,
+  session,
+  inputValue,
+  setInputValue,
+  setToggleAddressBoard,
+  EditAddress,
+  setDefaultStatus,
+  defaultStatus,
+}) => {
   const AddAddress = async (e) => {
     e.preventDefault();
     if (
@@ -13,33 +21,29 @@ const ModifyAddressForm = ({ status, session, inputValue, setInputValue, setTogg
       return;
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/address`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: session?.user?.id,
-            country: "United States",
-            name: inputValue[0].value.trim(),
-            phone: inputValue[1].value.trim(),
-            streetAddress: inputValue[2].value.trim(),
-            city: inputValue[3].value.trim(),
-            state: inputValue[4].value.trim(),
-            zipcode: inputValue[5].value.trim(),
-            defaultStatus: defaultStatus,
-          }),
-        }
-      );
+      const response = await fetch(`/api/address`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: session?.user?.id,
+          country: "United States",
+          name: inputValue[0].value.trim(),
+          phone: inputValue[1].value.trim(),
+          streetAddress: inputValue[2].value.trim(),
+          city: inputValue[3].value.trim(),
+          state: inputValue[4].value.trim(),
+          zipcode: inputValue[5].value.trim(),
+          defaultStatus: defaultStatus,
+        }),
+      });
       if (response.ok) {
         setInputValue(
           Array.from({ length: addressInfo.length }, () => ({ value: "" }))
         );
       }
-    } catch (err) {
-    }
+    } catch (err) {}
   };
   return (
     <div className="absolute bg-white text-[.9rem] flex flex-col items-start gap-1 p-5 border-2 left-[25%]">
@@ -96,7 +100,7 @@ const ModifyAddressForm = ({ status, session, inputValue, setInputValue, setTogg
             </div>
           </div>
         ))}
-        <div className='flex flex-row items-center gap-2'>
+        <div className="flex flex-row items-center gap-2">
           <input
             type="checkbox"
             name="makeDefaultInput"
@@ -122,6 +126,6 @@ const ModifyAddressForm = ({ status, session, inputValue, setInputValue, setTogg
       </form>
     </div>
   );
-}
+};
 
-export default ModifyAddressForm
+export default ModifyAddressForm;

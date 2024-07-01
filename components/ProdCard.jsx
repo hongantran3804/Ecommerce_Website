@@ -11,7 +11,7 @@ import checkMark from "@public/assets/icons/checkmark.png";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 const ProdCard = ({ products, userId }) => {
-  const {data: session} = useSession()
+  const { data: session } = useSession();
   const [added, setAdded] = useState(
     Array.from({ length: products.length }, () => false)
   );
@@ -23,7 +23,7 @@ const ProdCard = ({ products, userId }) => {
   const AddToCart = async (e, product, userId, quantityVal) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart`, {
+      const response = await fetch(`/api/cart`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

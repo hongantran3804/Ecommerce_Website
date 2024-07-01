@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
-import { signIn} from "next-auth/react";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import googleIcon from "@public/assets/icons/googleIcon.png";
 const LoginForm = () => {
@@ -15,10 +15,9 @@ const LoginForm = () => {
         email,
         password,
         redirect: true,
-        callbackUrl: `${process.env.NEXT_PUBLIC_URL}`,
+        callbackUrl: ``,
       });
-    } catch (error) {
-    }
+    } catch (error) {}
   };
   return (
     <section>
@@ -104,7 +103,7 @@ const LoginForm = () => {
                 className="border-[1px] border-black flex flex-row items-center p-1 gap-1  bg-gray-100 active:bg-gray-300 cursor-pointer rounded-[5px]"
                 onClick={() => {
                   signIn("google", {
-                    callbackUrl: `${process.env.NEXT_PUBLIC_URL}/`,
+                    callbackUrl: `/`,
                   });
                 }}
               >
@@ -119,8 +118,7 @@ const LoginForm = () => {
   );
 };
 const Login = () => {
-
-  return <LoginForm/>;
+  return <LoginForm />;
 };
 
 export default Login;

@@ -1,27 +1,25 @@
-"use client"
-import React, { useEffect, useState } from 'react'
-import { securityFields } from '@utils/utils';
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
+"use client";
+import React, { useEffect, useState } from "react";
+import { securityFields } from "@utils/utils";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 const ProfileForm = () => {
   const { data: session } = useSession();
   const [user, setUser] = useState(null);
-  const [fieldValues, setFieldValues] = useState([])
+  const [fieldValues, setFieldValues] = useState([]);
   useEffect(() => {
     const getUser = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/user/${session?.user?.id}`);
+        const response = await fetch(`/api/user/${session?.user?.id}`);
         if (response.ok) {
           const { user } = await response.json();
           setUser(user);
-          setFieldValues([user?.name, user?.phoneNumber, user?.compName])
+          setFieldValues([user?.name, user?.phoneNumber, user?.compName]);
         }
-      } catch (error) {
-        
-      }
-    }
+      } catch (error) {}
+    };
     getUser();
-  }, [session?.user])
+  }, [session?.user]);
   return (
     <div>
       <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
@@ -97,6 +95,6 @@ const ProfileForm = () => {
       </div>
     </div>
   );
-}
+};
 
-export default ProfileForm
+export default ProfileForm;

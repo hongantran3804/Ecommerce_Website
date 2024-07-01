@@ -1,7 +1,7 @@
-"use client"
-import { useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react'
-import OrderCard from './OrderCard';
+"use client";
+import { useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
+import OrderCard from "./OrderCard";
 
 const SearchOrderPage = () => {
   const [order, setOrder] = useState([]);
@@ -10,15 +10,19 @@ const SearchOrderPage = () => {
     const searchParams = new URLSearchParams(document.location.search);
     const getData = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/orders/products?queryString=${searchParams.get("queryString")}&userId=${session?.user?.id}`);
+        const response = await fetch(
+          `/api/orders/products?queryString=${searchParams.get(
+            "queryString"
+          )}&userId=${session?.user?.id}`
+        );
         if (response.ok) {
           const { order } = await response.json();
           setOrder(order);
-         }
+        }
       } catch (err) {}
-    }
+    };
     getData();
-  },[session?.user?.id])
+  }, [session?.user?.id]);
   return (
     <div>
       <OrderCard
@@ -29,6 +33,6 @@ const SearchOrderPage = () => {
       />
     </div>
   );
-}
+};
 
-export default SearchOrderPage
+export default SearchOrderPage;

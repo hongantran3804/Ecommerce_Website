@@ -12,21 +12,17 @@ const Payment = ({ products, quantity, amount, handleOrder }) => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {
-
     const getStripeElement = async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/orders/payment`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              amount: amount,
-            }),
-          }
-        );
+        const response = await fetch(`/api/orders/payment`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            amount: amount,
+          }),
+        });
 
         if (response.ok) {
           const { clientSecret } = await response.json();
@@ -42,7 +38,7 @@ const Payment = ({ products, quantity, amount, handleOrder }) => {
 
     if (!stripe || !elements) return;
 
-    const { error:submitError } = await elements.submit();
+    const { error: submitError } = await elements.submit();
 
     if (submitError) {
       setErrorMessage(submitError.message);
@@ -54,7 +50,7 @@ const Payment = ({ products, quantity, amount, handleOrder }) => {
       elements,
       clientSecret,
       confirmParams: {
-        return_url: `${process.env.NEXT_PUBLIC_URL}/payment/success?amount=${amount}`,
+        return_url: `/payment/success?amount=${amount}`,
       },
       redirect: "if_required",
     });
@@ -63,7 +59,7 @@ const Payment = ({ products, quantity, amount, handleOrder }) => {
       setErrorMessage(error.message);
     } else {
       handleOrder(e, amount);
-      window.location.href = `${process.env.NEXT_PUBLIC_URL}/payment/success?amount=${amount}`;
+      window.location.href = `/payment/success?amount=${amount}`;
     }
     setLoading(false);
   };
@@ -90,7 +86,9 @@ const Payment = ({ products, quantity, amount, handleOrder }) => {
         <button
           disabled={!stripe || loading}
           className="text-white w-full p5 bg-black mt-2 rounded-md font-bold disabled:opacity-50 disabled:animate-pulse"
-        >{!loading ? `Pay $${amount/100}` : "Processing..."}</button>
+        >
+          {!loading ? `Pay $${amount / 100}` : "Processing..."}
+        </button>
       </form>
     </section>
   );

@@ -8,11 +8,9 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import checkMark from "@public/assets/icons/checkmark.png";
 const ViewSingleProduct = () => {
-  const {data:session} = useSession()
+  const { data: session } = useSession();
   const [product, setProduct] = useState();
-  const [added, setAdded] = useState(
-    Array.from({ length: 1 }, () => false)
-  );
+  const [added, setAdded] = useState(Array.from({ length: 1 }, () => false));
   const [quantity, setQuantity] = useState([]);
   useEffect(() => {
     setQuantity(Array.from({ length: 1 }, () => 1));
@@ -21,7 +19,7 @@ const ViewSingleProduct = () => {
   const AddToCart = async (e, product, userId, quantityVal) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart`, {
+      const response = await fetch(`/api/cart`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,7 +35,7 @@ const ViewSingleProduct = () => {
     const searchParams = new URLSearchParams(document.location.search);
     const getProduct = async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/products/singleProduct?productId=${searchParams.get("productId")}`
+        `/api/products/singleProduct?productId=${searchParams.get("productId")}`
       );
       if (response.ok) {
         const { product } = await response.json();

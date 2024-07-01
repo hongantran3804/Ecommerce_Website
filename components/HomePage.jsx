@@ -10,7 +10,7 @@ const HomePage = () => {
   const [narrowBy, setNarrowBy] = useState([[]]);
   useEffect(() => {
     const getBrands = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/brands`);
+      const response = await fetch(`/api/brands`);
       if (response.ok) {
         const { prods, priceRanges } = await response.json();
         setProducts(prods);

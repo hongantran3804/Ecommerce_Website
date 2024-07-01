@@ -1,11 +1,11 @@
-"use client"
-import React, { useEffect, useState } from 'react'
-import addAddressIcon from "@public/assets/icons/addAddressIcon.png"
-import Image from 'next/image';
-import { useSession } from 'next-auth/react';
+"use client";
+import React, { useEffect, useState } from "react";
+import addAddressIcon from "@public/assets/icons/addAddressIcon.png";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
 import { addressInfo } from "@utils/utils";
-import ModifyAddressForm from './ModifyAddressForm';
-import AddressCard from './AddressCard';
+import ModifyAddressForm from "./ModifyAddressForm";
+import AddressCard from "./AddressCard";
 const AccountAddress = () => {
   const { data: session } = useSession();
   const [toggleAddressBoard, setToggleAddressBoard] = useState(false);
@@ -20,21 +20,20 @@ const AccountAddress = () => {
     const getUserAddress = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/address?userId=${session?.user?.id}`
+          `/api/address?userId=${session?.user?.id}`
         );
         if (response.ok) {
           const { addresses } = await response.json();
           setUserAddress(() => addresses);
         }
-      } catch (err) {
-      }
+      } catch (err) {}
     };
     getUserAddress();
   }, [session?.user, inputValue]);
   const EditAddress = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/address`, {
+      const response = await fetch(`/api/address`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -100,6 +99,6 @@ const AccountAddress = () => {
       </div>
     </section>
   );
-}
+};
 
-export default AccountAddress
+export default AccountAddress;

@@ -49,9 +49,7 @@ const ReviewCheckoutBoard = ({
   useEffect(() => {
     setQuantity(subQuantity);
     const getDefaultAddress = async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/address/getDefault?userId=${userId}`
-      );
+      const response = await fetch(`/api/address/getDefault?userId=${userId}`);
       if (response.ok) {
         const { defaultAddress } = await response.json();
         setShippingAddress(() => [
@@ -71,7 +69,7 @@ const ReviewCheckoutBoard = ({
       if (originalAddressId) {
         try {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_URL}/api/address/${originalAddressId}?userId=${userId}`
+            `/api/address/${originalAddressId}?userId=${userId}`
           );
           if (response.ok) {
             const { data } = await response.json();
@@ -116,27 +114,24 @@ const ReviewCheckoutBoard = ({
           shippingPrice +
           totalPrice) /
         100;
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/orders`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+      const response = await fetch(`/api/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-          body: JSON.stringify({
-            products: filtProducts,
-            userId: userId,
-            total: totalOrder,
-            orderPlacedDate: now,
-            deliveredDate: shippingOption.find((option) => option.chosen).date,
-            addressId: addressId,
-          }),
-        }
-      );
+        body: JSON.stringify({
+          products: filtProducts,
+          userId: userId,
+          total: totalOrder,
+          orderPlacedDate: now,
+          deliveredDate: shippingOption.find((option) => option.chosen).date,
+          addressId: addressId,
+        }),
+      });
 
       if (response.ok) {
-        window.location.href = `${process.env.NEXT_PUBLIC_URL}/payment/success?amount=${amount}`;
+        window.location.href = `/payment/success?amount=${amount}`;
       }
     } catch (err) {}
   };
@@ -273,7 +268,7 @@ const ReviewCheckoutBoard = ({
                       setPlaceOrder(false);
                     }}
                   >
-                    <Image src={close} className="w-[2rem]" alt=""/>
+                    <Image src={close} className="w-[2rem]" alt="" />
                   </div>
                   <Elements
                     stripe={stripePromise}
@@ -330,9 +325,7 @@ const ReviewCheckout = () => {
 
     setAddressId(searchParams.get("data"));
     const getData = async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/cart?userId=${session?.user.id}`
-      );
+      const response = await fetch(`/api/cart?userId=${session?.user.id}`);
       if (response.ok) {
         const { products, quantity } = await response.json();
         setProducts(products);

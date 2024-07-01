@@ -6,38 +6,42 @@ import { dbInfo } from "@utils/utils";
 const UpdateDataBaseForm = () => {
   const updateDataBase = async (e) => {
     e.preventDefault();
-    const [photoName,brand, prodDesc, upc, unitPrice, unitPerCase, numInStock] = inputs;
+    const [
+      photoName,
+      brand,
+      prodDesc,
+      upc,
+      unitPrice,
+      unitPerCase,
+      numInStock,
+    ] = inputs;
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/admin/update`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            photo: photoName.value,
-            brand: brand.value,
-            prodDesc: prodDesc.value,
-            upc: upc.value,
-            unitPrice: unitPrice.value,
-            unitPerCase: unitPerCase.value,
-            numInStock: numInStock.value,
-          }),
-        }
-      );
+      const response = await fetch(`/api/admin/update`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          photo: photoName.value,
+          brand: brand.value,
+          prodDesc: prodDesc.value,
+          upc: upc.value,
+          unitPrice: unitPrice.value,
+          unitPerCase: unitPerCase.value,
+          numInStock: numInStock.value,
+        }),
+      });
       if (response.ok) {
         setSuccess(true);
         setTimeout(() => {
-        setInputs(() =>
-          Array.from({ length: dbInfo.length }, () => ({ value: "" }))
-        );
+          setInputs(() =>
+            Array.from({ length: dbInfo.length }, () => ({ value: "" }))
+          );
           setCanUpdate(false);
           setSuccess(false);
         }, 1000);
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   };
   const [success, setSuccess] = useState(false);
   const [inputs, setInputs] = useState(

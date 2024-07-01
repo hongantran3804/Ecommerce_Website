@@ -15,7 +15,7 @@ const Nav = () => {
     const getAddress = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/address/getDefault?userId=${session?.user?.id}`
+          `/api/address/getDefault?userId=${session?.user?.id}`
         );
         if (response.ok) {
           const { defaultAddress } = await response.json();
@@ -65,7 +65,7 @@ const Nav = () => {
 
                     <Link
                       href={{
-                        pathname: `${process.env.NEXT_PUBLIC_URL}/account/address`,
+                        pathname: `/account/address`,
                       }}
                       className="cursor-pointer font-light font-bodyFont text-[0.8rem] border-[1px] border-Purple px-4 py-3 hover:bg-Purple hover:text-Green duration-300 text-nowrap w-full text-center"
                     >
@@ -99,7 +99,7 @@ const Nav = () => {
                     {session?.user?.image && <div>{session?.user.name}</div>}
                     <Link
                       href={{
-                        pathname: `${process.env.NEXT_PUBLIC_URL}/account`,
+                        pathname: `/account`,
                       }}
                       className="cursor-pointer font-light font-bodyFont text-[0.8rem] border-[1px] border-Purple px-4 py-3 hover:bg-Purple hover:text-Green duration-300 text-nowrap w-full text-center"
                     >
@@ -107,7 +107,7 @@ const Nav = () => {
                     </Link>
                     <Link
                       href={{
-                        pathname: `${process.env.NEXT_PUBLIC_URL}/userReqInfo`,
+                        pathname: `/userReqInfo`,
                       }}
                       className="cursor-pointer font-light font-bodyFont text-[0.8rem] border-[1px] border-Purple px-4 py-3 hover:bg-Purple hover:text-Green duration-300 text-nowrap w-full text-center"
                     >

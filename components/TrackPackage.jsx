@@ -30,28 +30,28 @@ const TrackPackage = () => {
     const orderId = searchParams.get("id");
     if (!address) {
       const getDefaultAddress = async () => {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/address/getDefault?userId=${session?.user.id}`)
+        const response = await fetch(
+          `/api/address/getDefault?userId=${session?.user.id}`
+        );
         if (response.ok) {
           const { defaultAddress } = await response.json();
           setAddress(defaultAddress);
-  
         }
-      }
+      };
       getDefaultAddress();
     }
-    
+
     const getOrder = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/orders/${orderId}?userId=${session?.user?.id}`
+          `/api/orders/${orderId}?userId=${session?.user?.id}`
         );
         if (response.ok) {
           const { order } = await response.json();
           setOrder(order);
-          setProgress(order?.progress?.progressValue)
+          setProgress(order?.progress?.progressValue);
         }
-      } catch (err) {
-      }
+      } catch (err) {}
     };
     getOrder();
   }, [session?.user?.id]);
@@ -87,9 +87,7 @@ const TrackPackage = () => {
   );
   const [map, setMap] = useState(/**@type google.maps.Map */ (null));
   if (!isLoaded) {
-    return (
-    <div></div>
-      )
+    return <div></div>;
   }
   return (
     <div>
@@ -116,8 +114,7 @@ const TrackPackage = () => {
             )}{" "}
           </div>
           <div className="border-[1px] border-black w-full h-[0.5rem] group">
-            <div
-              className={`bg-green-500 w-[${progress}%] h-full text-white`}>
+            <div className={`bg-green-500 w-[${progress}%] h-full text-white`}>
               g
             </div>
           </div>

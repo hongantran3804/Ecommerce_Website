@@ -1,9 +1,9 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import checkmark from "@public/assets/icons/checkmark.png";
 import Image from "next/image";
 import defaultImg from "@public/assets/images/defaultProductPhoto.png";
-const OrderCard = ({ orders, order, orderIndex,session }) => {
+const OrderCard = ({ orders, order, orderIndex, session }) => {
   const [buyAgainStatus, setBuyAgainStatus] = useState([]);
   useEffect(() => {
     if (orders) {
@@ -11,12 +11,11 @@ const OrderCard = ({ orders, order, orderIndex,session }) => {
         orders.map((order) => Array.from({ length: order.length }, () => false))
       );
     }
-    
   }, []);
   const buyAgain = async (e, product) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart`, {
+      const response = await fetch(`/api/cart`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -26,8 +25,7 @@ const OrderCard = ({ orders, order, orderIndex,session }) => {
           product: product,
         }),
       });
-    } catch (err) {
-    }
+    } catch (err) {}
   };
   return (
     <div className="flex flex-col gap-5">

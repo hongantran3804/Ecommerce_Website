@@ -47,28 +47,23 @@ const OrderButton = ({ order, CancelOrder }) => {
       )}
     </div>
   );
-}
+};
 const OrderShow = ({ originalOrders, session }) => {
   const [orders, setOrders] = useState(() => [...originalOrders]);
-  
+
   useEffect(() => {
     setOrders(() => [...originalOrders]);
-    
   }, [originalOrders]);
-  
+
   const CancelOrder = async (e, order) => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/orders?orderId=${order._id}`,
-        {
-          method: "PUT",
-        }
-      );
+      const response = await fetch(`/api/orders?orderId=${order._id}`, {
+        method: "PUT",
+      });
       if (response.ok) {
         location.reload();
       }
-    } catch (err) {
-    }
+    } catch (err) {}
   };
   return (
     <div className="flex flex-col gap-10">
@@ -124,7 +119,12 @@ const OrderShow = ({ originalOrders, session }) => {
                   </span>
                 )}
               </div>
-              <OrderCard order={order} orders={orders} orderIndex={orderIndex} session={session}/>
+              <OrderCard
+                order={order}
+                orders={orders}
+                orderIndex={orderIndex}
+                session={session}
+              />
             </div>
             <OrderButton order={order} CancelOrder={CancelOrder} />
           </div>

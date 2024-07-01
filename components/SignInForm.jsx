@@ -14,15 +14,17 @@ const SignInForm = () => {
   const saveChanges = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/user/checkUser?email=${inputs[0].value}&password=${inputs[1].value}`, {
-      });
+      const response = await fetch(
+        `/api/user/checkUser?email=${inputs[0].value}&password=${inputs[1].value}`,
+        {}
+      );
       if (response.ok) {
         window.location.href = "/account/profile";
       } else {
         setFail(true);
       }
       if (response.ok) {
-        window.location.href = "/account/profile"
+        window.location.href = "/account/profile";
       }
     } catch (error) {}
   };
@@ -55,7 +57,11 @@ const SignInForm = () => {
               />
             </div>
           ))}
-        {fail && <div className="text-red-700">Please check your email or password</div>}
+        {fail && (
+          <div className="text-red-700">
+            Please check your email or password
+          </div>
+        )}
         <input
           type="submit"
           value="Sign In"

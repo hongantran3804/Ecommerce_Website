@@ -1,12 +1,12 @@
-"use client"
-import React, {  useState } from 'react'
+"use client";
+import React, { useState } from "react";
 
 const SearchOrderBar = () => {
   const [search, setSearch] = useState("");
- const SearchProduct = async (e) => {
-   e.preventDefault();
-   window.location.href = `${process.env.NEXT_PUBLIC_URL}/orders/searchOrder?queryString=${search}`;
- };
+  const SearchProduct = async (e) => {
+    e.preventDefault();
+    window.location.href = `/orders/searchOrder?queryString=${search}`;
+  };
   return (
     <form className="flex flex-row items-center gap-3">
       <input
@@ -24,12 +24,11 @@ const SearchOrderBar = () => {
       <div
         className="bg-black text-white font-bold w-fit px-5 py-1 rounded-[20px] text-[.9rem] cursor-pointer"
         onClick={SearchProduct}
-      
       >
         Search Orders
       </div>
     </form>
   );
-}
+};
 
-export default SearchOrderBar
+export default SearchOrderBar;

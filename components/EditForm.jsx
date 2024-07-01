@@ -1,23 +1,21 @@
 "use client";
-import {  useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
-const PasswordForm = ({session}) => {
+const PasswordForm = ({ session }) => {
   const [inputPwds, setInputPwds] = useState([]);
   useEffect(() => {
-    setInputPwds(
-    [
-        { label: "Current password", value: "", id: "currPwd" },
-        { label: "New password", value: "", id: "newPwd" },
-        { label: "Reenter new password", value: "", id: "newPwd2" },
-      ]
-    );
-  }, [])
-  
+    setInputPwds([
+      { label: "Current password", value: "", id: "currPwd" },
+      { label: "New password", value: "", id: "newPwd" },
+      { label: "Reenter new password", value: "", id: "newPwd2" },
+    ]);
+  }, []);
+
   const [fail, setFail] = useState(false);
   const saveChanges = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/user`, {
+      const response = await fetch(`/api/user`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -33,7 +31,7 @@ const PasswordForm = ({session}) => {
       if (response.ok) {
         window.location.href = "/account/profile";
       } else {
-        setFail(true)
+        setFail(true);
       }
     } catch (error) {}
   };
@@ -42,7 +40,8 @@ const PasswordForm = ({session}) => {
       className="border-[1px] border-gray-300 rounded-[10px] flex flex-col items-start p-5 gap-2"
       onSubmit={saveChanges}
     >
-        {inputPwds && inputPwds?.map((input, index) => (
+      {inputPwds &&
+        inputPwds?.map((input, index) => (
           <div key={input?.id} className="flex flex-col w-fit">
             <label htmlFor={input?.id}>{input?.label}</label>
             <input
@@ -74,7 +73,7 @@ const GeneralForm = ({ inputValue, setInputValue, session }) => {
   const saveChanges = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/user`, {
+      const response = await fetch(`/api/user`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -134,9 +133,13 @@ const EditForm = () => {
         Change {inputValue?.label}
       </h1>
       {inputValue?.label !== "Password" ? (
-        <GeneralForm inputValue={inputValue} setInputValue={setInputValue} session={session} />
+        <GeneralForm
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          session={session}
+        />
       ) : (
-        <PasswordForm session={session}/>
+        <PasswordForm session={session} />
       )}
     </div>
   );

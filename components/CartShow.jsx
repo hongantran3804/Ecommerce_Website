@@ -15,7 +15,7 @@ const CartShow = ({
   const handleDelete = async (e, product, quantityValue) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart`, {
+      const response = await fetch(`/api/cart`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -43,7 +43,7 @@ const CartShow = ({
         quantity: filtQuantity[index].value,
       }));
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart`, {
+      const response = await fetch(`/api/cart`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -5,18 +5,18 @@ import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
 const OrdersSummary = ({ originalOrders, session }) => {
   const [prodName, setProdName] = useState("");
-  
+
   const [orders, setOrders] = useState([]);
   const now = dayjs();
   const [filterDay, setFilterDay] = useState(now.subtract(30, "days"));
   useEffect(() => {
-    setOrders(
-      (curr) => [...originalOrders.filter((order) => 
+    setOrders((curr) => [
+      ...originalOrders.filter((order) =>
         dayjs(order.orderPlacedDate).isAfter(filterDay)
-      )]
-    );
+      ),
+    ]);
   }, [filterDay, originalOrders]);
-  
+
   return (
     <section>
       <div className="flex flex-col gap-5">
@@ -37,7 +37,9 @@ const OrdersSummary = ({ originalOrders, session }) => {
               }
             }}
           >
-            <option value="0" selected="selected">last 30 days</option>
+            <option value="0" selected="selected">
+              last 30 days
+            </option>
             <option value="1">last 3 months</option>
             <option value="2">{now.year()}</option>
           </select>
@@ -52,9 +54,7 @@ const Orders = () => {
   const { data: session } = useSession();
   useEffect(() => {
     const getOrders = async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/orders?userId=${session?.user?.id}`
-      );
+      const response = await fetch(`/api/orders?userId=${session?.user?.id}`);
       if (response.ok) {
         const { orders } = await response.json();
         setOrders(() => orders);

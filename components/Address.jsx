@@ -21,14 +21,13 @@ const Address = () => {
     const getUserAddress = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/address?userId=${session?.user?.id}`
+          `/api/address?userId=${session?.user?.id}`
         );
         if (response.ok) {
           const { addresses } = await response.json();
           setUserAddress(() => addresses);
         }
-      } catch (err) {
-      }
+      } catch (err) {}
     };
     getUserAddress();
   }, [session?.user, inputValue]);
@@ -36,21 +35,18 @@ const Address = () => {
   const EditAddress = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/address`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            addressId: addressId,
-            data: inputValue,
-            userId: session?.user?.id,
-            defaultStatus: defaultStatus,
-          }),
-        }
-      );
+      const response = await fetch(`/api/address`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          addressId: addressId,
+          data: inputValue,
+          userId: session?.user?.id,
+          defaultStatus: defaultStatus,
+        }),
+      });
       if (response.ok) {
         setInputValue(
           Array.from({ length: addressInfo.length }, () => ({ value: "" }))
@@ -60,38 +56,31 @@ const Address = () => {
   };
   const setDefault = async (e, id, defaultValue) => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/address/setDefault`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId: session?.user.id,
-            addressId: id,
-            defaultStatus: defaultValue,
-          }),
-        }
-      );
+      const response = await fetch(`/api/address/setDefault`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: session?.user.id,
+          addressId: id,
+          defaultStatus: defaultValue,
+        }),
+      });
       if (response.ok) {
         setInputValue(
           Array.from({ length: addressInfo.length }, () => ({ value: "" }))
         );
       }
-    } catch (err) {
-    }
+    } catch (err) {}
   };
   const deleteAddress = async (e, addressId) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/address?userId=${session?.user?.id}`,
-        {
-          method: "DELETE",
-          body: JSON.stringify({
-            addressId,
-          }),
-        }
-      );
+      const response = await fetch(`/api/address?userId=${session?.user?.id}`, {
+        method: "DELETE",
+        body: JSON.stringify({
+          addressId,
+        }),
+      });
       if (response.ok) {
         // location.reload()
         setInputValue((curr) =>

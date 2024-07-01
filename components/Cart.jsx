@@ -7,24 +7,20 @@ import { useSession } from "next-auth/react";
 const Cart = () => {
   const [products, setProducts] = useState([]);
   const [quantity, setQuantity] = useState([]);
-  const {data: session} = useSession()
+  const { data: session } = useSession();
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/cart?userId=${session?.user?.id}`
-        );
+        const response = await fetch(`/api/cart?userId=${session?.user?.id}`);
         if (response.ok) {
           const { products, quantity } = await response.json();
           setProducts(products);
           setQuantity((curr) => quantity);
-          
         }
       } catch (e) {}
     };
     getProducts();
   }, [session?.user?.id]);
-
 
   return (
     <div>
