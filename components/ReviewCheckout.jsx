@@ -273,7 +273,7 @@ const ReviewCheckoutBoard = ({
                       setPlaceOrder(false);
                     }}
                   >
-                    <Image src={close} className="w-[2rem]" />
+                    <Image src={close} className="w-[2rem]" alt=""/>
                   </div>
                   <Elements
                     stripe={stripePromise}

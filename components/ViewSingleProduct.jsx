@@ -63,6 +63,7 @@ const ViewSingleProduct = () => {
               width={100}
               height={100}
               className=""
+              alt=""
             />
           </div>
           <div className="flex flex-col items-start font-bold h-full ">
@@ -72,52 +73,55 @@ const ViewSingleProduct = () => {
               <span>{product?.upc}</span>
             </div>
 
-            {session?.user && <div className="flex flex-row items-center gap-2 mt-5">
-              {added[0] && (
-                <div className="text-green-500 flex flex-row items-center gap-1 text-[.8rem]">
-                  <Image src={checkMark} className="w-[.9rem]" />
-                </div>
-              )}
-              <div className="cursor-pointer group relative inline-block">
-                <Image
-                  src={cart}
-                  className="w-[1.5rem]"
-                  onClick={(e) => {
-                    if (added[0]) {
-                      setAdded(() => {
-                        const newAdded = [...added];
-                        newAdded[0] = false;
-                        return newAdded;
-                      });
-                      setTimeout(() => {
+            {session?.user && (
+              <div className="flex flex-row items-center gap-2 mt-5">
+                {added[0] && (
+                  <div className="text-green-500 flex flex-row items-center gap-1 text-[.8rem]">
+                    <Image src={checkMark} className="w-[.9rem]" alt="" />
+                  </div>
+                )}
+                <div className="cursor-pointer group relative inline-block">
+                  <Image
+                    alt=""
+                    src={cart}
+                    className="w-[1.5rem]"
+                    onClick={(e) => {
+                      if (added[0]) {
+                        setAdded(() => {
+                          const newAdded = [...added];
+                          newAdded[0] = false;
+                          return newAdded;
+                        });
+                        setTimeout(() => {
+                          setAdded(() => {
+                            const newAdded = [...added];
+                            newAdded[0] = true;
+                            return newAdded;
+                          });
+                        }, 500);
+                      } else {
                         setAdded(() => {
                           const newAdded = [...added];
                           newAdded[0] = true;
                           return newAdded;
                         });
-                      }, 500);
-                    } else {
-                      setAdded(() => {
-                        const newAdded = [...added];
-                        newAdded[0] = true;
-                        return newAdded;
-                      });
-                    }
+                      }
 
+                      AddToCart(e, product, session?.user.id, quantity[0]);
+                    }}
+                  />
+                </div>
+                <div
+                  className="border-[1px] border-gray-300 text-[.7rem] p-[5px] hover:bg-Purple hover:text-white rounded-[5px] cursor-pointer active:bg-LightPurple duration-300 text-center inline-block"
+                  onClick={(e) => {
                     AddToCart(e, product, session?.user.id, quantity[0]);
+                    window.location.href = "/checkout";
                   }}
-                />
+                >
+                  Buy now
+                </div>
               </div>
-              <div
-                className="border-[1px] border-gray-300 text-[.7rem] p-[5px] hover:bg-Purple hover:text-white rounded-[5px] cursor-pointer active:bg-LightPurple duration-300 text-center inline-block"
-                onClick={(e) => {
-                  AddToCart(e, product, session?.user.id, quantity[0]);
-                  window.location.href = "/checkout";
-                }}
-              >
-                Buy now
-              </div>
-            </div>}
+            )}
           </div>
         </div>
         <Link
@@ -129,7 +133,7 @@ const ViewSingleProduct = () => {
             },
           }}
         >
-          <Image src={reqInfoIcon} className="w-[2rem]" />
+          <Image src={reqInfoIcon} className="w-[2rem]" alt="" />
         </Link>
       </div>
     </section>

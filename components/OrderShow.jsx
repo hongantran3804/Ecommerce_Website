@@ -73,7 +73,7 @@ const OrderShow = ({ originalOrders, session }) => {
   return (
     <div className="flex flex-col gap-10">
       {orders?.map((order, orderIndex) => (
-        <div className="border-[1px]">
+        <div className="border-[1px]" key={order._id}>
           <div className="p-3 text-[.9rem] flex flex-row items-center justify-between bg-gray-200 font-bold">
             <div className="flex flex-row justify-between w-[50%]">
               <div className="flex flex-col items-start">
