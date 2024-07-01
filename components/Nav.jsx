@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 "use client";
 import Image from "next/image";
-import lacacoLogo from "@public/assets/images/lacacoLogo.png";
+import lacacoLogo from "@public/assets/images/lacacologo.png";
 import GoogleTranslate from "./GoogleTranslate";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";

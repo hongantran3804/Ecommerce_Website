@@ -1,5 +1,4 @@
 import React from 'react'
-import CheckoutNav from '@components/checkoutNav';
 const layout = ({children}) => {
   return (
     <div>

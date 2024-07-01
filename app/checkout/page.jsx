@@ -1,6 +1,5 @@
 import Address from '@components/Address'
 import CheckoutNav from '@components/CheckoutNav'
-import Checkout from '@components/ReviewCheckout'
 import React from 'react'
 
 const page = () => {
