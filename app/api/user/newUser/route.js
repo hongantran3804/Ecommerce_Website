@@ -50,7 +50,7 @@ export const POST = async (request) => {
         await newUser.save();
         try {
           const emailVerification = await fetch(
-            "http://localhost:3000/api/emailVerification",
+            "/api/emailVerification",
             {
               method: "POST",
               headers: {

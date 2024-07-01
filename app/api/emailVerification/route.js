@@ -8,7 +8,7 @@ export const POST = async (request) => {
       expiresIn: "1h",
     })
   
-    const url = `http://localhost:3000/api/emailVerification/confirmation/${token}`
+    const url = `/api/emailVerification/confirmation/${token}`
     const transporter = nodemailer.createTransport({
       service: "gmail",
       host: "smtp.gmail.com",
