@@ -29,7 +29,7 @@ const Departments = () => {
       {categories.map((category) => (
         <Link
           href={{
-            pathname: `${process.env.NEXTAUTH_URL}/viewProduct`,
+            pathname: `/viewProduct`,
             query: {
               brandId: category._id,
               name: category.name,

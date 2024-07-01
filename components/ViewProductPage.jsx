@@ -30,7 +30,7 @@ const ViewProductPage = () => {
       if (response.ok) {
         const { prods, priceRanges } = await response.json();
         if (prods && priceRanges) {
-          setProducts((curr) => prods);
+          setProducts(prods);
           setNarrowBy([priceRanges]);
         }
       }
