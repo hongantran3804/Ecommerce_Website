@@ -11,8 +11,8 @@ const ProductsDisplay = ({
   userId,
   session,
 }) => {
-  if (!products || !narrowBy[0])
-    return <div className="font-bold">No product found</div>;
+  // if (!products || !narrowBy[0])
+  //   return <div className="font-bold">No product found</div>;
   const [originalProducts, setOriginalProducts] = useState([]);
   const [totalProd, setTotalProd] = useState(0);
   const [numOfProd, setNumOfProd] = useState(0);
