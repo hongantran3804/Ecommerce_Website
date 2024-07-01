@@ -1,5 +1,4 @@
 import { connectToDB } from "@utils/database";
-import User from "@models/User";
 import jwt from "jsonwebtoken";
 import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
