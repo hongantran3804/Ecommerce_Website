@@ -25,7 +25,7 @@ export const POST = async (request) => {
     const url = `${process.env.NEXTAUTH_URL}/pwChange?token=${token}`;
     const verificationMessage = `
   <div>
-  Do you want to update your Lacaco account password? Please click here to confirm. This link will expire in 1 hour.
+  Do you want to update your Hong An's Eshop account password? Please click here to confirm. This link will expire in 1 hour.
   <br>
   <div class="px-[10px] py-[5px]">
   <a href="${url}">Confirm your email</a>
