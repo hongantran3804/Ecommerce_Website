@@ -3,7 +3,6 @@ import Product from "@models/Product";
 export const GET = async (request, { params }) => {
   const { brandId } = params;
   const url = new URL(request.url);
-  const searchParams = new URLSearchParams(url.searchParams);
   try {
     await connectToDB();
     let products = [];

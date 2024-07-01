@@ -34,9 +34,9 @@ const ViewSingleProduct = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search);
     const getProduct = async () => {
-      const response = await fetch(
-        `${process.env.NEXTAUTH_URL}/api/products/singleProduct?productId=${searchParams.get("productId")}`
-      );
+      const response = await fetch(`/api/products/singleProduct?productId=${searchParams.get("productId")}`,
+      
+      {method: "GET"});
       if (response.ok) {
         const { product } = await response.json();
         setProduct(product);

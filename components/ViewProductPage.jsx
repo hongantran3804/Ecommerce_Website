@@ -16,7 +16,10 @@ const ViewProductPage = () => {
   const [narrowBy, setNarrowBy] = useState([[]]);
   useEffect(() => {
     const getProducts = async () => {
-      const response = await fetch(`${process.env.NEXTAUTH_URL}/api/products/${brandId}`);
+      const response = await fetch(
+        `/api/products/${brandId}`,
+        { method: "GET" }
+      );
       if (response.ok) {
         const { prods, priceRanges } = await response.json();
         console.log(response.status);
