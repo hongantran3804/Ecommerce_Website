@@ -21,8 +21,7 @@ const Nav = () => {
           const { defaultAddress } = await response.json();
           setAddress(defaultAddress);
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     };
     getAddress();
   }, [session?.user?.id]);
@@ -67,7 +66,6 @@ const Nav = () => {
                     <Link
                       href={{
                         pathname: `${process.env.NEXT_PUBLIC_URL}/account/address`,
-                        
                       }}
                       className="cursor-pointer font-light font-bodyFont text-[0.8rem] border-[1px] border-Purple px-4 py-3 hover:bg-Purple hover:text-Green duration-300 text-nowrap w-full text-center"
                     >
