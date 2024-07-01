@@ -18,10 +18,10 @@ const SearchInput = () => {
         className="flex flex-row items-center h-[3rem] relative flex-1"
         onSubmit={handleSubmit}
       >
-        <div id="departmentView" className="relative h-full w-[20%] group z-20">
+        <div id="departmentView" className="relative h-full w-[30%] group z-20">
           <Link href="/">
-            <div className="border-[1px] border-white rounded-l-[5px] text-nowrap w-full h-full p-2 peer cursor-pointer">
-              <span className="after:showAddress relative text-[.9rem] ">
+            <div className="border-[1px] border-white rounded-l-[5px] text-nowrap h-full p-2 peer cursor-pointer">
+              <span className="after:showAddress relative text-[.9rem]">
                 All Brands
               </span>
             </div>
