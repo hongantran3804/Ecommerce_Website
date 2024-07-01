@@ -1,10 +1,11 @@
 import { connectToDB } from "@utils/database";
 import Product from "@models/Product";
 export const GET = async (request, { params }) => {
-  const { brandId } = params;
-  const url = new URL(request.url);
   try {
     await connectToDB();
+    const { brandId } = params;
+    const url = new URL(request.url);
+
     let products = [];
     if (brandId) {
       products = await Product.find({ brand: brandId }).populate("brand");
