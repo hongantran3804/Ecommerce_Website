@@ -9,11 +9,18 @@ import { useSession } from "next-auth/react";
 const ViewProductPage = () => {
   const { data: session } = useSession();
 
-  const searchParams = useSearchParams();
-  const heading = searchParams.get("name");
-  const brandId = searchParams.get("brandId");
+  // const searchParams = useSearchParams();
+  // const heading = searchParams.get("name");
+  // const brandId = searchParams.get("brandId");
+  const [heading, setHeading] = useState("");
+  const [brandId, setBrandId] = useState("")
   const [products, setProducts] = useState([]);
   const [narrowBy, setNarrowBy] = useState([[]]);
+  useEffect(() => {
+    const searchParams = new URLSearchParams(document.location.searchParams);
+    setHeading(searchParams.get("name"));
+    setBrandId(searchParams.get("brandId"));
+  },[])
   useEffect(() => {
     const getProducts = async () => {
       const response = await fetch(
@@ -31,7 +38,7 @@ const ViewProductPage = () => {
     };
 
     getProducts();
-  }, [brandId]);
+  }, [brandId,heading]);
 
   return (
     <div>

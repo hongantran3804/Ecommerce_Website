@@ -43,7 +43,7 @@ const ViewSingleProduct = () => {
       }
     };
     getProduct();
-  }, []);
+  }, [session?.user]);
   return (
     <section className=" px-[20rem] py-[5rem]">
       <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px] w-full '>
