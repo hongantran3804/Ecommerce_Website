@@ -12,19 +12,21 @@ const Nav = () => {
   const { data: session } = useSession();
   const [address, setAddress] = useState(null);
   useEffect(() => {
-    const getAddress = async () => {
-      try {
-        const response = await fetch(
-          `/api/address/getDefault?userId=${session?.user?.id}`
-        );
-        if (response.ok) {
-          const { defaultAddress } = await response.json();
-          setAddress(defaultAddress);
-        }
-      } catch (error) {}
-    };
-    getAddress();
-  }, [session?.user?.id]);
+    if (session?.user) {
+      const getAddress = async () => {
+        try {
+          const response = await fetch(
+            `/api/address/getDefault?userId=${session?.user?.id}`
+          );
+          if (response.ok) {
+            const { defaultAddress } = await response.json();
+            setAddress(defaultAddress);
+          }
+        } catch (error) {}
+      };
+      getAddress();
+    }
+  }, [session?.user]);
   return (
     <section>
       <div>

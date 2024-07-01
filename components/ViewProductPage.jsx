@@ -38,7 +38,7 @@ const ViewProductPage = () => {
     };
 
     getProducts();
-  }, [session?.user, brandId, heading]);
+  }, []);
 
   return (
     <div>

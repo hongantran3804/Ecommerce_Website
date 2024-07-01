@@ -11,10 +11,10 @@ const ViewSingleProduct = () => {
   const { data: session } = useSession();
   const [product, setProduct] = useState();
   const [added, setAdded] = useState(Array.from({ length: 1 }, () => false));
-  const [quantity, setQuantity] = useState([]);
-  useEffect(() => {
-    setQuantity(Array.from({ length: 1 }, () => 1));
-  }, [product]);
+  const [quantity, setQuantity] = useState(Array.from({ length: 1 }, () => 1));
+  // useEffect(() => {
+  //   setQuantity(Array.from({ length: 1 }, () => 1));
+  // }, [product]);
 
   const AddToCart = async (e, product, userId, quantityVal) => {
     e.preventDefault();
@@ -43,7 +43,7 @@ const ViewSingleProduct = () => {
       }
     };
     getProduct();
-  }, [session?.user]);
+  }, []);
   return (
     <section className=" px-[20rem] py-[5rem]">
       <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px] w-full '>
