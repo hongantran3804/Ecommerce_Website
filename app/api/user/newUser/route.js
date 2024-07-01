@@ -1,5 +1,6 @@
 import { connectToDB } from "@utils/database";
 import User from "@models/User";
+import bcrypt from "bcrypt";
 const sleep = () =>
   new Promise((resolve) => {
     setTimeout(() => {
@@ -38,19 +39,19 @@ export const POST = async (request) => {
             await User.findByIdAndDelete({_id: userExist._id });
           }
         }
-
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
         const newUser = new User({
           email,
           name,
           compName,
           phoneNumber,
-          password,
+          hashedPassword,
           confirmed,
         });
         await newUser.save();
         try {
-          const emailVerification = await fetch(
-            "/api/emailVerification",
+          const emailVerification = await fetch(`${process.env.NEXTAUTH_URL}/api/emailVerification`,
             {
               method: "POST",
               headers: {

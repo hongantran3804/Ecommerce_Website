@@ -22,7 +22,7 @@ export const POST = async (request) => {
     const token = jwt.sign({ email }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    const url = `/pwChange?token=${token}`;
+    const url = `${process.env.NEXTAUTH_URL}/pwChange?token=${token}`;
     const verificationMessage = `
   <div>
   Do you want to update your Lacaco account password? Please click here to confirm. This link will expire in 1 hour.
