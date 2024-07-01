@@ -10,8 +10,6 @@ export const connectToDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
       dbName: "lacaco",
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
     });
     console.log("Mongodb connected");
   } catch (error) {
