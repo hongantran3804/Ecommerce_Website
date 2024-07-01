@@ -62,8 +62,11 @@ const SignUpForm = () => {
         }),
       });
       const noti = await response.json();
-      
+      if (!response.ok) {
+        alert("Something went wrong");
+      }
     } catch (error) {
+      alert("Something went wrong");
     } finally {
       setName("");
       setEmail("");

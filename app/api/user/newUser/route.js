@@ -46,7 +46,7 @@ export const POST = async (request) => {
           name,
           compName,
           phoneNumber,
-          hashedPassword,
+          password: hashedPassword,
           confirmed,
         });
         await newUser.save();

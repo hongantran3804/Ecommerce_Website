@@ -35,7 +35,7 @@ const ViewSingleProduct = () => {
     const searchParams = new URLSearchParams(document.location.search);
     const getProduct = async () => {
       const response = await fetch(
-        `/api/products/singleProduct?productId=${searchParams.get("productId")}`
+        `${process.env.NEXTAUTH_URL}/api/products/singleProduct?productId=${searchParams.get("productId")}`
       );
       if (response.ok) {
         const { product } = await response.json();

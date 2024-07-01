@@ -111,8 +111,13 @@ const SendRequest = () => {
         },
         body: JSON.stringify({ email }),
       });
+      if (!response.ok) {
+        alert("Something went wrong")
+      }
       setEmail("");
-    } catch (error) {}
+    } catch (error) {
+      alert("Something went wrong");
+    }
   };
   return (
     <div className="flex flex-col gap-[5px]">

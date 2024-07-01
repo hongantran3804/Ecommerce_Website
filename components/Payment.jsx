@@ -54,7 +54,7 @@ const Payment = ({ products, quantity, amount, handleOrder }) => {
       },
       redirect: "if_required",
     });
-
+    
     if (error) {
       setErrorMessage(error.message);
     } else {
