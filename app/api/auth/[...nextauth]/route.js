@@ -2,7 +2,13 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { connectToDB } from "@utils/database";
+import Product from "@models/Product";
+import Brand from "@models/Brand";
+import Order from "@models/Order";
+import Address from "@models/Address";
+import ShoppingCart from "@models/ShoppingCart";
 import User from "@models/User";
+import Progress from "@models/Progress";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 const handler = NextAuth({

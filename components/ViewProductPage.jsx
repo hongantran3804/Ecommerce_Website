@@ -23,13 +23,16 @@ const ViewProductPage = () => {
   // },[])
   useEffect(() => {
     const getProducts = async () => {
+      alert("1")
       const response = await fetch(
         `/api/products/${searchParams.get("brandId")}`,
         { method: "GET" }
       );
+      alert(2)
       if (response.ok) {
         const { prods, priceRanges } = await response.json();
         if (prods && priceRanges) {
+          alert(prods)
           setProducts(prods);
           setNarrowBy([priceRanges]);
         }

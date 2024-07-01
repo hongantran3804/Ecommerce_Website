@@ -1,5 +1,12 @@
 import jwt from "jsonwebtoken";
 import { connectToDB } from "@utils/database";
+import Product from "@models/Product";
+import Brand from "@models/Brand";
+import Order from "@models/Order";
+import Address from "@models/Address";
+import ShoppingCart from "@models/ShoppingCart";
+import User from "@models/User";
+import Progress from "@models/Progress";
 export const POST = async (request) => {
   const { email } = await request.json()
   
