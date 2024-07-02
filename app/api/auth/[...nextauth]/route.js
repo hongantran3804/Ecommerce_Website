@@ -53,7 +53,10 @@ const handler = NextAuth({
     maxAge: 24 * 60 * 60,
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === "update") {
+        return {...token, ...session.user}
+      }
       if (user) {
         return {
           ...token,

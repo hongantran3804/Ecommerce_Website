@@ -72,7 +72,7 @@ const PasswordForm = ({ session }) => {
     </form>
   );
 };
-const GeneralForm = ({ inputValue, setInputValue, session }) => {
+const GeneralForm = ({ inputValue, setInputValue, session, update }) => {
   const saveChanges = async (e) => {
     e.preventDefault();
     try {
@@ -88,6 +88,14 @@ const GeneralForm = ({ inputValue, setInputValue, session }) => {
         }),
       });
       if (response.ok) {
+        if(inputValue.name === "name") {}
+        await update({
+          ...session,
+          user: {
+            ...session?.user,
+            name: inputValue.oldValue
+          }
+        })
         window.location.href = "/account/profile";
       }
     } catch (error) {}
@@ -121,7 +129,7 @@ const GeneralForm = ({ inputValue, setInputValue, session }) => {
   );
 };
 const EditForm = () => {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const [inputValue, setInputValue] = useState(null);
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -151,6 +159,7 @@ const EditForm = () => {
           inputValue={inputValue}
           setInputValue={setInputValue}
           session={session}
+          update={update}
         />
       ) : (
         <PasswordForm session={session} />
