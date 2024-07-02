@@ -19,7 +19,7 @@ const Success = () => {
           ${amount / 100}
         </div>
         <Link href="/orders">
-          <div className="border-[1px] px-2 py-1 text-white bg-LightPurple active:bg-Purple cursor-pointer rounded-[5px]">
+          <div className="border-[1px] px-2 py-1 text-white bg-LightPurple active:bg-Purple cursor-pointer rounded-[5px] w-fit">
             Go to Order Page
           </div>
         </Link>
