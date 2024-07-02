@@ -58,7 +58,7 @@ const Payment = ({ products, quantity, amount, handleOrder }) => {
     if (error) {
       setErrorMessage(error.message);
     } else {
-     // handleOrder(e, amount);
+      handleOrder(e, amount);
       window.location.href = `/payment/success?amount=${amount}`;
     }
     setLoading(false);
