@@ -38,10 +38,12 @@ const ProdCard = ({ products, userId }) => {
   return (
     <div className="grid grid-cols-prodCol gap-3 flex-1">
       {products.map((product, index) => (
-        <div className='flex flex-col border-gray-300 rounded-[5px] border-[1px] text-[.6rem] font-["Arial] items-center py-[5px] h-full justify-between text-center relative gap-2'>
+        <div
+          className='flex flex-col border-gray-300 rounded-[5px] border-[1px] text-[.6rem] font-["Arial] items-center py-[5px] h-full justify-between text-center relative gap-2'
+          key={product.prodDesc}
+        >
           <div className="flex flex-col items-center text-wrap w-[90%] text-center ">
             <Link
-              key={product.prodDesc}
               href={{
                 pathname: "/viewSingleProduct",
                 query: {
