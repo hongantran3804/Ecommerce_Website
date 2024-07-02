@@ -9,6 +9,9 @@ import {
 import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
 import OrderCard from "./OrderCard";
+import previousPage from "@public/assets/icons/previousPage.png";
+import Image from "next/image";
+import Link from "next/link";
 const TrackPackage = () => {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
@@ -91,9 +94,20 @@ const TrackPackage = () => {
   }
   return (
     <div>
-      <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
-        Tracking Your Order
-      </h1>
+      <div className="flex flex-row items-center gap-2">
+        <div
+          className="border-2 w-fit rounded-full bg-gray-300 p-2 cursor-pointer"
+          onClick={() => {
+            window.history.back();
+          }}
+        >
+          <Image src={previousPage} width={20} height={20} />
+        </div>
+        <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
+          Tracking Your Order
+        </h1>
+      </div>
+
       <div className="w-full relative">
         <div
           className={`absolute left-0 top-0 z-10 bg-white mt-[2rem] ml-[2rem] w-[38%] p-5  flex flex-col items-start ${

@@ -6,6 +6,9 @@ import React, { useEffect, useState } from "react";
 import ProductsDisplay from "./ProductsDisplay";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import previousPage from "@public/assets/icons/previousPage.png";
+import Image from "next/image";
+import Link from "next/link";
 const ViewProductPage = () => {
   const { data: session } = useSession();
 
@@ -23,16 +26,13 @@ const ViewProductPage = () => {
   // },[])
   useEffect(() => {
     const getProducts = async () => {
-      alert("1")
       const response = await fetch(
         `/api/products/${searchParams.get("brandId")}`,
         { method: "GET" }
       );
-      alert(2)
       if (response.ok) {
         const { prods, priceRanges } = await response.json();
         if (prods && priceRanges) {
-          alert(prods)
           setProducts(prods);
           setNarrowBy([priceRanges]);
         }
@@ -40,13 +40,24 @@ const ViewProductPage = () => {
     };
 
     getProducts();
-  }, []);
+  }, [brandId]);
 
   return (
     <div>
-      <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
-        {heading}
-      </h1>
+      <div className="flex flex-row items-center gap-2">
+        <div
+          className="border-2 w-fit rounded-full bg-gray-300 p-2 cursor-pointer"
+          onClick={() => {
+            window.history.back();
+          }}
+        >
+          <Image src={previousPage} width={20} height={20} />
+        </div>
+        <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
+          {heading}
+        </h1>
+      </div>
+
       <ProductsDisplay
         products={products}
         narrowBy={narrowBy}

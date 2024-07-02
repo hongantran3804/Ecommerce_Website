@@ -1,11 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import addAddressIcon from "@public/assets/icons/addAddressIcon.png";
-import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { addressInfo } from "@utils/utils";
 import ModifyAddressForm from "./ModifyAddressForm";
 import AddressCard from "./AddressCard";
+import previousPage from "@public/assets/icons/previousPage.png";
+import Image from "next/image";
+import Link from "next/link";
 const AccountAddress = () => {
   const { data: session } = useSession();
   const [toggleAddressBoard, setToggleAddressBoard] = useState(false);
@@ -67,9 +69,20 @@ const AccountAddress = () => {
           defaultStatus={defaultStatus}
         />
       )}
-      <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
-        Your Addresses
-      </h1>
+      <div className="flex flex-row items-center gap-2">
+        <div
+          className="border-2 w-fit rounded-full bg-gray-300 p-2  cursor-pointer"
+          onClick={() => {
+            window.history.back();
+          }}
+        >
+          <Image src={previousPage} width={20} height={20} />
+        </div>
+        <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
+          Your Addresses
+        </h1>
+      </div>
+
       <div className="flex flex-row flex-wrap gap-5">
         <div>
           <div

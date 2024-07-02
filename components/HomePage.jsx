@@ -19,7 +19,6 @@ const HomePage = () => {
     };
     getBrands();
   }, []);
-
   return (
     <div>
       <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>

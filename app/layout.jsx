@@ -5,8 +5,10 @@ import "@styles/global.css";
 import Provider from "@components/Provider";
 import Departments from "@components/Departments";
 import SearchInput from "@components/SearchInput";
+import Image from "next/image";
+import previousPage from "@public/assets/icons/previousPage.png";
 export const metadata = {
-  title: "eShop",
+  title: "HongAn EShop",
 };
 
 const RootLayout = ({ children }) => {
@@ -17,10 +19,9 @@ const RootLayout = ({ children }) => {
           <div className="w-full bg-Purple text-white sticky z-50 top-0">
             <Nav />
           </div>
-
           <div className="w-[100%] gap-[0.4rem] flex flex-col px-[10rem]">
             <div className="flex flex-row items-start gap-5">
-              <div className="flex-1 flex flex-col">
+              <div className="flex flex-row items-start w-full">
                 <div className="flex-1">{children}</div>
               </div>
             </div>

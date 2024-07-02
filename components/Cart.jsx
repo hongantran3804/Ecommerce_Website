@@ -4,6 +4,9 @@
 import React, { useEffect, useState } from "react";
 import CartSummary from "./CartSummary";
 import { useSession } from "next-auth/react";
+import previousPage from "@public/assets/icons/previousPage.png";
+import Image from "next/image";
+import Link from "next/link";
 const Cart = () => {
   const [products, setProducts] = useState([]);
   const [quantity, setQuantity] = useState([]);
@@ -24,9 +27,20 @@ const Cart = () => {
 
   return (
     <div>
-      <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
-        Shopping Cart
-      </h1>
+      <div className="flex flex-row items-center gap-2">
+        <div
+          className="border-2 w-fit rounded-full bg-gray-300 p-2 cursor-pointer"
+          onClick={() => {
+            window.history.back();
+          }}
+        >
+          <Image src={previousPage} width={20} height={20} />
+        </div>
+        <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
+          Shopping Cart
+        </h1>
+      </div>
+
       <CartSummary
         products={products}
         oldQuantity={quantity}

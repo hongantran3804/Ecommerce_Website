@@ -1,7 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import checkmark from "@public/assets/icons/checkmark.png";
+import previousPage from "@public/assets/icons/previousPage.png";
 import Image from "next/image";
+import Link from "next/link";
 import defaultImg from "@public/assets/images/defaultProductPhoto.png";
 const OrderCard = ({ orders, order, orderIndex, session }) => {
   const [buyAgainStatus, setBuyAgainStatus] = useState([]);
@@ -35,18 +37,28 @@ const OrderCard = ({ orders, order, orderIndex, session }) => {
           key={product._id}
         >
           <div className="flex flex-row items-start gap-5 h-full">
-            <div>
-              <Image
-                src={
-                  product?.photo
-                    ? process.env.NEXT_PUBLIC_DOMAIN_PHOTO + product?.photo
-                    : defaultImg
-                }
-                width={100}
-                height={100}
-                alt=""
-              />
-            </div>
+            <Link
+              key={order._id}
+              href={{
+                pathname: "/viewSingleProduct",
+                query: {
+                  productId: product._id,
+                },
+              }}
+            >
+              <div>
+                <Image
+                  src={
+                    product?.photo
+                      ? process.env.NEXT_PUBLIC_DOMAIN_PHOTO + product?.photo
+                      : defaultImg
+                  }
+                  width={100}
+                  height={100}
+                  alt=""
+                />
+              </div>
+            </Link>
             <div className="flex flex-col items-start justify-between gap-3 ">
               <span>{product.prodDesc}</span>
               <span>{product.brand.name}</span>

@@ -7,7 +7,7 @@ const Success = () => {
     const searchParams = new URLSearchParams(document.location.search);
     setAmount(searchParams.get("amount"));
   }, []);
-
+  
   return (
     <main className="max-w-6xl mx-auto p-10 text-white text-center border m-10 rounded-md bg-gradient-to-tr from-blue-500 to-purple-500 w-full">
       <div className="mb-10">

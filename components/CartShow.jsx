@@ -1,6 +1,9 @@
-import Image from "next/image";
+
 import React, { useState, useEffect } from "react";
 import defaultImg from "@public/assets/images/defaultProductPhoto.png";
+import previousPage from "@public/assets/icons/previousPage.png";
+import Image from "next/image";
+import Link from "next/link";
 const CartShow = ({
   products,
   quantity,
@@ -83,18 +86,28 @@ const CartShow = ({
             />
           )} */}
           <div className="flex flex-row items-start flex-1 gap-4 h-fit">
-            <div className="h-full">
-              <Image
-                src={
-                  product?.photo
-                    ? process.env.NEXT_PUBLIC_DOMAIN_PHOTO + product?.photo
-                    : defaultImg
-                }
-                width={100}
-                height={100}
-                alt=""
-              />
-            </div>
+            <Link
+              key={product._id}
+              href={{
+                pathname: "/viewSingleProduct",
+                query: {
+                  productId: product._id,
+                },
+              }}
+            >
+              <div className="h-full">
+                <Image
+                  src={
+                    product?.photo
+                      ? process.env.NEXT_PUBLIC_DOMAIN_PHOTO + product?.photo
+                      : defaultImg
+                  }
+                  width={100}
+                  height={100}
+                  alt=""
+                />
+              </div>
+            </Link>
             <div className="flex flex-col justify-between items-start w-[80%]">
               <div>{product?.prodDesc}</div>
               <div>{product?.brand?.name}</div>

@@ -1,18 +1,32 @@
 "use client";
 import React from "react";
 import { accountPages } from "@utils/utils";
-import Link from "next/link";
+
 import { useSession } from "next-auth/react";
+
+import adminIcon from "@public/assets/icons/adminIcon.png";
+import previousPage from "@public/assets/icons/previousPage.png";
 import Image from "next/image";
-import adminIcon from "@public/assets/icons/adminIcon.png"
+import Link from "next/link";
 const Account = () => {
   const { data: session } = useSession();
   return (
     <section>
       <div>
-        <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
-          Your Account
-        </h1>
+        <div className="flex flex-row items-center gap-2">
+          <div
+            className="border-2 w-fit rounded-full bg-gray-300 p-2 cursor-pointer"
+            onClick={() => {
+              window.history.back();
+            }}
+          >
+            <Image src={previousPage} width={20} height={20} />
+          </div>
+          <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
+            Your Account
+          </h1>
+        </div>
+
         <div className="flex flex-row items-start gap-2">
           {accountPages.map((accountPage, index) => (
             <Link

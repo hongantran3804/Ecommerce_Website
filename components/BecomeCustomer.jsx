@@ -2,6 +2,9 @@
 import React, { useEffect, useState,useRef } from "react";
 import { becomeCustomerInfo } from "@utils/utils";
 import ReCAPTCHA from "react-google-recaptcha";
+import previousPage from "@public/assets/icons/previousPage.png";
+import Image from "next/image";
+import Link from "next/link";
 const SignUpForm = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -97,14 +100,24 @@ const SignUpForm = () => {
   ];
   return (
     <div className="flex flex-col items-center w-full h-full">
+      <div className="flex flex-row items-center gap-2">
+        <div
+          className="border-2 w-fit rounded-full bg-gray-300 p-2 cursor-pointer"
+          onClick={() => {
+            window.history.back();
+          }}
+        >
+          <Image src={previousPage} width={20} height={20} />
+        </div>
+        <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading'>
+          Become a Customer
+        </h1>
+      </div>
       <form
         class="relative flex flex-col z-0 items-start"
         id="signupForm"
         onSubmit={handleSubmit}
       >
-        <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading'>
-          Become a Customer
-        </h1>
         <div className="flex flex-col gap-[0.5rem] items-start">
           {becomeCustomerInfo.map((eachInput, index) => (
             <div
