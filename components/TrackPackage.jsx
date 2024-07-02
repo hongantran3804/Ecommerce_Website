@@ -108,7 +108,7 @@ const TrackPackage = () => {
         </h1>
       </div>
 
-      <div className="w-full relative">
+      <div className="w-full relative group">
         <div
           className={`absolute left-0 top-0 z-10 bg-white mt-[2rem] ml-[2rem] w-[38%] p-5  flex flex-col items-start ${
             order?.products?.length >= 4
@@ -127,8 +127,16 @@ const TrackPackage = () => {
               </span>
             )}{" "}
           </div>
-          <div className="border-[1px] border-black w-full h-[0.5rem] group">
-            <div className={`bg-green-500 w-[${`${progress}%`}] h-full text-white`}>
+          <div className="border-[1px] border-black w-full h-[0.5rem]  cursor-pointer">
+            <div
+              className={`bg-green-500  duration-1000 w-0 h-full text-white 
+              ${progress <= 25 && "group-hover:w-[25%]"} 
+              ${progress > 25 && progress <= 50 && "group-hover:w-[50%]"}
+              ${progress > 50 && progress <= 75 && "group-hover:w-[75%]"}
+              ${progress === 100 && "group-hover:w-[100%]"}
+              `}
+              id="progressBar"
+            >
               g
             </div>
           </div>

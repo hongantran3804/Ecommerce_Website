@@ -18,7 +18,7 @@ const Success = () => {
         <div className="bg-white p-2 rounded-md text-purple-500 mt-5 text-4xl font-bold">
           ${amount / 100}
         </div>
-        <Link href="/orders">
+        <Link href="/orders" className="flex flex-col items-center mt-5">
           <div className="border-[1px] px-2 py-1 text-white bg-LightPurple active:bg-Purple cursor-pointer rounded-[5px] w-fit">
             Go to Order Page
           </div>
