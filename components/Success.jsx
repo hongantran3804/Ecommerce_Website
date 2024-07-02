@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 const Success = () => {
   const [amount, setAmount] = useState(0);
@@ -17,6 +18,11 @@ const Success = () => {
         <div className="bg-white p-2 rounded-md text-purple-500 mt-5 text-4xl font-bold">
           ${amount / 100}
         </div>
+        <Link href="/orders">
+          <div className="border-[1px] px-2 py-1 text-white bg-LightPurple active:bg-Purple cursor-pointer rounded-[5px]">
+            Go to Order Page
+          </div>
+        </Link>
       </div>
     </main>
   );
