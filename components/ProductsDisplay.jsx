@@ -11,8 +11,7 @@ const ProductsDisplay = ({
   userId,
   session,
 }) => {
-  // if (!products || !narrowBy[0])
-  //   return <div className="font-bold">No product found</div>;
+  
   const [originalProducts, setOriginalProducts] = useState([]);
   const [totalProd, setTotalProd] = useState(0);
   const [numOfProd, setNumOfProd] = useState(0);
@@ -24,7 +23,7 @@ const ProductsDisplay = ({
     setOriginalProducts(() => [...products]);
     setTotalProd(products.length);
     setNumOfProd(products.length);
-    setRangeValue(Array.from({ length: narrowBy[0].length }, () => null));
+    setRangeValue(Array.from({ length: narrowBy[0]?.length }, () => null));
   }, [narrowBy]);
   useEffect(() => {
     setProducts((currentProducts) => [...originalProducts]);
@@ -57,6 +56,8 @@ const ProductsDisplay = ({
       currentProducts.sort((a, b) => sortOption * (a.casePrice - b.casePrice))
     );
   }, [numOfProd, page, rangeValue, sortOption]);
+  if (!products || !narrowBy[0])
+    return <div className="font-bold">No product found</div>;
   return (
     <section>
       <div>

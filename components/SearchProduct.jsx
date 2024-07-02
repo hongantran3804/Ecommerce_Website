@@ -15,9 +15,7 @@ const SearchProduct = () => {
     setQueryString(searchParams.get("queryString"));
     const getData = async () => {
       const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_URL
-        }/api/products?queryString=${searchParams.get("queryString")}`
+        `/api/products?queryString=${searchParams.get("queryString")}`
       );
       if (response.ok) {
         const { prods, priceRanges } = await response.json();
