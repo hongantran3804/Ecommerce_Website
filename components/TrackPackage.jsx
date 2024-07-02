@@ -128,7 +128,7 @@ const TrackPackage = () => {
             )}{" "}
           </div>
           <div className="border-[1px] border-black w-full h-[0.5rem] group">
-            <div className={`bg-green-500 w-[${progress}%] h-full text-white`}>
+            <div className={`bg-green-500 w-[${`${progress}%`}] h-full text-white`}>
               g
             </div>
           </div>
