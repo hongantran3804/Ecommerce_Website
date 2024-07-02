@@ -37,9 +37,8 @@ const handler = NextAuth({
           if (user.confirmed) {
             return user;
           } else {
-            await User.findByIdAndDelete({_id: user._id})
+            await User.findByIdAndDelete({ _id: user._id });
           }
-          
         }
         return null;
       },
@@ -59,7 +58,7 @@ const handler = NextAuth({
         return {
           ...token,
           id: user._id,
-          isAdmin: user.isAdmin
+          isAdmin: user.isAdmin,
         };
       }
       return token;
@@ -67,20 +66,17 @@ const handler = NextAuth({
     async session({ session, token }) {
       const sessionUser = await User.findOne({ email: session.user.email });
       token.isAdmin = sessionUser.isAdmin;
-      if (token) {
-        return {
-          ...session,
-          user: {
-            name: token.name,
-            id: token.id ? token.id.toString() : sessionUser._id.toString(),
-            isAdmin: token.isAdmin ? token.isAdmin : session.user.isAdmin,
-            ...session.user,
-          },
-        };
-      }
+      return {
+        ...session,
+        user: {
+          name: token.name,
+          id: token.id ? token.id.toString() : sessionUser._id.toString(),
+          isAdmin: token.isAdmin ? token.isAdmin : session.user.isAdmin,
+          ...session.user,
+        },
+      };
     },
     async signIn({ account, profile, user, credentials }) {
-      
       if (account.provider === "google") {
         try {
           await connectToDB();
