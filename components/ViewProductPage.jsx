@@ -17,13 +17,6 @@ const ViewProductPage = () => {
   const brandId = searchParams.get("brandId");
   const [products, setProducts] = useState([]);
   const [narrowBy, setNarrowBy] = useState([[]]);
-  // const [heading, setHeading] = useState(searchParams.get("name"));
-  // const [brandId, setBrandId] = useState(searchParams.get("brandId"));
-  // useEffect(() => {
-  //   //const searchParams = new URLSearchParams(document.location.searchParams);
-  //   setHeading(searchParams.get("name"));
-  //   setBrandId(searchParams.get("brandId"));
-  // },[])
   useEffect(() => {
     const getProducts = async () => {
       const response = await fetch(

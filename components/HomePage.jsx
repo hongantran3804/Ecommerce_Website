@@ -7,14 +7,16 @@ import { useSession } from "next-auth/react";
 const HomePage = () => {
   const { data: session } = useSession();
   const [products, setProducts] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [narrowBy, setNarrowBy] = useState([[]]);
   useEffect(() => {
     const getBrands = async () => {
       const response = await fetch(`/api/brands`);
       if (response.ok) {
-        const { prods, priceRanges } = await response.json();
+        const { prods, priceRanges, brands } = await response.json();
         setProducts(prods);
-        setNarrowBy(() => [[...priceRanges]]);
+        setNarrowBy(() => [[...priceRanges], [...brands]]);
+
       }
     };
     getBrands();

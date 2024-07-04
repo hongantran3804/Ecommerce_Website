@@ -74,6 +74,9 @@ const ProdCard = ({ products, userId }) => {
             <div className="font-bold text-[.7rem]">
               Case Price: ${product.casePrice}
             </div>
+            <div className="font-bold text-[.7rem]">
+              Unit Price: ${product.unitPrice}
+            </div>
           </div>
           <div className="flex flex-col items-center w-full gap-[0.2rem]">
             <div className="flex flex-col items-center w-full">

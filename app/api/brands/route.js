@@ -6,43 +6,20 @@ import Address from "@models/Address";
 import ShoppingCart from "@models/ShoppingCart";
 import User from "@models/User";
 import Progress from "@models/Progress";
+import { getPriceRanges } from "@lib/getPriceRanges";
 export const GET = async (request) => {
   try {
     await connectToDB();
-    const elements = await Brand.find({})
+    let brands = await Brand.find({})
     let products = await Product.find({}).populate('brand')
-   const priceUnder100 = {
-     name: "Under 100",
-     quan: products.filter((product) => product.casePrice < 100).length,
-     range: [0, 100],
-   };
-   const priceUnder500 = {
-     name: "100 - 500",
-     quan: products.filter(
-       (product) => product.casePrice > 100 && product.casePrice < 500
-     ).length,
-     range: [100, 500],
-   };
-   const priceUnder1000 = {
-     name: "500 - 1000",
-     quan: products.filter(
-       (product) => product.casePrice > 500 && product.casePrice < 1000
-     ).length,
-     range: [500, 1000],
-   };
-   const priceOver1000 = {
-     name: "1000+",
-     quan: products.filter((product) => product.casePrice >= 1000).length,
-     range: [1000, null],
-   };
-   const priceRanges = [
-     priceUnder100,
-     priceUnder500,
-     priceUnder1000,
-     priceOver1000,
-   ].filter((element) => element.quan > 0);
-   products = products.filter((product) => product.numInStock > 0);
-    return new Response(JSON.stringify({container:elements,prods: products, priceRanges}), {status: 200})
+    const priceRanges = getPriceRanges(products);
+    products = products.filter((product) => product.numInStock > 0);
+    brands = brands.map(brand => ({
+      id: brand._id.toString(),
+      name: brand.name,
+      quan: products.filter(product => product.brand.name === brand.name).length
+    }))
+    return new Response(JSON.stringify({brands,prods: products, priceRanges}), {status: 200})
   } catch (err) {
     console.log(err)
   }

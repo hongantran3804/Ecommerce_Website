@@ -94,7 +94,7 @@ export const prodReqInfo = [
   },
 ];
 export const narrowCategories = [
-   {name:"Retail Price"}, 
+   {name:"Retail Price"}, {name: "Brands"}
 ]
 export const dbInfo = [
   {

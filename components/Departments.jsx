@@ -14,14 +14,14 @@ const Departments = () => {
         });
         if (response.ok) {
           try {
-            const { container } = await response.json();
-            setCategories(() => [...container]);
-          } catch (err) {}
+            const { brands } = await response.json();
+            setCategories(() => [...brands]);
+          } catch (err) {
+          }
         }
       };
       getBrands();
     } catch (err) {
-      aler(err);
     }
   }, []);
   return (
@@ -31,7 +31,7 @@ const Departments = () => {
           href={{
             pathname: `/viewProduct`,
             query: {
-              brandId: category._id,
+              brandId: category.id,
               name: category.name,
             },
           }}

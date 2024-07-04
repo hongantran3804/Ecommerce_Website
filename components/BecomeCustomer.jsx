@@ -14,6 +14,7 @@ const SignUpForm = () => {
   const [passwordAgain, setPasswordAgain] = useState("");
   const [captchaValue, setCaptchaValue] = useState("");
   const [fail, setFail] = useState(null);
+  const [success, setSuccess] = useState(false);
   const recaptchaRef = useRef(null);
   useEffect(() => {
     const phonePattern =
@@ -67,19 +68,23 @@ const SignUpForm = () => {
       const noti = await response.json();
       if (!response.ok) {
         alert("Something went wrong");
-      }
+      } else { setSuccess(true) };
     } catch (error) {
       alert("Something went wrong");
     } finally {
-      setName("");
-      setEmail("");
-      setCompName("");
-      setPhoneNumber("");
-      setPassword("");
-      setPasswordAgain("");
-      setCaptchaValue("");
-      recaptchaRef.current.reset();
-      setFail(true);
+      setTimeout(() => {
+        setName("");
+        setEmail("");
+        setCompName("");
+        setPhoneNumber("");
+        setPassword("");
+        setPasswordAgain("");
+        setCaptchaValue("");
+        recaptchaRef.current.reset();
+        setFail(true);
+        setSuccess(false);
+      }, 1000);
+      
     }
   };
   const SetCollections = [
@@ -152,6 +157,7 @@ const SignUpForm = () => {
               )}
             </div>
           ))}
+          {success && <div className="text-green-500 text-[1.2rem] ml-[7rem]">Success!</div>}
           <div className="flex flex-row gap-[1vh] items-start">
             <label htmlFor="captcha" className="w-[7rem]"></label>
             <div id="captcha">
@@ -164,6 +170,7 @@ const SignUpForm = () => {
               />
             </div>
           </div>
+
           <div className="flex flex-row gap-[1vh] items-start">
             <label htmlFor="submitBtn" className="w-[7rem]"></label>
             <button

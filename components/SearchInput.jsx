@@ -18,10 +18,10 @@ const SearchInput = () => {
         className="flex flex-row items-center h-[3rem] relative flex-1"
         onSubmit={handleSubmit}
       >
-        <div id="departmentView" className="relative h-full w-[30%] group z-20">
+        <div id="departmentView" className="relative h-full w-fit group z-20 ">
           <Link href="/">
-            <div className="border-[1px] border-white rounded-l-[5px] text-nowrap h-full p-2 peer cursor-pointer">
-              <span className="after:showAddress relative text-[.9rem]">
+            <div className="border-[1px] border-white rounded-l-[5px] text-nowrap h-full p-2 peer cursor-pointer pr-[2rem]">
+              <span className="after:showAddress relative text-[.9rem] w-fit text">
                 All Brands
               </span>
             </div>
@@ -43,7 +43,7 @@ const SearchInput = () => {
 
         <div
           onClick={handleSubmit}
-          className="bg-yellow-400 rounded-r-[5px] relative h-full p-2"
+          className="bg-yellow-400 rounded-r-[5px] relative h-full p-2 flex flex-row items-center justify-center"
         >
           <Image src={searchIcon} alt="Search absolute" className="" />
         </div>
