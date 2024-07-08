@@ -30,7 +30,7 @@ export const POST = async (req) => {
   `;
   const mailOptions = {
     from: {
-      name: "Lacaco Account",
+      name: "HongAn-Eshop Account",
       address: process.env.GMAIL_ADDRESS,
     },
     to: "hongantran3804@gmail.com",

@@ -41,7 +41,7 @@ export const POST = async (request) => {
       address: process.env.GMAIL_ADDRESS,
     },
     to: email,
-    subject: "Your Lacaco Account Email Confirmation Link",
+    subject: "Your HongAn Eshop Account Email Confirmation Link",
     html: verificationMessage,
   };
   try {

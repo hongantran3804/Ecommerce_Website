@@ -88,7 +88,7 @@ const LoginForm = () => {
           </fieldset>
           <fieldset className="flex flex-col border-[1px] border-black relative px-[1rem] pt-[1.5rem] rounded-[5px] text-[.9rem] h-[12rem] items-start gap-[2rem]">
             <div>
-              If you don&apos;t have an account for lacacoshop please click
+              If you don&apos;t have an account for eshop please click
               &quot;Create&quot; to request one or use Google sign in
             </div>
             <div className="flex flex-row items-center gap-2">

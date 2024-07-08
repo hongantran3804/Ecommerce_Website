@@ -39,7 +39,7 @@ export const POST = async (request) => {
   `;
     const mailOptions = {
       from: {
-        name: "Lacaco Reset Password",
+        name: "HongAn-Eshop Reset Password",
         address: process.env.GMAIL_ADDRESS,
       },
       to: email,
