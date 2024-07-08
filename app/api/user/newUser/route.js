@@ -39,7 +39,7 @@ export const POST = async (request) => {
         if (userExist) {
           if (userExist.confirmed) {
             return new Response(
-              JSON.stringify({ message: "User already exist" }, { status: 409 })
+              JSON.stringify({ message: "User already exist" }),{ status: 409 }
             );
           } else {
             await User.findByIdAndDelete({_id: userExist._id });

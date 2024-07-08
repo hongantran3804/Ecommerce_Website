@@ -67,7 +67,7 @@ const SignUpForm = () => {
       });
       const noti = await response.json();
       if (!response.ok) {
-        alert("Something went wrong");
+        alert("User already exist");
       } else { setSuccess(true) };
     } catch (error) {
       alert("Something went wrong");
