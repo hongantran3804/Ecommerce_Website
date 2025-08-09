@@ -1,11 +1,4 @@
-import { connectToDB } from "@utils/database";
-import Product from "@models/Product";
-import Brand from "@models/Brand";
-import Order from "@models/Order";
-import Address from "@models/Address";
-import ShoppingCart from "@models/ShoppingCart";
 import User from "@models/User";
-import Progress from "@models/Progress";
 import bcrypt from "bcrypt";
 const sleep = () =>
   new Promise((resolve) => {
@@ -19,7 +12,6 @@ export const POST = async (request) => {
     await request.json();
   const confirmed = false;
   try {
-    await connectToDB();
     const response = await fetch(
       `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${captcha}`,
       {

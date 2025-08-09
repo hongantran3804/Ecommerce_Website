@@ -1,15 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { connectToDB } from "@utils/database";
-import Product from "@models/Product";
-import Brand from "@models/Brand";
-import Order from "@models/Order";
-import Address from "@models/Address";
-import ShoppingCart from "@models/ShoppingCart";
 import User from "@models/User";
-import Progress from "@models/Progress";
-import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 const handler = NextAuth({
   // Configure one or more authentication providers
@@ -55,7 +47,7 @@ const handler = NextAuth({
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       if (trigger === "update") {
-        return {...token, ...session.user}
+        return { ...token, ...session.user };
       }
       if (user) {
         return {
@@ -82,7 +74,6 @@ const handler = NextAuth({
     async signIn({ account, profile, user, credentials }) {
       if (account.provider === "google") {
         try {
-          await connectToDB();
           const userExist = await User.findOne({ email: profile.email });
           if (!userExist) {
             const newUser = await User.create({

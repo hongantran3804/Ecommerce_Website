@@ -1,29 +1,59 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  useJsApiLoader,
-  GoogleMap,
-  Marker,
-  InfoWindow,
-} from "@react-google-maps/api"; // indicate whether the map is loaded or not
+import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
 import OrderCard from "./OrderCard";
+
 import previousPage from "@public/assets/icons/previousPage.png";
 import Image from "next/image";
-import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const Map = dynamic(() => import("./Map"), {
+  ssr: false,
+});
+
+async function findNearestUPS(lat, lon) {
+  const MAX_RADIUS = 1; // max degrees (~111km)
+  let radius = 0.05; // start small ~1km
+  let data = [];
+
+  while (radius <= MAX_RADIUS) {
+    try {
+      const left = lon - radius;
+      const right = lon + radius;
+      const top = lat + radius;
+      const bottom = lat - radius;
+      const url = `https://nominatim.openstreetmap.org/search?q=UPS&format=jsonv2&limit=10&viewbox=${left},${top},${right},${bottom}&bounded=1`;
+
+      const res = await fetch(url, {
+        headers: {
+          "User-Agent": `MyApp/1.0 ${process.env.NEXT_PUBLIC_MY_EMAIL}`,
+        },
+      });
+
+      data = await res.json();
+      if (data.length > 0) {
+        return data;
+      } // found results, stop expanding
+      radius *= 2; // increase radius by 0.05 degrees (~5.5km)
+    } catch (error) {
+      console.error("Error fetching UPS locations:", error);
+    }
+  }
+
+  if (data.length === 0) return null;
+}
+
 const TrackPackage = () => {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-    libraries: ["places"],
-  });
   const { data: session } = useSession();
-  const [longitude, setLongitude] = useState("");
-  const [latitude, setLatitude] = useState("");
+  const [customerlongitude, setCustomerLongitude] = useState(0);
+  const [customerlatitude, setCustomerLatitude] = useState(0);
   const [address, setAddress] = useState();
   const [order, setOrder] = useState("");
-  const [openWindow, setOpenWindow] = useState(true);
+  const [nearestUPS, setNearestUPS] = useState({}); // State to hold nearest UPS location
   const [progress, setProgress] = useState(0);
+  const [upsAddress, setUpsAddress] = useState("");
+
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search);
     const addressObj = JSON.parse(
@@ -59,67 +89,80 @@ const TrackPackage = () => {
     getOrder();
   }, [session?.user?.id]);
   useEffect(() => {
-    if (address) {
-      fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-          address.streetAddress +
-            ", " +
-            address.city +
-            " " +
-            address.state +
-            " " +
-            address.zipcode
-        )}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.results.length > 0) {
-            const { lat, lng } = data.results[0].geometry.location;
-            setLatitude(lat);
-            setLongitude(lng);
+    const getCustomerAddress = async () => {
+      if (address) {
+        const wholeAddress = `${address.streetAddress}, ${address.city}, ${address.state} ${address.zipcode}`;
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+            wholeAddress
+          )}&format=jsonv2&limit=1`,
+          {
+            headers: {
+              "User-Agent": `MyApp/1.0 ${process.env.NEXT_PUBLIC_MY_EMAIL}`,
+            },
+          }
+        );
+
+        if (!res.ok) {
+          alert("Error fetching location. Please try again.");
+          return;
+        }
+        const data = await res.json();
+        if (data) {
+          const { lat, lon } = data[0];
+          setCustomerLatitude(parseFloat(lat));
+          setCustomerLongitude(parseFloat(lon));
+        } else {
+          console.error("No results found for the given address.");
+        }
+      }
+    };
+    getCustomerAddress();
+
+    if (customerlatitude && customerlongitude) {
+      findNearestUPS(customerlatitude, customerlongitude)
+        .then((locations) => {
+          if (locations.length > 0) {
+            setUpsAddress(locations[0].display_name);
+            setNearestUPS(() => ({
+              lat: parseFloat(locations[0].lat),
+              lon: parseFloat(locations[0].lon),
+            }));
           } else {
-            console.error("No results found for the given address.");
+            console.error("No UPS locations found nearby.");
           }
         })
-        .catch((error) => console.error("Error:", error));
+        .catch((error) => console.error("Error fetching nearest UPS:", error));
     }
-  }, [address]);
-  const center = useMemo(
-    () => ({ lat: latitude, lng: longitude }),
-    [longitude, latitude]
-  );
-  const [map, setMap] = useState(/**@type google.maps.Map */ (null));
-  if (!isLoaded) {
-    return <div></div>;
-  }
-  return (
-    <div>
-      <div className="flex flex-row items-center gap-2">
-        <div
-          className="border-2 w-fit rounded-full bg-gray-300 p-2 cursor-pointer"
-          onClick={() => {
-            window.history.back();
-          }}
-        >
-          <Image src={previousPage} width={20} height={20} />
-        </div>
-        <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
-          Tracking Your Order
-        </h1>
-      </div>
+  }, [address, customerlatitude, customerlongitude, nearestUPS]);
 
-      <div className="w-full relative group">
+  return (
+    <div className="w-full h-full">
+      <div className="w-full relative group h-full flex flex-row">
         <div
-          className={`absolute left-0 top-0 z-10 bg-white mt-[2rem] ml-[2rem] w-[38%] p-5  flex flex-col items-start ${
+          className={`left-0 top-0 z-10 bg-white mt-[2rem] ml-[2rem] w-[40%] p-5  flex flex-col items-start ${
             order?.products?.length >= 4
               ? "h-[75vh] overflow-y-scroll"
               : "h-fit"
           } gap-3`}
         >
           <div className="flex flex-col items-start">
+            <div className="flex flex-row items-center gap-2">
+              <div
+                className="border-2 w-fit rounded-full bg-gray-300 p-2 cursor-pointer"
+                onClick={() => {
+                  window.history.back();
+                }}
+              >
+                <Image src={previousPage} width={20} height={20} />
+              </div>
+              <h1 className='font-bold text-[1.5rem] font-["Trebuchet MS"] drop-shadow-becomeCustomerHeading my-[10px]'>
+                Tracking Your Order
+              </h1>
+            </div>
             {order.delivered ? (
               <span className="text-black font-bold">
-                `Delivered` {dayjs(order.deliveredDate).format("MMMM D")}
+                Delivered {dayjs(order.deliveredDate).format("MMMM D")}
               </span>
             ) : (
               <span className="text-green-600 font-bold">
@@ -173,46 +216,12 @@ const TrackPackage = () => {
             session={session}
           />
         </div>
-        <GoogleMap
-          center={center}
-          zoom={15}
-          mapContainerStyle={{ width: "100%", height: "80vh" }}
-          mapContainerClassName="relative"
-          options={{
-            zoomControl: false,
-            streetViewControl: false,
-            mapTypeControl: false,
-            fullscreenControl: false,
-          }}
-          onLoad={(map) => setMap(map)}
-        >
-          {/* Display markes, or directions */}
-          <Marker
-            position={center}
-            onClick={() => {
-              setOpenWindow(true);
-            }}
-          >
-            {openWindow && (
-              <InfoWindow
-                position={center}
-                onCloseClick={() => {
-                  setOpenWindow(false);
-                }}
-              >
-                <div className="text-center w-fit">
-                  <div>{session?.user?.name}</div>
-                  <div>{address?.streetAddress}</div>
-                  <div className="uppercase">
-                    <span>{address?.city}, </span>
-                    <span>{address?.state} </span>
-                    <span>{address?.zipcode}</span>
-                  </div>
-                </div>
-              </InfoWindow>
-            )}
-          </Marker>
-        </GoogleMap>
+        <Map
+          customer={[customerlatitude, customerlongitude]}
+          customerAddress={address}
+          ups={[nearestUPS.lat, nearestUPS.lon]}
+          upsAddress={upsAddress}
+        />
       </div>
     </div>
   );

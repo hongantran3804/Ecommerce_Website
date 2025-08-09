@@ -1,14 +1,7 @@
-
-import { connectToDB } from "@utils/database";
 import Product from "@models/Product";
 import Brand from "@models/Brand";
-import Order from "@models/Order";
-import Address from "@models/Address";
-import ShoppingCart from "@models/ShoppingCart";
-import User from "@models/User";
-import Progress from "@models/Progress";
 export const POST = async (request) => {
-  let { photo,brand, prodDesc, upc, unitPrice, unitPerCase, numInStock } =
+  let { photo, brand, prodDesc, upc, unitPrice, unitPerCase, numInStock } =
     await request.json();
   brand = brand.trim();
   upc = upc.replace(" ", "");
@@ -16,7 +9,6 @@ export const POST = async (request) => {
   unitPerCase = unitPerCase.replace(" ", "");
   numInStock = numInStock.replace(" ", "");
   try {
-    await connectToDB();
     const brandExist = await Brand.findOne({ name: brand });
     if (brandExist) {
       const productExist = await Product.findOne({ upc: upc });
@@ -32,9 +24,9 @@ export const POST = async (request) => {
           brand: brandExist._id,
           unitPerCase: parseInt(unitPerCase),
           numInStock: parseInt(numInStock),
-          numPurchased:0,
+          numPurchased: 0,
         });
-       await product.save();
+        await product.save();
       } else {
         await Product.findByIdAndUpdate(productExist._id, {
           photo: photo,
@@ -53,7 +45,7 @@ export const POST = async (request) => {
     } else {
       const brandProd = new Brand({ name: brand, numPurchased: 0 });
       await brandProd.save();
-      
+
       const product = new Product({
         photo: photo,
         prodDesc: prodDesc,
@@ -74,7 +66,6 @@ export const POST = async (request) => {
     );
   } catch (error) {
     console.log(error);
-    
   }
   return new Response(
     JSON.stringify({ message: "Something went wrong" }, { status: 422 })

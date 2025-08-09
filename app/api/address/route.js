@@ -1,13 +1,4 @@
-import { connectToDB } from "@utils/database";
-import Product from "@models/Product";
-import Brand from "@models/Brand";
-import Order from "@models/Order";
 import Address from "@models/Address";
-import ShoppingCart from "@models/ShoppingCart";
-import User from "@models/User";
-import Progress from "@models/Progress";
-import { addressInfo } from "@utils/utils";
-import AddressCard from "@components/AddressCard";
 
 export const POST = async (request) => {
   const {
@@ -23,7 +14,6 @@ export const POST = async (request) => {
   } = await request.json();
   if (userId) {
     try {
-      await connectToDB();
       const address = await Address.findOne({
         userId: userId,
         zipcode: zipcode,
@@ -34,7 +24,7 @@ export const POST = async (request) => {
         return new Response(null, {
           status: 200,
         });
-      const addresses = await Address.find({userId:userId});
+      const addresses = await Address.find({ userId: userId });
       if (defaultStatus) {
         await Address.updateMany({ userId: userId }, { default: false });
         const newAddress = new Address({
@@ -80,7 +70,6 @@ export const GET = async (request) => {
   const userId = request.nextUrl.searchParams.get("userId");
   if (userId) {
     try {
-      await connectToDB();
       const addresses = await Address.find({ userId: userId });
       return new Response(JSON.stringify({ addresses }), {
         status: 200,
@@ -106,7 +95,6 @@ export const PUT = async (request) => {
   ] = data;
   if (userId) {
     try {
-      await connectToDB();
       if (defaultStatus) {
         await Address.updateMany({ userId: userId }, { default: false });
         await Address.findByIdAndUpdate(
@@ -150,7 +138,6 @@ export const DELETE = async (request) => {
   const { addressId } = await request.json();
   if (userId && addressId) {
     try {
-      await connectToDB();
       await Address.findByIdAndDelete({ _id: addressId, userId: userId });
       const address = await Address.findOne({ userId: userId });
       if (address) {

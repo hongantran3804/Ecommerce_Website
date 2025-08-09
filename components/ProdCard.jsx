@@ -4,7 +4,7 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
 import reqInfoIcon from "@public/assets/icons/reqInfoIcon.png";
-import defaultProductPhoto from "@public/assets/images/defaultProductPhoto.png";
+import defaultImg from "@public/assets/images/defaultProductPhoto.png";
 import cart from "@public/assets/icons/shopping-cart.png";
 import { useState } from "react";
 import checkMark from "@public/assets/icons/checkmark.png";
@@ -55,8 +55,8 @@ const ProdCard = ({ products, userId }) => {
                 <Image
                   src={
                     product.photo
-                      ? process.env.NEXT_PUBLIC_DOMAIN_PHOTO + product.photo
-                      : defaultProductPhoto
+                      ? process.env.NEXT_PUBLIC_DOMAIN_PHOTO + product?.photo
+                      : process.env.NEXT_PUBLIC_DOMAIN_PHOTO + defaultImg
                   }
                   width={100}
                   height={100}

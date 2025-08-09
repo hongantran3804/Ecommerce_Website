@@ -1,11 +1,6 @@
-import { connectToDB } from "@utils/database";
 import dayjs from "dayjs";
-import Product from "@models/Product";
-import Brand from "@models/Brand";
 import Order from "@models/Order";
-import Address from "@models/Address";
 import ShoppingCart from "@models/ShoppingCart";
-import User from "@models/User";
 import Progress from "@models/Progress";
 export const POST = async (request) => {
   const { products, userId, orderPlacedDate, deliveredDate, total, addressId } =
@@ -16,7 +11,6 @@ export const POST = async (request) => {
   );
   if (addressId && userId) {
     try {
-      await connectToDB();
       const newProgress = new Progress({
         progressValue: progress,
         userId: userId,
@@ -52,7 +46,6 @@ export const GET = async (request) => {
   const userId = request.nextUrl.searchParams.get("userId");
   if (userId) {
     try {
-      await connectToDB();
       const now = dayjs();
 
       await Order.updateMany(
@@ -96,7 +89,6 @@ export const GET = async (request) => {
 export const PUT = async (request) => {
   const orderId = request.nextUrl.searchParams.get("orderId");
   try {
-    await connectToDB();
     const order = await Order.findOne({ _id: orderId });
     await Progress.findByIdAndDelete({ _id: order.progress._id });
     await Order.findByIdAndDelete(orderId);

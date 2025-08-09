@@ -230,20 +230,25 @@ const ReviewCheckoutBoard = ({
             <div className="text-[.8rem] w-full">
               <div className="flex flex-row justify-between">
                 <div>Items {`(${numOfProd})`}:</div>
-                <div>${`${totalPrice / 100}`}</div>
+                <div>${`${Math.round(totalPrice / 100)}`}</div>
               </div>
               <div className="flex flex-row justify-between">
                 <div>Shipping & handling:</div>
-                <div>${`${shippingPrice / 100}`}</div>
+                <div>${`${Math.round(shippingPrice / 100)}`}</div>
               </div>
               <div className="flex flex-row justify-between">
                 <div>Total before tax:</div>
-                <div>${`${(totalPrice + shippingPrice) / 100}`}</div>
+                <div>
+                  ${`${Math.round((totalPrice + shippingPrice) / 100)}`}
+                </div>
               </div>
               <div className="flex flex-row justify-between gap-[3rem]">
                 <div>Estimated tax to be collected:</div>
                 <div>
-                  ${`${Math.round((totalPrice + shippingPrice) / 10) / 100}`}
+                  $
+                  {`${Math.round(
+                    Math.round((totalPrice + shippingPrice) / 10) / 100
+                  )}`}
                 </div>
               </div>
               <div className="text-[1.2rem] text-red-700 flex flex-row justify-between">
@@ -251,10 +256,10 @@ const ReviewCheckoutBoard = ({
                 <div>
                   $
                   {`${
-                    (Math.round((totalPrice + shippingPrice) / 10) +
+                    Math.round((Math.round((totalPrice + shippingPrice) / 10) +
                       shippingPrice +
                       totalPrice) /
-                    100
+                    100)
                   }`}
                 </div>
               </div>

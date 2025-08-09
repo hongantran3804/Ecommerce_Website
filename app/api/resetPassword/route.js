@@ -1,14 +1,6 @@
-import { connectToDB } from "@utils/database";
 import jwt from "jsonwebtoken";
-import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
-import Product from "@models/Product";
-import Brand from "@models/Brand";
-import Order from "@models/Order";
-import Address from "@models/Address";
-import ShoppingCart from "@models/ShoppingCart";
 import User from "@models/User";
-import Progress from "@models/Progress";
 export const POST = async (request) => {
   const { email } = await request.json();
   const nodemailer = require("nodemailer");
@@ -23,7 +15,6 @@ export const POST = async (request) => {
     },
   });
   try {
-    await connectToDB();
     const token = jwt.sign({ email }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -77,8 +68,6 @@ export const POST = async (request) => {
 export const PATCH = async (request) => {
   const { token, password } = await request.json();
   try {
-    await connectToDB();
-
     try {
       const { email } = jwt.verify(token, process.env.JWT_SECRET);
       try {
