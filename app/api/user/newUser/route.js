@@ -1,10 +1,12 @@
+<<<<<<< HEAD
 import Product from "@models/Product";
 import Brand from "@models/Brand";
 import Order from "@models/Order";
 import Address from "@models/Address";
 import ShoppingCart from "@models/ShoppingCart";
+=======
+>>>>>>> cda2c3e67829f7de8779346723be955df7844eec
 import User from "@models/User";
-import Progress from "@models/Progress";
 import bcrypt from "bcrypt";
 const sleep = () =>
   new Promise((resolve) => {
