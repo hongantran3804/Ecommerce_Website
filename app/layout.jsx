@@ -1,12 +1,10 @@
 /* eslint-disable @next/next/no-sync-scripts */
+
 import React from "react";
 import Nav from "@components/Nav";
 import "@styles/global.css";
 import Provider from "@components/Provider";
-import Departments from "@components/Departments";
-import SearchInput from "@components/SearchInput";
-import Image from "next/image";
-import previousPage from "@public/assets/icons/previousPage.png";
+import "leaflet/dist/leaflet.css";
 export const metadata = {
   title: "HongAn EShop",
 };
@@ -15,14 +13,14 @@ const RootLayout = ({ children }) => {
   return (
     <html lang="en">
       <Provider>
-        <body className="flex flex-col items-center">
+        <body className="flex flex-col items-center h-full">
           <div className="w-full bg-Purple text-white sticky z-50 top-0">
             <Nav />
           </div>
-          <div className="w-[100%] gap-[0.4rem] flex flex-col px-[10rem]">
-            <div className="flex flex-row items-start gap-5">
-              <div className="flex flex-row items-start w-full">
-                <div className="flex-1">{children}</div>
+          <div className="w-[100%] gap-[0.4rem] flex flex-col px-[10rem] flex-1">
+            <div className="flex flex-row items-start gap-5 h-full">
+              <div className="flex flex-row items-start w-full h-full">
+                <div className="flex-1 h-full">{children}</div>
               </div>
             </div>
           </div>

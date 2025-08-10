@@ -4,7 +4,7 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
 import reqInfoIcon from "@public/assets/icons/reqInfoIcon.png";
-import defaultProductPhoto from "@public/assets/images/defaultProductPhoto.png";
+import defaultImg from "@public/assets/images/defaultProductPhoto.png";
 import cart from "@public/assets/icons/shopping-cart.png";
 import { useState } from "react";
 import checkMark from "@public/assets/icons/checkmark.png";
@@ -39,7 +39,7 @@ const ProdCard = ({ products, userId }) => {
     <div className="grid grid-cols-prodCol gap-3 flex-1">
       {products.map((product, index) => (
         <div
-          className='flex flex-col border-gray-300 rounded-[5px] border-[1px] text-[.6rem] font-["Arial] items-center py-[5px] h-full justify-between text-center relative gap-2'
+          className='flex flex-col border-gray-300 rounded-[5px] border-[1px] text-[.6rem] font-["Arial] items-center py-[5px] h-[30rem] justify-between text-center relative gap-2'
           key={product.prodDesc}
         >
           <div className="flex flex-col items-center text-wrap w-[90%] text-center ">
@@ -55,8 +55,8 @@ const ProdCard = ({ products, userId }) => {
                 <Image
                   src={
                     product.photo
-                      ? process.env.NEXT_PUBLIC_DOMAIN_PHOTO + product.photo
-                      : defaultProductPhoto
+                      ? process.env.NEXT_PUBLIC_DOMAIN_PHOTO + product?.photo
+                      : process.env.NEXT_PUBLIC_DOMAIN_PHOTO + defaultImg
                   }
                   width={100}
                   height={100}

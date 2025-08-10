@@ -50,11 +50,15 @@ const ProductsDisplay = ({
         );
       }
     });
-    if(filtValueProds.length === 0) filtValueProds = [...originalProducts]
+    if (filtValueProds.length === 0) filtValueProds = [...originalProducts];
     if (chosenBrands.length > 0) {
-      filtValueProds = filtValueProds.filter((product) =>
-       {return  chosenBrands.findIndex((brandName) => brandName === product.brand.name) !== -1}
-      );
+      filtValueProds = filtValueProds.filter((product) => {
+        return (
+          chosenBrands.findIndex(
+            (brandName) => brandName === product.brand.name
+          ) !== -1
+        );
+      });
     }
     setProducts(() => [...filtValueProds]);
     setProducts((currentProducts) =>
@@ -149,67 +153,76 @@ const ProductsDisplay = ({
             <div className="from-LightPurple to-Purple  h-fit min-w-[12rem] bg-gradient-to-br text-white flex flex-col p-[10px]">
               <div className="text-white uppercase font-bold">Narrow By</div>
               <div className="w-full flex flex-col gap-1 text-[.8rem] items-center ">
-                {narrowCategories.map((category, narrowIndex) => (
-                  narrowBy[narrowIndex] && <div
-                    key={category.name}
-                    className={`border-[1px] border-r-white border-b-white border-l-[#c0c0c0] border-t-[#c0c0c0] w-full px-[10px] py-[2px] ${
-                      category.quan !== 0 ? "block" : "hidden"
-                    }`}
-                  >
-                    <div className="text-[#c0c0c0] font-bold">
-                      {category.name}
-                    </div>
-                    <div className="flex flex-col items-start">
-                      
-                        {narrowBy[narrowIndex].map((element, elementIndex) => (
-                          <div
-                            key={narrowBy[narrowIndex].name}
-                            className="flex flex-row items-center gap-[5px]"
-                          >
-                            <input
-                              type="checkbox"
-                              onChange={(e) => {
-                                if (narrowIndex === 0) {
-                                  const newRange = [...rangeValue];
-                                  setRangeValue(() => {
-                                    if (
-                                      e.target.checked 
-                                    ) {
-                                      newRange[elementIndex] =
-                                        narrowBy[narrowIndex][
-                                          elementIndex
-                                        ].range;
+                {narrowCategories.map(
+                  (category, narrowIndex) =>
+                    narrowBy[narrowIndex] && (
+                      <div
+                        key={category.name}
+                        className={`border-[1px] border-r-white border-b-white border-l-[#c0c0c0] border-t-[#c0c0c0] w-full px-[10px] py-[2px] ${
+                          category.quan !== 0 ? "block" : "hidden"
+                        }`}
+                      >
+                        <div className="text-[#c0c0c0] font-bold">
+                          {category.name}
+                        </div>
+                        <div className="flex flex-col items-start">
+                          {narrowBy[narrowIndex].map(
+                            (element, elementIndex) => (
+                              <div
+                                key={narrowBy[narrowIndex].name}
+                                className="flex flex-row items-center gap-[5px]"
+                              >
+                                <input
+                                  type="checkbox"
+                                  onChange={(e) => {
+                                    if (narrowIndex === 0) {
+                                      const newRange = [...rangeValue];
+                                      setRangeValue(() => {
+                                        if (e.target.checked) {
+                                          newRange[elementIndex] =
+                                            narrowBy[narrowIndex][
+                                              elementIndex
+                                            ].range;
+                                        } else {
+                                          newRange[elementIndex] = null;
+                                        }
+                                        return newRange;
+                                      });
                                     } else {
-                                      newRange[elementIndex] = null;
+                                      const newChosenBrands = [...chosenBrands];
+                                      setChosenBrands(() => {
+                                        if (e.target.checked) {
+                                          if (
+                                            !newChosenBrands.includes(
+                                              element.name
+                                            )
+                                          ) {
+                                            newChosenBrands.push(element.name);
+                                          }
+                                        } else {
+                                          const index =
+                                            newChosenBrands.findIndex(
+                                              (brandName) =>
+                                                brandName === element.name
+                                            );
+                                          if (index !== -1) {
+                                            newChosenBrands.splice(index, 1);
+                                          }
+                                        }
+                                        return newChosenBrands;
+                                      });
                                     }
-                                    return newRange;
-                                  });
-                                } else {
-                                
-                                  const newChosenBrands = [...chosenBrands];
-                                  setChosenBrands(() => {
-                                    
-                                    if (e.target.checked) {
-                                      newChosenBrands.push(element.name);
-                                    } else {
-                                      const index = newChosenBrands.find(
-                                        (brandName) =>
-                                          brandName === element.name
-                                      );
-                                      newChosenBrands.splice(index,1)
-                                    }
-                                    return newChosenBrands;
-                                  })
-                                }
-                              }}
-                            />
-                            <div>{element.name}</div>
-                            <div>({element.quan})</div>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                ))}
+                                  }}
+                                />
+                                <div>{element.name}</div>
+                                <div>({element.quan})</div>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )
+                )}
               </div>
             </div>
             <ProdCard products={products} userId={userId} session={session} />
