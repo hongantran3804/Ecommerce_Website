@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-sync-scripts */
-
 import React from "react";
 import Nav from "@components/Nav";
 import "@styles/global.css";
@@ -8,6 +7,7 @@ import "leaflet/dist/leaflet.css";
 export const metadata = {
   title: "HongAn EShop",
 };
+await connectToDB(); 
 
 const RootLayout = ({ children }) => {
   return (
