@@ -1,7 +1,10 @@
 module.exports = {
   images: {
     formats: ["image/avif", "image/webp"],
-    domains: ["d1cb2g4kfnudz5.cloudfront.net"],
+    domains: [
+      "d1cb2g4kfnudz5.cloudfront.net",
+      "hongan-ecommerce-website.vercel.app",
+    ],
     remotePatterns: [
       {
         protocol: "https",
