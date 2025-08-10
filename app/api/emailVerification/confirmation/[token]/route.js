@@ -7,12 +7,10 @@ import ShoppingCart from "@models/ShoppingCart";
 import User from "@models/User";
 import Progress from "@models/Progress";
 import { redirect } from "next/navigation";
-import { connectToDB } from "@utils/database";
 export const GET = async (request, { params }) => {
   const { token } = params;
   let page = "/signup";
   try {
-    await connectToDB()
     
     const {
       email

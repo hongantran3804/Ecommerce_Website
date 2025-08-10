@@ -1,4 +1,3 @@
-import { connectToDB } from "@utils/database";
 import Product from "@models/Product";
 import Brand from "@models/Brand";
 import Order from "@models/Order";
@@ -6,25 +5,24 @@ import Address from "@models/Address";
 import ShoppingCart from "@models/ShoppingCart";
 import User from "@models/User";
 import Progress from "@models/Progress";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 export const PUT = async (request) => {
-  const { userId, newValue, fieldChange ,oldPwd, newPwd, newPwd2} = await request.json();
+  const { userId, newValue, fieldChange, oldPwd, newPwd, newPwd2 } =
+    await request.json();
 
   if (userId) {
     try {
-      await connectToDB();
-      const user = await User.findOne({ _id:userId });
+      const user = await User.findOne({ _id: userId });
       if (fieldChange === "password") {
         const isMatch = await bcrypt.compare(oldPwd, user.password);
-        if (isMatch && (newPwd === newPwd2)) {
+        if (isMatch && newPwd === newPwd2) {
           const salt = await bcrypt.genSalt(10);
           const hashedPassword = await bcrypt.hash(newPwd, salt);
           user.password = hashedPassword;
-          await user.save()
+          await user.save();
         }
         console.log(user);
-      }
-      else if (fieldChange === "name") {
+      } else if (fieldChange === "name") {
         await User.findByIdAndUpdate({ _id: userId }, { name: newValue });
       } else if (fieldChange === "phone") {
         await User.findByIdAndUpdate({ _id: userId }, { phone: newValue });
@@ -33,7 +31,7 @@ export const PUT = async (request) => {
       }
       return new Response(null, { status: 200 });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
   return new Response(null, { status: 422 });

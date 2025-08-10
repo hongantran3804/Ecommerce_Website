@@ -1,4 +1,3 @@
-import { connectToDB } from "@utils/database";
 import Product from "@models/Product";
 import Brand from "@models/Brand";
 import Order from "@models/Order";
@@ -19,7 +18,6 @@ export const POST = async (request) => {
     await request.json();
   const confirmed = false;
   try {
-    await connectToDB();
     const response = await fetch(
       `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${captcha}`,
       {
@@ -39,10 +37,11 @@ export const POST = async (request) => {
         if (userExist) {
           if (userExist.confirmed) {
             return new Response(
-              JSON.stringify({ message: "User already exist" }),{ status: 409 }
+              JSON.stringify({ message: "User already exist" }),
+              { status: 409 }
             );
           } else {
-            await User.findByIdAndDelete({_id: userExist._id });
+            await User.findByIdAndDelete({ _id: userExist._id });
           }
         }
         const salt = await bcrypt.genSalt(10);
@@ -57,7 +56,8 @@ export const POST = async (request) => {
         });
         await newUser.save();
         try {
-          const emailVerification = await fetch(`${process.env.NEXTAUTH_URL}/api/emailVerification`,
+          const emailVerification = await fetch(
+            `${process.env.NEXTAUTH_URL}/api/emailVerification`,
             {
               method: "POST",
               headers: {

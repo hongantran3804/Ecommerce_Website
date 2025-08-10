@@ -1,4 +1,3 @@
-import { connectToDB } from "@utils/database";
 import Product from "@models/Product";
 import Brand from "@models/Brand";
 import Order from "@models/Order";
@@ -10,7 +9,6 @@ export const GET = async (request) => {
   const userId = request.nextUrl.searchParams.get("userId");
   if (userId) {
     try {
-      await connectToDB();
       let defaultAddress = await Address.findOne({
         userId: userId,
         default: true,

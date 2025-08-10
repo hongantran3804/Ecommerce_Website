@@ -14,7 +14,6 @@ export const GET = async (request) => {
   if (queryString) {
     
     try {
-      await connectToDB();
       const brands = await Brand.find({});
       let products = await Product.find({}).populate("brand");
       products = products.filter(
