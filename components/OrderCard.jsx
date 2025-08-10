@@ -51,7 +51,7 @@ const OrderCard = ({ orders, order, orderIndex, session }) => {
                   src={
                     product?.photo
                       ? process.env.NEXT_PUBLIC_DOMAIN_PHOTO + product?.photo
-                      : defaultImg
+                      : process.env.NEXT_PUBLIC_DOMAIN_PHOTO + defaultImg
                   }
                   width={100}
                   height={100}

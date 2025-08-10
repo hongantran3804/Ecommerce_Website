@@ -1,4 +1,3 @@
-import { connectToDB } from "@utils/database";
 import Product from "@models/Product";
 import Brand from "@models/Brand";
 import Order from "@models/Order";
@@ -12,7 +11,6 @@ export const GET = async (request) => {
   const password = request.nextUrl.searchParams.get("password");
 
   try {
-    await connectToDB();
     const user = await User.findOne({ email: email });
     if (user) {
       const isMatch = await bcrypt.compare(password, user.password);

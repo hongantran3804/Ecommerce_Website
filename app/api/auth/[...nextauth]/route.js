@@ -55,7 +55,7 @@ const handler = NextAuth({
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       if (trigger === "update") {
-        return {...token, ...session.user}
+        return { ...token, ...session.user };
       }
       if (user) {
         return {
@@ -82,7 +82,6 @@ const handler = NextAuth({
     async signIn({ account, profile, user, credentials }) {
       if (account.provider === "google") {
         try {
-          await connectToDB();
           const userExist = await User.findOne({ email: profile.email });
           if (!userExist) {
             const newUser = await User.create({
