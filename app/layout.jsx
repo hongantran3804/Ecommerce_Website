@@ -8,7 +8,8 @@ import "leaflet/dist/leaflet.css";
 export const metadata = {
   title: "HongAn EShop",
 };
-await connectToDB();
+await connectToDB(); 
+
 const RootLayout = ({ children }) => {
   return (
     <html lang="en">
