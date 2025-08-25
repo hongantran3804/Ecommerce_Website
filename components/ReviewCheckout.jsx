@@ -255,13 +255,16 @@ const ReviewCheckoutBoard = ({
                 <div>Order total: </div>
                 <div>
                   $
-                  {`${
-                    Math.round((Math.round((totalPrice + shippingPrice) / 10) +
+                  {`${Math.round(
+                    (Math.round((totalPrice + shippingPrice) / 10) +
                       shippingPrice +
                       totalPrice) /
-                    100)
-                  }`}
+                      100
+                  )}`}
                 </div>
+              </div>
+              <div className="font-bold">
+                Please do not use real card, just click pay button blow to proceed
               </div>
             </div>
             <div>

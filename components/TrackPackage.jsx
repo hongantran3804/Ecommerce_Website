@@ -7,6 +7,7 @@ import OrderCard from "./OrderCard";
 import previousPage from "@public/assets/icons/previousPage.png";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const Map = dynamic(() => import("./Map"), {
   ssr: false,
@@ -216,12 +217,25 @@ const TrackPackage = () => {
             session={session}
           />
         </div>
-        <Map
-          customer={[customerlatitude, customerlongitude]}
-          customerAddress={address}
-          ups={[nearestUPS.lat, nearestUPS.lon]}
-          upsAddress={upsAddress}
-        />
+        {!customerlatitude ||
+        !customerlongitude ||
+        !nearestUPS.lat ||
+        !nearestUPS.lon ||
+        !upsAddress ||
+        !address ? (
+          <DotLottieReact
+            src="https://lottie.host/4285b52a-8503-4f51-809d-88d1a379ee39/582WDBNku7.lottie"
+            loop
+            autoplay
+          />
+        ) : (
+          <Map
+            customer={[customerlatitude, customerlongitude]}
+            customerAddress={address}
+            ups={[nearestUPS.lat, nearestUPS.lon]}
+            upsAddress={upsAddress}
+          />
+        )}
       </div>
     </div>
   );
